@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Meta-title jää kirjoittamatta kunnes mallin nimi ratkeaa (D1). Sivun
+     otsikkona on toistaiseksi sivutyyppi, ei tuotenimi. -->
+<title data-copy="talo.sivuOtsikko">Luotokoti</title>
+<meta name="description" data-copy="talo.sivuKuvaus" content="">
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="page-talo" data-scroll-syvyys>
+
+<!-- Globaalit vaihtimet asetetaan ennen ensimmäistä maalausta. -->
+<script src="assets/asetukset.js"></script>
+
+<a class="skip" href="#main" data-copy="navi.ohita"></a>
+
+<header class="site-header">
+  <div class="wrap header-bar">
+    <a class="wordmark" href="index.html"><img src="assets/logo-luotokoti.svg" alt="Luotokoti" width="520" height="70"></a>
+
+    <button class="nav-toggle" type="button" data-nav-toggle
+            aria-expanded="false" aria-controls="site-nav">
+      <span class="nav-toggle__bars" aria-hidden="true"><i></i></span><span data-copy="navi.valikko"></span>
+    </button>
+
+    <nav class="site-nav" id="site-nav" data-copy-aria="navi.paavalikko">
+      <ul>
+        <li><a href="index.html" data-copy="navi.etusivu"></a></li>
+        <li><a href="talo.html" aria-current="page" data-copy="navi.talo"></a></li>
+        <li><a href="kohteet.html" data-event="taso2_kohteet" data-copy="navi.kohteet"></a></li>
+        <li><a href="oma-tontti.html" data-event="taso2_ostopolku_oma_tontti" data-copy="navi.omaTontti"></a></li>
+        <li><a href="meista.html" data-event="taso1_meista_katselu" data-copy="navi.meista"></a></li>
+      </ul>
+      <!-- Mobiilissa CTA on valikon sisällä, koska se ei mahdu headeriin
+           375 px leveydellä. Työpöydällä CTA on headerissa ja tämä piilossa. -->
+      <p class="nav-cta">
+        <a class="btn btn--primary" href="yhteystiedot.html"
+           data-event="taso3_yhteydenotto_valikko" data-copy="navi.yhteys"></a>
+      </p>
+    </nav>
+
+    <div class="header-tools">
+      <!-- Kielenvaihdin. Kaksi linkkiä, ei painiketta: kieli on osoitteessa
+           (?lang=sv), joten sivu on jaettavissa ja selaimen omat eleet
+           toimivat. proto.js täydentää href-osoitteet niin että muut
+           parametrit säilyvät, ja merkitsee nykyisen aria-current-arvolla.
+           Nimikkeet FI ja SV eivät ole copyssa: kielen nimi kirjoitetaan
+           kielen itsensä mukaan, joten se on sama kummalla kielellä. -->
+      <nav class="lang" data-copy-aria="navi.kieliValinta">
+        <a href="?lang=fi" data-kieli-linkki="fi" lang="fi" hreflang="fi">FI</a>
+        <a href="?lang=sv" data-kieli-linkki="sv" lang="sv" hreflang="sv">SV</a>
+      </nav>
+      <a class="btn btn--primary btn--nav" href="yhteystiedot.html"
+         data-event="taso3_yhteydenotto_header" data-copy="navi.yhteys"></a>
+    </div>
+
+  </div>
+</header>
+
+<div class="proto-bar">
+  <div class="wrap proto-bar__inner">
+    <span class="proto-bar__tag">Prototyyppi</span>
+      <div class="proto-group">
+        <span class="proto-group__label" id="lbl-omistusmalli">Omistusmalli</span>
+        <div class="proto-group__btns" role="group" aria-labelledby="lbl-omistusmalli">
+          <button class="proto-btn" type="button" data-asetus="omistusmalli" data-arvo="a" data-selite="Luotokoti omistaa tontin" aria-pressed="false">A</button>
+          <button class="proto-btn" type="button" data-asetus="omistusmalli" data-arvo="b" data-selite="varaus kunnan tontteihin" aria-pressed="false">B</button>
+        </div>
+      </div>
+      <div class="proto-group">
+        <span class="proto-group__label" id="lbl-sisalto">Sisältö</span>
+        <div class="proto-group__btns" role="group" aria-labelledby="lbl-sisalto">
+          <button class="proto-btn" type="button" data-asetus="sisalto" data-arvo="aukot" data-selite="merkityt aukot" aria-pressed="false">Aukot</button>
+          <button class="proto-btn" type="button" data-asetus="sisalto" data-arvo="placeholder" data-selite="kuvitteelliset arvot" aria-pressed="false">Placeholder</button>
+        </div>
+      </div>
+    <button class="notes-toggle" type="button" data-notes-toggle
+            aria-pressed="false" aria-label="Näytä muistiinpanot">
+      <span class="notes-toggle__label">Muistiinpanot</span>
+    </button>
+    <p class="proto-varoitus" data-copy="proto.varoitusLuvut"></p>
+    <p class="visually-hidden" role="status" data-asetus-status></p>
+  </div>
+</div>
+
+<main id="main">
+
+  <!-- 01 · Hero ===========================================================
+       Sivuston ainoa tuotesivu. Mallin nimi, mitat ja päävalokuva puuttuvat
+       kaikki — ne renderöityvät merkittyinä aukkoina talo-data.js:stä. -->
+  <section class="hero" data-status="uusi" aria-labelledby="hero-h">
+    <div class="wrap">
+      <span class="eyebrow" data-copy="talo.ylaKonseptitalo"></span>
+
+      <h1 id="hero-h"><span data-talo="nimi" data-gap="Mallin nimi"></span></h1>
+
+      <p class="hero__sub">
+        <span data-talo="kenelle" data-gap="Yksi lause: kenelle talo on suunniteltu"></span>
+      </p>
+
+      <figure class="ph ph--photo ph--critical" data-ph-kuva="julkisivu" role="img"
+        aria-label="Kuvapaikka: talomallin päävalokuva, valmis talo ulkoa päivänvalossa. Kuva puuttuu prototyypistä.">
+        <span class="ph__tag">Kuvapaikka</span>
+        <span class="ph__what">Päävalokuva: talomalli ulkoa, kuvasuhde 3:2</span>
+        <span class="ph__meta">Sivun tärkein kuva. Valokuvia ei ole aineistossa.</span>
+      </figure>
+
+      <aside class="note">
+        <p><span class="note__status">Uusi</span></p>
+        <dl>
+          <dt>Copy</dt>
+          <dd>Yläotsikko <em>arkkitehtioptimoitu konseptitalo</em> on ainoa
+              vahvistettu sisältö tässä sektiossa. Termi on päätetty ja
+              perusteltu sisältöstrategiassa: arkkitehti on ollut mukana
+              kehittämässä mallia, ja siitä pitää olla selkeä.</dd>
+          <dt>Lähde</dt>
+          <dd>Luotokoti_innehållsstrategi, luku 3, kommentti
+              &rdquo;arkitektoptimerat koncepthus&rdquo;</dd>
+          <dt>Siirretty sektioon 02 · 20.8.2026</dt>
+          <dd>Kokovalitsin, avainluvut ja niiden selitteet olivat herossa,
+              800 pikseliä pohjapiirustuksen yläpuolella. Valinta ei siis
+              näyttänyt tekevän mitään: sen ainoa näkyvä seuraus oli ruudun
+              ulkopuolella. Ne ovat nyt samassa sektiossa kaavion kanssa.</dd>
+          <dt>Kokovalitsin — kehystäminen</dt>
+          <dd>Kolme kokoa on kehystetty <strong>kokovalintana, ei
+              personointina</strong>. Väärä kehys olisi &rdquo;räätälöi kotisi
+              tarpeidesi mukaan&rdquo;: se romuttaisi vakioinnin joka on
+              hinnan perusta, sektion 06 argumentin, ja sen erottautumisen
+              ettei Luotokoti kilpaile räätälöinnillä kuten sata muuta
+              toimijaa. Pääviesti on <em>yksi hyvin suunniteltu talo, siinä
+              koossa jonka tarvitset</em>.</dd>
+          <dt>Nimeäminen</dt>
+          <dd>Koot nimetään makuuhuoneiden määrällä, ei kirjaimilla,
+              malleina eikä tuotenimillä — se tekisi yhdestä mallista
+              malliston. Nimi johdetaan datasta funktiolla
+              <code>kokoNimi()</code>, joten sääntö ei voi eriytyä sivujen
+              välillä.</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Puuttuu kokonaan · kirjattu 18.8.2026</dt>
+          <dd>Mallin nimi, kolmen koon pinta-alat ja huoneistotyypit,
+              kerrosluku, kohderyhmälause ja päävalokuva. Kaikki tulevat
+              <code>assets/talo-data.js</code>-objektista, joten yksi
+              tiedosto täyttää koko sektion.</dd>
+          <dt>Vahvistettava — kokojen mitat · kirjattu 18.8.2026</dt>
+          <dd>Yhdenkään koon pinta-ala tai huoneistotyyppi ei ole tiedossa.
+              Vastaavuus h+k-merkintään on hakutermi: suomalainen ostaja
+              hakee muodossa &rdquo;3h+k&rdquo; tai &rdquo;4h+k&rdquo;, jossa
+              olohuone lasketaan mukaan. Täsmällinen vastaavuus riippuu
+              pohjaratkaisusta jota ei ole nähty, joten sitä ei ole laskettu
+              makuuhuoneiden määrästä.</dd>
+          <dt>Vahvistettava — oletuskoko · kirjattu 18.8.2026</dt>
+          <dd>Prototyyppi avautuu kahteen makuuhuoneeseen, koska se on
+              kolmesta keskimmäinen. Se on perusteltu arvaus eikä päätös.
+              Oletus on datassa (<code>oletus:true</code>), joten muutos on
+              yhden rivin muutos.</dd>
+          <dt>Tietoisesti täyttämättä</dt>
+          <dd>Brändistrategia antaa markkinatiedon &rdquo;3, 4 tai 5 huonetta,
+              n. 100 m², piha ja sauna&rdquo;. Se on tieto siitä mitä ostajat
+              kysyvät, ei siitä mitä Luotokoti toimittaa — eikä sitä ole
+              käytetty tässä. Sama koskee saunaa: sitä ei ole sivulla.</dd>
+          <dt>Päätös tarvitaan · kirjattu 18.8.2026</dt>
+          <dd>Mikä on neljäs avainluku? Vaihtoehtoja: tontin koko,
+              energialuokka, rakennusaika tai terassin pinta-ala. Yksikään
+              ei ole vahvistettu.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 02 · Pohjaratkaisu: perustelu, kokovalitsin, avainluvut ja kaavio =====
+       IA-muutos 20.8.2026. Kokovalitsin oli herossa ja kaavio 800 pikseliä
+       alempana, joten valinnan ainoa näkyvä seuraus oli ruudun ulkopuolella
+       — valitsin näytti siltä ettei se tee mitään. Nyt yhdessä sektiossa:
+       ensin perustelu sanoin, sitten valinta, sitten sen seuraus lukuina ja
+       kaaviona.
+
+       Iso tyhjä laatikko keskellä sivua on yhä tarkoitettu tuntumaan
+       epämukavalta. Se on sivun konkreettisin viesti siitä mitä puuttuu. -->
+  <section class="section" data-status="uusi" aria-labelledby="pohja-h">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" data-copy="talo.ylaPohjaratkaisu"></span>
+        <h2 id="pohja-h" data-copy="talo.pohjaOtsikko"></h2>
+        <!-- Kaksi kappaletta yhdistetty yhdeksi 20.8.2026: perustelu siitä
+             mille pohja on piirretty (arjelle) ja perustelu siitä että se on
+             suunniteltu laajennettavaksi olivat eri sektioissa, vaikka ne
+             ovat sama argumentti. Ehdollisuus (kannattaako suurempi koko
+             juuri sinun tontillasi) on osa samaa kappaletta eikä oma
+             huomautuksensa: huomautuslaatikko nosti ehdon lupaustasolle. -->
+        <p data-copy="talo.pohjaIngressi"></p>
+      </div>
+
+      <!-- Kokovalitsin. Yksi kysymys, kolme vastausta — ei konfiguraattori.
+           Painikkeiden tekstit tulevat TALO.koot:sta talo.js:ssä, jotta
+           nimeämissääntö (koko = makuuhuoneiden määrä) on yhdessä paikassa.
+           aria-pressed kertoo tilan, ei aria-current: nämä ovat painikkeita
+           eivät navigaatiota, eikä valinta vaihda sivua. -->
+      <div class="kokovalitsin vali-7" data-kokovalitsin role="group"
+           aria-labelledby="koko-lbl">
+        <span class="kokovalitsin__lbl" id="koko-lbl" data-copy="talo.kokoValitsinOtsikko"></span>
+        <div class="kokovalitsin__btns">
+          <button class="kokovalitsin__btn" type="button" data-koko-nappi="mh2"
+                  aria-pressed="true">2 makuuhuonetta</button>
+          <button class="kokovalitsin__btn" type="button" data-koko-nappi="mh3"
+                  aria-pressed="false">3 makuuhuonetta</button>
+          <button class="kokovalitsin__btn" type="button" data-koko-nappi="mh4"
+                  aria-pressed="false">4 makuuhuonetta</button>
+        </div>
+      </div>
+
+      <!-- Ruudunlukija ei huomaa neliömäärän vaihtumista ilman ilmoitusta, ja
+           neliömäärä on juuri se mikä valinnassa muuttuu. -->
+      <p class="visually-hidden" role="status" aria-live="polite" data-koko-status></p>
+
+      <p class="small vali-3" data-copy="talo.kokoValitsinHuomio"></p>
+
+      <!-- Avainluvut. Nämä kaksi vaihtuvat kokovalinnan mukana, joten ne
+           kuuluvat valitsimen viereen eivätkä heroon: valinnan seuraus on
+           luettavissa samasta ruudusta. Kerrosluku odottaa mittoja.
+           Neljäs luku on energialuokka (ks. AVOIMET.md 6 ja 25) — sama
+           vakio kuin luottamuslukuna, jotta ne eivät voi eriytyä. -->
+      <ul class="facts talo-specs">
+        <li>
+          <span class="facts__k" data-copy="talo.faktaPintaAla"></span>
+          <span class="facts__v"><span data-talo="neliot" data-gap="m²"></span></span>
+        </li>
+        <li>
+          <span class="facts__k" data-copy="talo.faktaHuoneet"></span>
+          <span class="facts__v"><span data-talo="huoneet" data-gap="huoneistotyyppi"></span></span>
+        </li>
+        <li>
+          <span class="facts__k" data-copy="talo.faktaKerrokset"></span>
+          <span class="facts__v"><span data-talo="kerrokset" data-gap="kerrokset"></span></span>
+        </li>
+        <li>
+          <span class="facts__k" data-copy="talo.faktaEnergialuokka"></span>
+          <span class="facts__v" data-copy="yhteinen.energialuokka"
+                data-gap="energialuokka"></span>
+        </li>
+      </ul>
+
+      <!-- Kaksi tilaa, yksi elementti. Kolmen makuuhuoneen pohja on
+           olemassa (20.8.2026); kaksi muuta kokoa ovat yhä merkittyjä
+           aukkoja. talo.js asettaa data-pohja-tilan datasta ja täyttää
+           kuvasäiliön, styles.css §47 tekee ulkoasun. Aukkotilan sisältö
+           jää markupiin sellaisenaan — sitä ei ole poistettu, koska se on
+           yhä totta kahdella kolmesta koosta. -->
+      <figure class="ph ph--floorplan ph--critical" role="img" data-pohja
+        data-event="taso2_pohjapiirustus_avaus"
+        aria-label="Kuvapaikka: talomallin pohjapiirustus huoneineen ja mittoineen. Pohjapiirustus puuttuu prototyypistä.">
+        <span class="pohja" data-pohja-kuva></span>
+        <span class="ph__tag">Pohjapiirustus puuttuu</span>
+        <span class="ph__what" data-pohja-what>Pohjapiirustus, kuvasuhde 4:3</span>
+        <span class="ph__meta">
+          Sama runko, kasvava pääty. Tuotesivun tärkein yksittäinen kuva —
+          ilman sitä kävijä ei voi arvioida sopiiko talo hänelle.
+        </span>
+        <figcaption class="pohja__varaus" data-copy="talo.pohjaVaraus"></figcaption>
+      </figure>
+
+      <div class="grid grid--3 vali-6">
+        <div class="card">
+          <h3 data-copy="talo.pohjaKortit.0.otsikko"></h3>
+          <p data-copy="talo.pohjaKortit.0.teksti"></p>
+        </div>
+        <div class="card">
+          <h3 data-copy="talo.pohjaKortit.1.otsikko"></h3>
+          <p data-copy="talo.pohjaKortit.1.teksti"></p>
+        </div>
+        <div class="card">
+          <h3 data-copy="talo.pohjaKortit.2.otsikko"></h3>
+          <p data-copy="talo.pohjaKortit.2.teksti"></p>
+        </div>
+      </div>
+
+      <aside class="note">
+        <p><span class="note__status">Uusi</span></p>
+        <dl>
+          <dt>Copy</dt>
+          <dd>Perustelukulma on kirjoitettu brändistrategian USP 2:n mukaan:
+              &rdquo;Planritningarna är designade för hur folk faktiskt lever.
+              Rätt fönster i rätt väderstreck. Förvaring som fungerar.&rdquo;
+              Perustelut on kirjoitettu ilman mittoja, koska mittoja ei ole.</dd>
+          <dt>Lähde</dt>
+          <dd>Brand Strategy, kalvo 14 &rdquo;Våra tre USP:ar&rdquo;, USP 02</dd>
+        </dl>
+        <dl>
+          <dt>Sivuston vahvin visuaalinen mahdollisuus</dt>
+          <dd>Kun kuva tulee, kyseessä on <strong>yksi pohjapiirustus
+              kolmena tilana</strong> — ei kolme eri kuvaa. Kävijä klikkaa
+              1 → 2 → 3 ja näkee talon kasvavan päädystä. Se on
+              konkreettisin tapa esittää koko modulaarisuusargumentti ilman
+              että sanaa tarvitsee käyttää. Kuvapaikka on rakennettu tätä
+              varten: kolme tilaa samassa elementissä
+              <code>data-koko</code>-attribuutilla.</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Tarkistettava · kirjattu 18.8.2026</dt>
+          <dd>USP 2 nimeää vain ikkunat ja säilytyksen. Kolmas kortti
+              (kulkureitit) on rautalankavaiheen laajennus samaan kulmaan —
+              se pitää joko vahvistaa tai poistaa. Lähdekalvo on lisäksi
+              merkitty luottamukselliseksi, joten kulma on hyväksyttävä
+              julkiseen käyttöön erikseen.</dd>
+          <dt>Ratkennut osittain 20.8.2026 · kirjattu 18.8.2026</dt>
+          <dd>Kysymys oli: puuttuu itse pohjapiirustus, ja nyt kolmena
+              tilana. <strong>Kolmen makuuhuoneen pohja on nyt olemassa</strong>
+              — se on piirretty Walltecin arkkitehtipiirustuksesta
+              (ARK A-02, 1:50) ja esitetään havainnekuvana, koska geometria
+              on luettu valokuvasta ±100 mm:n tarkkuudella. Kaksi ja neljä
+              makuuhuonetta puuttuvat edelleen, ja niiden kuvapaikka on yhä
+              merkitty aukko. Perustelut ovat yhä geneerisiä: ne
+              kirjoitetaan mittoihin sidottuina vasta kun kaikki kolme
+              kokoa on olemassa, koska yhden koon mitat eivät kelpaa
+              tekstiin joka koskee kaikkia kolmea. Lightbox odottaa samaa.</dd>
+          <dt>Kuvatarve tarkentui</dt>
+          <dd>Yksi pohjapiirustus ei enää riitä: tarvitaan sama runko
+              kolmessa pituudessa, samassa mittakaavassa ja samasta
+              kuvakulmasta. Jos kuvat piirretään erikseen ilman yhteistä
+              mittakaavaa, koon kasvu ei näy — ja koko sektion argumentti
+              menetetään.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 03 · Sisustustyylit (valinnat) ==================================================
+       R6 (workshop 18.8.2026): sektio oli aiemmin KYSYMYS — "onko
+       valintoja lainkaan" — ja on nyt sisältöä. Valintoja on, ja ne ovat
+       kolme arkkitehdin esivalitsemaa kokonaisuutta.
+
+       Kolme tyyliä KORVAAVAT koko valintalistan: erillisiä komponenttitason
+       valintoja (kodinkoneet, autokatos, pintamateriaalit) ei ole. Valinta
+       tehdään valmiin linjan tasolla, koska vakiointi on kiinteän hinnan
+       perusta — sama logiikka kuin pohjaratkaisussa.
+
+       Tyylien nimet, kuvaukset ja hinnat tulevat TALO.tyylit-taulukosta ja
+       ovat aukkoja kunnes arkkitehdin speksit saadaan. -->
+  <section class="section section--beige" data-status="uusi" aria-labelledby="valinnat-h">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" data-copy="talo.ylaValinnat"></span>
+        <h2 id="valinnat-h" data-copy="talo.valinnatOtsikko"></h2>
+        <p data-copy="talo.valinnatIngressi"></p>
+      </div>
+
+      <ul class="opts" data-talo-lista="tyylit"></ul>
+
+      <p class="small vali-5"
+         data-copy="talo.valinnatAlahuomio"></p>
+
+      <aside class="note">
+        <p><span class="note__status">Uusi</span></p>
+        <dl>
+          <dt>Ratkennut 18.8.2026</dt>
+          <dd>Valintoja <strong>on</strong>, ja ne ovat kolme arkkitehdin
+              esivalitsemaa sisustustyyliä (R6). Sektio oli aiemmin sivulla
+              kysymyksenä — &rdquo;onko valintoja lainkaan, ja onko sektion
+              oikea nimi <em>Mitä on vakiona</em>&rdquo; — ja se kysymys on
+              nyt suljettu.</dd>
+          <dt>Miksi kokonaisuus eikä komponentti</dt>
+          <dd>Valinta tehdään valmiin linjan tasolla, ei materiaali
+              kerrallaan. Komponenttitason valinta tekisi talosta
+              konfiguraattorin ja murtaisi vakiointiviestin, joka on
+              kiinteän hinnan perusta — sama peruste kuin pohjaratkaisun
+              muuttamattomuudelle.</dd>
+          <dt>Miksi hinta on rakenteessa alusta asti</dt>
+          <dd>Kannustalon dokumentoitu virhe: sisustusvalinnat koettiin
+              20&nbsp;000&nbsp;€ kalliimmiksi kuin viestittiin. Luotokodin
+              brändi on rakennettu sen välttämiselle
+              (&rdquo;priset vi säger är det som gäller&rdquo;), joten
+              hintapaikka ei voi olla jälkikäteinen lisäys. Se on
+              rakenteessa vaikka tyylit olisivat keskenään
+              samanhintaisia.</dd>
+          <dt>Korjattu samalla</dt>
+          <dd>Valintakorttien aukko oli nimetty <code>…</code>, ja
+              placeholder-tilassa siihen osui sarja joka oli kirjoitettu
+              sektion 04 <em>ei sisälly</em> -saraketta varten. Sivulla luki
+              siis, että kodinkoneet ja autokatos ovat asioita jotka voi
+              valita — vaikka ne ovat asioita joita talo ei sisällä.
+              Molemmat aukot on nyt nimetty omilla nimillään. Lisäksi
+              hintarivin etiketti oli <em>Lisähinta</em> myös silloin kun
+              arvo oli <em>Sisältyy</em>; etiketti on nyt
+              <em>Hinta</em>.</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Avoin · kirjattu 18.8.2026</dt>
+          <dd>Tyylien nimet, kuvaukset ja mahdollinen hintaero. Ne tulevat
+              arkkitehdin speksien mukana. <strong>Sektion olemassaolo ei
+              ole enää auki, sisältö on.</strong></dd>
+          <dt>Avoin · kirjattu 18.8.2026</dt>
+          <dd>Onko tyylien välillä hintaeroa lainkaan? Jos ei, hintarivi voi
+              lukea &rdquo;Sisältyy&rdquo; kaikilla kolmella — mutta rivi
+              itsessään jää, koska sen puuttuminen olisi se virhe jota
+              vastaan se on olemassa.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 04 · Tekniset tiedot ja takuut ======================================
+       Nostettu sektiosta 08 pohjaratkaisun jälkeen 20.8.2026: talon
+       tekniset perustiedot ovat ostajan toiseksi kysymys heti pohjan
+       jälkeen, eivätkä ne kuulu sivun loppuun hinnan taakse. -->
+  <section class="section" data-status="uusi" aria-labelledby="tekniset-h">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" data-copy="talo.ylaTekniset"></span>
+        <h2 id="tekniset-h" data-copy="talo.teknisetOtsikko"></h2>
+      </div>
+
+      <dl class="specs measure" data-talo-lista="tekniset"></dl>
+
+      <p class="small vali-5" data-copy="talo.teknisetPdf"></p>
+
+      <aside class="note">
+        <p><span class="note__status">Uusi</span></p>
+        <dl>
+          <dt>Rakenne</dt>
+          <dd>Viisi riviä (lämmitys, energialuokka, rakenteet, ilmanvaihto,
+              takuu) on rakenteellinen oletus. Rivit tulevat
+              <code>TALO.tekniset</code>-objektista ja
+              <code>TALO.takuu</code>-kentästä.</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Puuttuu kokonaan · kirjattu 18.8.2026</dt>
+          <dd>Kaikki viisi. Aineistossa ei ole yhtään teknistä tietoa eikä
+              takuuvuosia. Takuu on näistä kiireisin: kohderyhmä
+              (ensiasunnon ostaja, eläkeläispariskunta) ostaa nimenomaan
+              luottamusta, ja takuu on halvin tapa osoittaa se.</dd>
+          <dt>Avoin kysymys · kirjattu 18.8.2026</dt>
+          <dd>Onko materiaaleista sanottavissa mitään tuotenimien tasolla?
+              Aineisto puhuu vain yleisesti kunnollisista laatumateriaaleista
+              (&rdquo;gedigna kvalitetsmaterial&rdquo;), eikä sitä ole
+              tarkennettu tässä.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 05 · Miksi emme muuta pohjaratkaisua =================================
+       Sivun ainoa sektio jonka copy on valmis. Sisältöstrategian blokki 4
+       suomennettuna, sisältöä ei muutettu. -->
+  <section class="section" data-status="valmis" aria-labelledby="pohjafilosofia-h">
+    <div class="wrap">
+      <div class="measure">
+        <span class="eyebrow" data-copy="talo.ylaMiksiEiMuuteta"></span>
+        <h2 id="pohjafilosofia-h" data-copy="talo.miksiOtsikko"></h2>
+
+        <p data-copy="talo.miksiKappale1"></p>
+        <p data-copy="talo.miksiKappale2"></p>
+        <p data-copy="yhteinen.pohjaPerustelu"></p>
+        <!-- Tämä kappale on lisätty, koska kokovalitsin ja tämä sektio ovat
+             ilman sitä näennäisessä ristiriidassa. Lukija huomaa sen. -->
+        <p data-copy="talo.miksiKappale4"></p>
+      </div>
+
+      <aside class="note">
+        <p><span class="note__status">Valmis</span></p>
+        <dl>
+          <dt>Copy</dt>
+          <dd>Blokki 4 suomennettu sellaisenaan, sisältöä ei muutettu.
+              Otsikko on blokin oma rubriikki
+              &rdquo;Genomtänkta kvalitetshus som byggs kostnadseffektivt&rdquo;.
+              Kolmas kappale on sama teksti joka on etusivun UKK-vastauksessa
+              &rdquo;Voinko muuttaa pohjaratkaisua?&rdquo; — sanamuoto on
+              pidetty identtisenä tarkoituksella.</dd>
+          <dt>Lähde</dt>
+          <dd>Luotokoti_innehållsstrategi, luku 6, Block 4
+              &rdquo;Varför vi inte ändrar planlösningen&rdquo;</dd>
+          <dt>Neljäs kappale on lisätty</dt>
+          <dd>Kolme ensimmäistä kappaletta ovat blokki 4 sellaisenaan.
+              Neljäs on kirjoitettu rautalankavaiheessa, koska kokovalitsin
+              tekee tästä sektiosta ilman sitä näennäisen ristiriidan:
+              lukija näkee kolme kokoa herossa ja sitten lauseen ettei
+              pohjaa muuteta. Kappale erottaa nämä toisistaan — pituus on
+              suunniteltu muuttumaan, pohjaratkaisu ei. <strong>Vaatii
+              hyväksynnän</strong>, koska se ei ole blokki 4:n copya.</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Huomio</dt>
+          <dd>Tämä on sivun kymmenestä sektiosta ainoa, jonka copy on
+              olemassa. Yhdeksän muuta odottaa sisältöä. Jos sivun
+              vaikutelmaa haluaa arvioida realistisesti, kannattaa katsoa
+              nimenomaan suhdetta tämän sektion ja muiden välillä.</dd>
+          <dt>Ehdotus copywriterille</dt>
+          <dd>Sisältöstrategian tonaliteettitaulukossa on perustelurivi
+              &rdquo;Det är processen vi har sparat in pengar på, inte
+              materialen&rdquo;. Suomeksi se olisi tämän sektion vahvin
+              yksittäinen lause: <em>&rdquo;Emme säästä materiaaleissa.
+              Prosessissa olemme säästäneet.&rdquo;</em> Sitä ei ole lisätty
+              leipätekstiin, koska rivi on sisäinen tonaliteettiohje eikä
+              blokin 4 asiakascopya — ja tämän sektion sääntö on että blokki
+              4 suomennetaan sellaisenaan. Lisäys vaatii siis erillisen
+              hyväksynnän.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 06 · Kuvagalleria ================================================== -->
+  <section class="section section--beige" data-status="uusi" aria-labelledby="galleria-h">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" data-copy="yhteinen.yla.kuvat"></span>
+        <h2 id="galleria-h" data-copy="talo.galleriaOtsikko"></h2>
+      </div>
+
+      <!-- Lightbox tulee myöhemmin: kuvien klikkaus avaa suurennuksen vasta
+           kun valokuvat on tuotettu. Prototyypissä ei ole lightboxia. -->
+      <div class="grid grid--3">
+        <figure class="ph ph--photo" data-ph-kuva="sisaankaynti" role="img"
+          aria-label="Kuvapaikka: talon julkisivu ulkoa, koko rakennus näkyvissä. Kuva puuttuu prototyypistä.">
+          <span class="ph__tag">Kuvapaikka 1</span>
+          <span class="ph__what">Julkisivu</span>
+          <span class="ph__meta">Koko rakennus, päivänvalo</span>
+        </figure>
+
+        <figure class="ph ph--photo" role="img"
+          aria-label="Kuvapaikka: keittiö ja olohuone sisältä, kiinteä sisustus näkyvissä. Kuva puuttuu prototyypistä.">
+          <span class="ph__tag">Kuvapaikka 2</span>
+          <span class="ph__what">Keittiö ja olohuone</span>
+          <span class="ph__meta">Kiinteä sisustus näkyvissä</span>
+        </figure>
+
+        <figure class="ph ph--photo" role="img"
+          aria-label="Kuvapaikka: kylpyhuone sisältä. Kuva puuttuu prototyypistä.">
+          <span class="ph__tag">Kuvapaikka 3</span>
+          <span class="ph__what">Kylpyhuone</span>
+          <span class="ph__meta">Kolmas kuva odottaa päätöstä, ks. muistiinpano</span>
+        </figure>
+      </div>
+
+      <aside class="note">
+        <p><span class="note__status">Uusi</span></p>
+        <dl>
+          <dt>Rakenne</dt>
+          <dd>Kolme kuvapaikkaa: julkisivu, keittiö ja olohuone, kylpyhuone.
+              Jokaisella <code>aria-label</code>, joka kertoo mitä kuvan
+              pitäisi esittää. Lightbox lisätään kun kuvat ovat olemassa.</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Poikkeama rautalangasta</dt>
+          <dd>Rautalanka ehdotti kolmanneksi kuvaksi &rdquo;sauna tai
+              kylpyhuone&rdquo;. Saunaa ei mainita missään aineistossa talon
+              ominaisuutena — ainoa maininta on brändistrategian
+              markkinatieto siitä mitä ostajat kysyvät. Siksi kuvapaikka
+              nimeää vain kylpyhuoneen. Jos saunasta tulee vahvistettu
+              ominaisuus, se on kolmannen kuvan luonteva aihe ja kuuluu
+              samalla hero-avainlukuihin.</dd>
+          <dt>Puuttuu kokonaan · kirjattu 18.8.2026</dt>
+          <dd>Kaikki kolme valokuvaa. Brändikirjan sivu
+              &rdquo;Fotostil&rdquo; on tyhjä, joten kuvamaailmaa ei ole
+              määritelty — kuvaustuotanto tarvitsee sen ensin.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 07 · Laajennus muuton jälkeen =======================================
+       Beige tausta vaihdettu paperiksi 20.8.2026: kuvagalleria siirtyi
+       tämän yläpuolelle ja se on beige, joten kaksi beigeä sektiota olisi
+       ollut peräkkäin eikä sektioiden raja olisi erottunut.
+       Sijoitus on tarkoituksellinen: heti sektion 06 jälkeen, ennen hintaa.
+       Tämä on argumentin jatko, ei erillinen myyntipuhe — sektio 06 sanoo
+       miksi pohja pysyy, tämä sanoo mikä saa muuttua.
+
+       KRIITTINEN RAJOITE: tämä sektio ei lupaa vaivattomuutta, aikataulua
+       eikä hintaa. Jos laajennus ei ole alkuperäisessä rakennusluvassa,
+       asiakas kohtaa oman lupaprosessinsa — eikä lupaus &rdquo;ei
+       krångel&rdquo; ulotu siihen. Copy ei saa antaa muuta ymmärtää, ja
+       siksi kolme keskeisintä kysymystä ovat sivulla kysymyksinä. -->
+  <section class="section" data-status="uusi"
+           aria-labelledby="laajennus-h">
+    <div class="wrap">
+      <div class="measure">
+        <span class="eyebrow" data-copy="talo.ylaMyohemmin"></span>
+        <h2 id="laajennus-h" data-copy="talo.laajennusOtsikko"></h2>
+        <p data-copy="talo.laajennusTeksti"></p>
+      </div>
+
+      <!-- Kolme estävää kysymystä. Nämä eivät ole puuttuvaa copya vaan
+           päätöksiä, joista riippuu onko yllä oleva kappale lupaus vai vihje.
+           Kaksi kolmesta pysyy aukkona myös placeholder-tilassa: keksitty
+           &rdquo;Kyllä&rdquo; lupakysymykseen kääntäisi estävän kysymyksen
+           lupaukseksi, ja se on tämän sivun vaarallisin mahdollinen arvaus. -->
+      <dl class="specs specs--kysymykset vali-6">
+        <dt data-copy="talo.laajennusKysymysLupa"></dt>
+        <dd><span class="gap">[lupa vahvistettava]</span></dd>
+        <dt data-copy="talo.laajennusKysymysHinta"></dt>
+        <dd><span data-talo="laajennus.hinta" data-gap="€"></span></dd>
+        <dt data-copy="talo.laajennusKysymysTakuu"></dt>
+        <dd><span class="gap">[takuu vahvistettava]</span></dd>
+      </dl>
+
+      <p class="small measure vali-5" data-copy="talo.laajennusVaraus"></p>
+
+      <!-- v4: erottelu polkujen välillä. Laajennus muuton jälkeen riippuu
+           tontista, ja kohteissa tontti on Luotokodin — vastaus on siis
+           tiedossa kohdekohtaisesti (KOHTEET[].laajennus). Omalla tontilla
+           se on selvitettävä. Epävarmuus merkitään vain siihen polkuun,
+           johon se kuuluu: yleinen "ehkä" tekisi tiedossa olevasta
+           vastauksesta epävarman. -->
+      <div class="polkuerottelu vali-6">
+        <div class="card card--beige">
+          <h3 data-copy="talo.laajennusKohdeOtsikko"></h3>
+          <p data-copy="talo.laajennusKohdeTeksti"></p>
+          <p class="vali-4">
+            <a class="link-arrow" href="kohteet.html" data-event="taso2_kohteet"
+               data-copy="yhteinen.ctaKatsoKohteet"></a>
+          </p>
+        </div>
+        <div class="card card--beige">
+          <h3 data-copy="talo.laajennusOmaOtsikko"></h3>
+          <p data-copy-html="talo.laajennusOmaTekstiHtml"></p>
+          <p class="vali-4">
+            <a class="link-arrow" href="oma-tontti.html" data-event="taso2_ostopolku_oma_tontti"><span data-copy="yhteinen.ctaTarkistaTontti"></span></a>
+          </p>
+        </div>
+      </div>
+
+      <aside class="note">
+        <p><span class="note__status">Uusi</span></p>
+        <dl>
+          <dt>Mikä on vahvistettu</dt>
+          <dd>Vain se, että laajennus onnistuu myös muuton jälkeen. Se on
+              modulaarisuudesta vahvistettujen kahden asian toinen — toinen on
+              että kokoja on 1–3 makuuhuonetta. Kaikki muu on auki.</dd>
+          <dt>Miksi copy on näin varovainen</dt>
+          <dd>Kappale kertoo mahdollisuuden ja siitä seuraavan hyödyn
+              (&rdquo;voit aloittaa siitä koosta johon sinulla on nyt
+              varaa&rdquo;), mutta ei sano sanaa vaivattomuudesta,
+              aikataulusta eikä hinnasta. Nämä kolme ovat juuri ne joita ei
+              voi luvata ennen kuin lupakysymys on selvä.</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Estävä kysymys — tärkein tällä sivulla · kirjattu 18.8.2026</dt>
+          <dd>Sisältyykö laajennus alkuperäiseen rakennuslupaan? <strong>Jos
+              sisältyy, tämä on toimialan vahvin yksittäinen
+              myyntiargumentti.</strong> Jos ei, asiakas kohtaa oman
+              lupaprosessinsa — eikä laajennusta saa esittää vaivattomana
+              missään muodossa. Vastaus ratkaisee onko tämä sektio hero-tason
+              argumentti vai alaviite.</dd>
+          <dt>Estävä kysymys · kirjattu 18.8.2026</dt>
+          <dd>Rakennetaanko perustus alusta asti täyteen mittaan? Jos kyllä,
+              pienimmän koon ostaja maksaa sen etukäteen ja se pitää sanoa
+              ääneen — muuten läpinäkyvyyslupaus pettää juuri siinä kohdassa
+              johon se on rakennettu. Jos ei, myöhempi laajennus on selvästi
+              kalliimpi kuin sama makuuhuone alussa, ja sekin pitää sanoa.</dd>
+          <dt>Estävä kysymys · kirjattu 18.8.2026</dt>
+          <dd>Miten laajennus vaikuttaa takuuseen? Takuu on kohderyhmälle
+              (ensiasunnon ostaja, eläkeläispariskunta) halvin tapa osoittaa
+              luottamusta, ja laajennus joka katkaisee sen on eri tuote kuin
+              laajennus joka ei katkaise.</dd>
+          <dt>Tietoisesti täyttämättä</dt>
+          <dd>Kesto ei ole sivulla lainkaan, ei aukkonakaan. Kenttä on
+              datassa (<code>TALO.laajennus.kesto</code>) ja
+              placeholder-arvo on olemassa, mutta aikataulua ei saa esittää
+              ennen kuin lupakysymys on ratkaistu — lupaprosessin kesto ei
+              ole Luotokodin hallinnassa.</dd>
+          <dt>Vahvistettava · kirjattu 18.8.2026</dt>
+          <dd>Muuttuuko rakennusaika koon mukaan? Neljän kuukauden lupaus on
+              jo epäselvä; kolme kokoa voi tehdä siitä kolme eri lupausta.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 08 · Mitä talon hintaan sisältyy ====================================
+       Sivun uskottavuuden kannalta tärkein yksittäinen elementti, ja sen
+       oikea puolikas on tyhjä. Näytetään sellaisena. -->
+  <section class="section" data-status="paatos" aria-labelledby="sisaltyy-h">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" data-copy="talo.ylaTalonHinta"></span>
+        <h2 id="sisaltyy-h" data-copy="talo.sisaltyyOtsikko"></h2>
+        <p data-copy="talo.sisaltyyIngressi"></p>
+      </div>
+
+      <!-- Yksi lista, ei taulukkoa. "Ei sisälly" -sarake poistettiin
+           20.8.2026: se oli kolme kysymysmerkkiriviä ja selittävä kappale,
+           eli puolet lohkon pinta-alasta kertoi ettei tietoa ole. Raja
+           sanotaan nyt yhtenä lauseena listan alla — sama tieto, mutta
+           lause voi olla kesken ilman että lohko näyttää rikkinäiseltä.
+           Poissulkulista on yhä avoin kohta, ks. AVOIMET.md 22 ja 159. -->
+      <p class="eyebrow" id="sisaltyy-lbl" data-copy="talo.sisaltyyLabel"></p>
+      <ul class="ticks ticks--kuvaus sisaltyy-lista"
+          data-talo-lista="sisaltyy" aria-labelledby="sisaltyy-lbl"></ul>
+
+      <p class="sisaltyy-raja measure" data-copy-html="talo.sisaltyyRajaHtml"></p>
+
+      <aside class="note">
+        <p><span class="note__status">Päätös</span></p>
+        <dl>
+          <dt>Copy</dt>
+          <dd>Vasen sarake on koottu sisältöstrategian USP 2:sta (tomt,
+              bygglov, markarbete, hus med fast inredning) sekä missiosta
+              (&rdquo;från bygglov till nyckelöverlämning&rdquo;). Mitään ei
+              ole lisätty.</dd>
+          <dt>Lähde</dt>
+          <dd>Luotokoti_innehållsstrategi, luvut 1 ja 4</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Rakenne muuttui 20.8.2026</dt>
+          <dd>Kahden sarakkeen taulukko purettiin. Oikea sarake
+              (&rdquo;ei sisälly&rdquo;) oli kolme kysymysmerkkiriviä ja
+              kappale siitä ettei listaa ole missään aineistossa — puolet
+              lohkosta kertoi puuttumisesta. Raja on nyt yksi lause listan
+              alla, ja siinä oleva aukko on yhden lauseen mittainen eikä
+              puolen lohkon.</dd>
+          <dt>Päätös tarvitaan · kirjattu 18.8.2026, yhä auki</dt>
+          <dd>&rdquo;Ei sisälly&rdquo; -lista on tuotesivun uskottavuuden
+              kannalta tärkein yksittäinen sisältö, ja se puuttuu kokonaan.
+              Kiinteän hinnan lupaus on koko brändin kärki — ilman
+              poissulkulistaa lupaus jää tarkistamattomaksi juuri siinä
+              kohdassa jossa kilpailijat (Kastelli, Älvsbyhus) ovat
+              kompastuneet.</dd>
+          <dt>Avoin kysymys · kirjattu 18.8.2026</dt>
+          <dd>Liittymät on merkitty epävarmaksi. Ne mainitaan brändistrategian
+              USP 01:ssä (&rdquo;anslutningar&rdquo;), mutta sisältöstrategian
+              julkinen USP-lista ei sisällä niitä. Sama koskee perustuksia:
+              aineisto puhuu maatöistä (&rdquo;markarbete&rdquo;) mutta ei
+              nimeä perustuksia erikseen.</dd>
+          <dt>Huomio</dt>
+          <dd>Sama epävarmuus on merkitty etusivun hintablokkiin. Kun asia
+              ratkeaa, molemmat päivittyvät.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 09 · Hinta ==========================================================
+       v2: hintasivu poistui, joten tässä on jaettu hintablokki eikä linkki.
+       Sama komponentti on etusivulla ja molemmilla ostopolkusivuilla, ja
+       ohjauspalkin valinta vaihtaa ne kaikki yhdellä kertaa. -->
+  <section class="section" data-status="paatos" aria-labelledby="hinta-h">
+    <div class="wrap">
+      <div class="hintablokki">
+
+        <div class="hintablokki__sisalto">
+          <span class="eyebrow" data-copy="yhteinen.yla.hinta"></span>
+          <h2 id="hinta-h" data-copy="talo.hintaOtsikko"></h2>
+          <p data-copy="talo.hintaIngressi"></p>
+          <p class="facts__v vali-y5">
+            <span class="gap">[XXX XXX €]</span>
+          </p>
+          <p class="small" data-copy="talo.hintaSelite"></p>
+          <!-- Kaksi polkua, yksi ero. Talon hinta on kiinteä molemmissa;
+               kokonaishinta ei ole sama asia. Kohteessa maaperä on tutkittu
+               ja tontti meidän, joten kokonaishinta on tiedossa heti.
+               Omalla tontilla maaperä on tuntematon, ja maatöiden osuus on
+               juuri se mikä puuttuu — siksi kokonaishinta vahvistuu vasta
+               tutkimuksen jälkeen, ja tutkimuksen tilaamme me (R4).
+               Tämä EI ole "kokonaishinta viikossa" -lupaus: se kuuluu
+               oma-tontti.html:lle. Ks. copy-data.js, hintalogiikka. -->
+          <p class="small" data-copy="talo.hintaPolut"></p>
+          <!-- Kokoporrastus. Rivit tulevat TALO.koot:sta talo.js:ssä — kokojen
+               tiedot eivät ole missään sivun markupissa. Aktiivinen rivi
+               merkitään CSS:llä body[data-koko]-attribuutin perusteella, joten
+               talo-sivulla tehty valinta näkyy täällä ilman uudelleenrenderöintiä.
+
+               Miksi tämä on tärkeää: jos jokaisella lisämakuuhuoneella on hinta,
+               syntyy radikaali läpinäkyvyys myös lisistä. Jos hintaa ei ole,
+               kokovalinta lukee lisämyyntinä — siksi puuttuva hinta on merkitty
+               aukko eikä jätetty pois. -->
+          <div class="koko-hinta">
+            <p class="koko-hinta__h" id="koko-hinta-h" data-copy="yhteinen.kokoHintaOtsikko"></p>
+            <ul class="koko-hinta__lista" data-koko-porras aria-labelledby="koko-hinta-h"></ul>
+          </div>
+          <p class="vali-5">
+            <a class="btn btn--primary" href="kohteet.html" data-event="taso2_hinta_kohteet"
+               data-copy="yhteinen.ctaKohteetJaHinnat"></a>
+          </p>
+        </div>
+
+
+
+      </div>
+
+      <!-- R4-lupaus "Kokonaishinta viikossa" EI ole tällä sivulla.
+           Tuotesivulla se herättäisi epäilyn ettei talon hintaakaan tiedetä.
+           Se kuuluu oma-tontti.html:lle, jossa maaperä on tuntematon
+           ja maatöiden osuus siksi vielä auki. Ks. copy-data.js,
+           hintalogiikan sääntö 3. -->
+
+      <aside class="note">
+        <p><span class="note__status">Päätös</span></p>
+        <dl>
+          <dt>Komponentti</dt>
+          <dd>Jaettu hintablokki. v1:ssä tässä oli linkki erilliselle hintasivulle; v2:ssa hintasivu poistui ja sisältö on blokkina kolmella sivulla.</dd>
+          <dt>Lähde</dt>
+          <dd>Luotokoti_innehållsstrategi, luku 4, USP 1 ja 2</dd>
+          <dt>Kokoporrastus</dt>
+          <dd>Rivit tulevat <code>TALO.koot</code>-taulukosta, ei markupista.
+              Aktiivinen rivi on se koko jonka kävijä valitsi talo-sivulla —
+              valinta säilyy <code>sessionStorage</code>ssa ja seuraa mukana.</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Ratkennut 18.8.2026</dt>
+          <dd>Hinta esitetään konkreettisena lukuna (R3). Tuotesivulla luku
+              on <strong>talon hinta</strong> eikä kokonaishinta: tontti ei
+              sisälly siihen. Ks. hintatasot <code>copy-data.js</code>:n
+              alusta.</dd>
+          <dt>Estävä kysymys — kokojen hinnat · kirjattu 18.8.2026</dt>
+          <dd>Onko lisämakuuhuoneella kiinteä hinta? <strong>Ilman hintaa
+              kokovalinta lukee lisämyyntinä</strong> — ja se on ainoa asia
+              joka voi kääntää hintaläpinäkyvyyden brändin vahvuudesta sen
+              heikkoudeksi. Jos hinta on kiinteä, syntyy jotain mitä yksikään
+              kilpailija ei tarjoa: radikaali läpinäkyvyys myös lisistä, ja
+              suora vastalääke Kannustalon dokumentoituun virheeseen jossa
+              valinnat maksoivat 20&nbsp;000&nbsp;€ enemmän kuin viestittiin.</dd>
+          <dt>Ratkennut 18.8.2026</dt>
+          <dd>Perusmalli on <strong>kaksi makuuhuonetta</strong>, ja kolmas
+              ja neljäs ovat lisiä perushintaan (R2). Muistiinpano väitti
+              aiemmin perushinnaksi yhtä makuuhuonetta — se oli jäänne
+              vanhasta 1–3 datasta. Porrastus renderöityy portaikkona:
+              perusrivi on kokonaisluku, lisärivit <code>+</code>-merkillä.</dd>
+          <dt>Puuttuu · kirjattu 18.8.2026</dt>
+          <dd>Kaikki luvut. Yhtäkään hintaa ei ole keksitty.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 10 · Missä tämä talo on nyt saatavilla ==============================
+       Talo-sivu oli umpikuja: se kertoi tuotteesta muttei siitä, mistä sen
+       voi saada. Nosto lukee KOHTEET-taulukosta enintään kolme kohdetta ja
+       linkittää kohteen alasivulle.
+
+       Tyhjä tila EI ole tyhjä osio vaan aluekysely: jos kohteita ei ole,
+       oikea kysymys kävijälle on "missä haluaisit asua" — ja se on juuri se
+       tieto jota R9 tarvitsee. -->
+  <section class="section" id="saatavilla" data-status="uusi"
+           aria-labelledby="saatavilla-h">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" data-copy="talo.ylaSaatavuus"></span>
+        <h2 id="saatavilla-h" data-copy="talo.saatavuusOtsikko"></h2>
+        <p data-copy="talo.saatavuusIngressi"></p>
+      </div>
+
+      <ul class="alueet" data-talo-kohteet></ul>
+
+      <p class="vali-6" data-talo-kohteet-linkki hidden>
+        <a class="link-arrow" href="kohteet.html" data-event="taso2_kohteet"
+           data-copy="talo.ctaKaikkiKohteet"></a>
+      </p>
+
+      <div class="tyhja-tila" data-talo-kohteet-tyhja hidden>
+        <h3 data-copy="talo.tyhjaOtsikko"></h3>
+        <p data-copy="talo.tyhjaTeksti"></p>
+        <div class="btn-row vali-5">
+          <a class="btn btn--primary" href="yhteystiedot.html?polku=alue"
+             data-event="taso2_aluekysely"><span data-copy="yhteinen.ctaKerroAlue"></span></a>
+          <a class="btn btn--ghost" href="oma-tontti.html" data-event="taso2_ostopolku_oma_tontti"
+             data-copy="yhteinen.ctaOmaTontti"></a>
+        </div>
+      </div>
+
+      <aside class="note">
+        <p><span class="note__status">Uusi</span></p>
+        <dl>
+          <dt>Miksi tämä sektio</dt>
+          <dd>Talo-sivu kertoi tuotteesta muttei siitä mistä sen voi saada.
+              Nosto lukee <code>KOHTEET</code>-taulukosta enintään kolme
+              kohdetta samassa järjestyksessä kuin Kohteet-sivun listaus:
+              muuttovalmiit ensin.</dd>
+          <dt>Tyhjä tila on aluekysely</dt>
+          <dd>Jos kohteita ei ole, osio ei katoa vaan kysyy aluetta. Se on
+              R9:n mukainen kevyt konversio — ja tyhjä osio olisi
+              huonompi kuin kysymys.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 11 · CTA ============================================================
+       Tuotesivulta ei ohjata suoraan yhteydenottoon vaan ostopolulle:
+       kävijä ei vielä tiedä kumpaan tilanteeseen hän kuuluu.
+
+       TUMMA 20.8.2026. Sektio oli beige, ja beigejä sektioita on sivulla
+       kolme — loppu-CTA ei erottunut niistä mitenkään. Charcoal on paletin
+       viides väri ja sivuston ainoa käänteinen pinta: se lukee pysähdyksenä
+       eikä yhtenä sektiona lisää. Sama ratkaisu on etusivun nimisektiossa,
+       joten kieli ei ole uusi. -->
+  <section class="section section--loppu" id="seuraava" data-status="uusi"
+    aria-labelledby="cta-h">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" data-copy="yhteinen.yla.seuraavaAskel"></span>
+        <h2 id="cta-h" data-copy="talo.ctaOtsikko"></h2>
+        <p data-copy="talo.ctaIngressi"></p>
+      </div>
+
+      <div class="hero__paths">
+        <a class="path-card" href="kohteet.html" data-event="taso2_kohteet">
+          <span class="path-card__n" aria-hidden="true">1</span>
+          <span class="path-card__t" data-copy="yhteinen.ctaKatsoKohteet"></span>
+          <span class="path-card__go" aria-hidden="true">→</span>
+          <span class="path-card__d" data-copy="talo.polkuKohdeKuvaus"></span>
+        </a>
+
+        <a class="path-card" href="oma-tontti.html" data-event="taso2_ostopolku_oma_tontti">
+          <span class="path-card__n" aria-hidden="true">2</span>
+          <span class="path-card__t" data-copy="talo.polkuOmaOtsikko"></span>
+          <span class="path-card__go" aria-hidden="true">→</span>
+          <span class="path-card__d" data-copy="talo.polkuOmaKuvaus"></span>
+        </a>
+      </div>
+
+      <p class="vali-6">
+        <a class="btn btn--ghost" href="yhteystiedot.html" data-event="taso3_yhteydenotto_loppucta"
+           data-copy="yhteinen.ctaPyydaHinta"></a>
+      </p>
+          <p class="cta-tuki">
+            <span data-copy="yhteinen.ctaEiSido"></span>
+            <span data-copy-html="yhteinen.ctaVastausaikaHtml"></span>
+          </p>
+
+      <aside class="note">
+        <p><span class="note__status">Uusi</span></p>
+        <dl>
+          <dt>Rakenne</dt>
+          <dd>Kaksi ostopolkua ensisijaisina, yhteydenotto toissijaisena.
+              Tuotesivulta ei ohjata suoraan yhteydenottoon: kävijä ei vielä
+              tiedä kumpaan tilanteeseen hän kuuluu, ja väärään polkuun
+              ohjattu yhteydenotto maksaa myyntiajassa.</dd>
+          <dt>Mittarointi</dt>
+          <dd>Sektion CTA:t lokittuvat omilla nimillään
+              (<code>taso2_kohteet</code>, <code>taso2_ostopolku_oma_tontti</code>,
+              <code>taso3_yhteydenotto_loppucta</code>), joten raportista
+              näkee kumpi polku valitaan. Muistiinpano kertoi aiemmin, että
+              sektio piilottaa kelluvan minipalkin — palkki poistettiin
+              20.8.2026, ks. AVOIMET.md kohta 147.</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Tarkistettava · kirjattu 18.8.2026</dt>
+          <dd>Tapahtuman nimi <code>taso2_ostopolku_oma_tontti</code> on
+              tämän sivun rautalangan mukainen, mutta etusivulla vastaava
+              tapahtuma on <code>taso2_ostopolku_oma_tontti</code>.
+              Nimeäminen pitää yhtenäistää ennen GTM-toteutusta.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <p class="wordmark footer-brand__nimi"><img src="assets/logo-luotokoti-vaalea.svg" alt="Luotokoti" width="520" height="70"></p>
+        <p class="small footer-brand__kuvaus"
+           data-copy="yhteinen.footerKuvaus"></p>
+      </div>
+
+      <nav data-copy-aria="navi.sivukartta">
+        <h2 data-copy="navi.footerSivut"></h2>
+        <ul>
+          <li><a href="index.html" data-copy="navi.etusivu"></a></li>
+          <li><a href="talo.html" data-copy="navi.talo"></a></li>
+          <li><a href="kohteet.html" data-copy="navi.kohteet"></a></li>
+          <li><a href="oma-tontti.html" data-copy="navi.omaTontti"></a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Luotokoti">
+        <h2>Luotokoti</h2>
+        <ul>
+          <li><a href="meista.html" data-copy="navi.meista"></a></li>
+          <li><a href="yhteystiedot.html" data-copy="navi.yhteys"></a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="footer-note">
+      <p>
+        <strong data-copy="proto.footerRautalankaOtsikko"></strong>
+        <span data-copy="proto.footerRautalanka"></span>
+      </p>
+      <p>
+        <strong data-copy="proto.footerFontitOtsikko"></strong>
+        <span data-copy="proto.footerFontit"></span>
+      </p>
+      <p>
+        <span data-copy="proto.footerAvoimetAlku"></span>
+        <code>AVOIMET.md</code><span data-copy="proto.footerAvoimet"></span>
+      </p>
+      <!-- Kuvitteellisten lukujen varoitus. Se oli ohjauspalkissa, joka on
+           piilotettu 20.8.2026 — ja placeholder on oletustila, joten ilman
+           tätä sivulla olisi kuvitteellisia hintoja ilman yhtään merkintää
+           siitä mistä ne ovat. Näkyy vain placeholder-tilassa: aukkotilassa
+           hakasulkeet kertovat saman asian itse. Ks. styles.css osio 47. -->
+      <p class="footer-note__ph">
+        <strong data-copy="proto.varoitusLuvutOtsikko"></strong>
+        <span data-copy="proto.varoitusLuvutFooter"></span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/talo-data.js"></script>
+<script src="assets/talo.js"></script>
+<script src="assets/kohteet-data.js"></script>
+<script src="assets/copy-data.js"></script>
+<script src="assets/copy-data-sv.js"></script>
+<script src="assets/placeholder-data.js"></script>
+<script src="assets/proto.js"></script>
+
+</body>
+</html>

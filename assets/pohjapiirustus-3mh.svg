@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-300 -2800 14900 13800" width="745" height="690"
+     role="img" aria-label="Pohjapiirustus: kolme makuuhuonetta, olohuone ja keittio, kylpyhuone, wc, apukeittio, eteinen, varasto seka terassi ja kuisti.">
+<!-- =====================================================================
+     Luotokoti — pohjapiirustuksen geometria SVG:ksi.
+     
+     Aja projektin juuresta:   python3 tyokalut/pohja.py
+     Tuottaa:                  assets/pohjapiirustus-3mh.svg
+     
+     MISTÄ MITAT TULEVAT
+     Lähde on valokuva Walltecin arkkitehtipiirustuksesta (Nordhem Röd,
+     Vesslevägen 9, Jakobstad; ARK A-02, 1:50, Julia Lindell, 05/03/26) —
+     tiedosto pohjapiirrustus.webp. Valokuvasta EI saa vektoreita, joten
+     geometria on mitattu kuvasta ja kalibroitu piirustuksen omilla mitoilla:
+     
+       runko          13000 x 8900     (piirustuksen päämitat)
+       terassi         9500 x 2500
+       etukuisti       3000 x 2000
+       itäkuisti       1300 x 1700     (mittaketju 6615 + 1700 + 585 = 8900)
+     
+     Kalibrointi tarkistettiin neljällä riippumattomalla tavalla:
+       · väliseinä olohuoneen ja itäsiiven välillä osuu mitalle 9500,
+         eli täsmälleen terassin päähän
+       · WC:n rekonstruoitu ala 2,15 m2 (piirustus: 2,0)
+       · apukeittiön ala 7,63 m2 (piirustus: 7,8)
+       · ikkuna-aukkojen mitatut leveydet vastaavat karmikoodeja:
+         F12x21 = 1200, F10x13 = 1000, FD10x22 = 1000, VD10x22 = 1000
+     
+     TARKKUUS. Seinälinjat ovat +-100 mm, oviaukot +-150 mm alkuperäisestä.
+     Tämä on lukukelpoinen esityskuva, EI mittapiirustus. Rakentamiseen ja
+     mitoitukseen käytetään arkkitehdin alkuperäistä piirustusta.
+     
+     MIKSI TÄSSÄ EI OLE TEKSTIÄ
+     Sama päätös kuin toimialuekartassa (tyokalut/kartta.py): huoneiden nimet
+     ja pinta-alat renderöidään HTML:nä kuvan päälle, koska SVG:n sisällä
+     teksti skaalautuisi puhelimessa lukukelvottomaksi eikä olisi
+     indeksoitavaa — eikä copy kuulu generoituun tiedostoon (AGENTS.md 2).
+     Nimien paikat tulostuvat ajossa prosentteina, valmiina asemointiin.
+
+     GENEROITU TIEDOSTO. Ala muokkaa kasin — aja tyokalut/pohja.py.
+
+     Varit ovat brandikirjasta ja kirjoitettu tahan kiinteina, koska
+     <img>-elementin sisalla CSS-muuttujat eivat periydy:
+       lattia   #faf8f3  paper
+       seina    #4c4735  charcoal
+       ulkotaso #e8e0cc  beige
+     ===================================================================== -->
+<style>
+  .lattia{fill:#faf8f3}
+  .seina{fill:#4c4735}
+  .taso{fill:#e8e0cc}
+  .lauta{fill:none;stroke:rgba(76,71,53,.24);stroke-width:8}
+  .reuna{fill:none;stroke:#4c4735;stroke-width:10;opacity:.45}
+  .karmi{fill:#faf8f3;stroke:#4c4735;stroke-width:12}
+  .lasi{fill:none;stroke:#4c4735;stroke-width:22;opacity:.55}
+  .lehti{fill:none;stroke:#4c4735;stroke-width:26}
+  .kaari{fill:none;stroke:#4c4735;stroke-width:11;opacity:.42}
+  .pieli{fill:none;stroke:#4c4735;stroke-width:12;opacity:.5}
+</style>
+
+<!-- Ulkotasot: terassi, etukuisti, itakuisti -->
+<g>
+  <rect class="taso" x="0" y="-2500" width="9500" height="2500"/>
+  <path class="lauta" d="M0 -2350 H9500 M0 -2200 H9500 M0 -2050 H9500 M0 -1900 H9500 M0 -1750 H9500 M0 -1600 H9500 M0 -1450 H9500 M0 -1300 H9500 M0 -1150 H9500 M0 -1000 H9500 M0 -850 H9500 M0 -700 H9500 M0 -550 H9500 M0 -400 H9500 M0 -250 H9500 M0 -100 H9500"/>
+  <rect class="reuna" x="0" y="-2500" width="9500" height="2500"/>
+  <rect class="taso" x="7370" y="8900" width="3000" height="2000"/>
+  <path class="lauta" d="M7370 9050 H10370 M7370 9200 H10370 M7370 9350 H10370 M7370 9500 H10370 M7370 9650 H10370 M7370 9800 H10370 M7370 9950 H10370 M7370 10100 H10370 M7370 10250 H10370 M7370 10400 H10370 M7370 10550 H10370 M7370 10700 H10370 M7370 10850 H10370"/>
+  <rect class="reuna" x="7370" y="8900" width="3000" height="2000"/>
+  <rect class="taso" x="13000" y="6615" width="1300" height="1700"/>
+  <path class="lauta" d="M13000 6765 H14300 M13000 6915 H14300 M13000 7065 H14300 M13000 7215 H14300 M13000 7365 H14300 M13000 7515 H14300 M13000 7665 H14300 M13000 7815 H14300 M13000 7965 H14300 M13000 8115 H14300 M13000 8265 H14300"/>
+  <rect class="reuna" x="13000" y="6615" width="1300" height="1700"/>
+</g>
+
+<!-- Lattia-ala ulkoseinien sisapinnasta -->
+<rect class="lattia" x="280" y="280" width="12440" height="8340"/>
+
+<!-- Seinat. Aukot on jatetty pois umpiosista, ei peitetty paalta. -->
+<g class="seina">
+  <rect class="seina" x="0" y="0" width="1580" height="280"/>
+  <rect class="seina" x="2580" y="0" width="1520" height="280"/>
+  <rect class="seina" x="5300" y="0" width="400" height="280"/>
+  <rect class="seina" x="6900" y="0" width="1070" height="280"/>
+  <rect class="seina" x="8930" y="0" width="1590" height="280"/>
+  <rect class="seina" x="11520" y="0" width="1480" height="280"/>
+  <rect class="seina" x="0" y="8620" width="1580" height="280"/>
+  <rect class="seina" x="2580" y="8620" width="1520" height="280"/>
+  <rect class="seina" x="5300" y="8620" width="400" height="280"/>
+  <rect class="seina" x="6900" y="8620" width="1490" height="280"/>
+  <rect class="seina" x="9400" y="8620" width="1060" height="280"/>
+  <rect class="seina" x="11450" y="8620" width="1550" height="280"/>
+  <rect class="seina" x="0" y="280" width="280" height="8340"/>
+  <rect class="seina" x="12720" y="280" width="280" height="4730"/>
+  <rect class="seina" x="12720" y="6010" width="280" height="1040"/>
+  <rect class="seina" x="12720" y="8050" width="280" height="570"/>
+  <rect class="seina" x="2980" y="280" width="100" height="3450"/>
+  <rect class="seina" x="2980" y="5230" width="100" height="3390"/>
+  <rect class="seina" x="280" y="3730" width="1800" height="100"/>
+  <rect class="seina" x="2000" y="3830" width="100" height="400"/>
+  <rect class="seina" x="280" y="5130" width="1800" height="100"/>
+  <rect class="seina" x="9520" y="280" width="100" height="2750"/>
+  <rect class="seina" x="9520" y="3930" width="100" height="1220"/>
+  <rect class="seina" x="9520" y="6050" width="100" height="950"/>
+  <rect class="seina" x="9520" y="7930" width="100" height="690"/>
+  <rect class="seina" x="9620" y="3930" width="3100" height="100"/>
+  <rect class="seina" x="10680" y="4030" width="100" height="2030"/>
+  <rect class="seina" x="9620" y="6060" width="2200" height="100"/>
+  <rect class="seina" x="7230" y="6160" width="100" height="2460"/>
+  <rect class="seina" x="7230" y="6160" width="1390" height="100"/>
+</g>
+
+<!-- Ikkunat: karmi ulkoseinan paksuudelta, lasilinja keskella -->
+<g>
+  <rect class="karmi" x="1580" y="0" width="1000" height="280"/> <!-- F10x13 -->
+  <path class="lasi" d="M1580 140 H2580"/>
+  <rect class="karmi" x="4100" y="0" width="1200" height="280"/> <!-- F12x21 -->
+  <path class="lasi" d="M4100 140 H5300"/>
+  <rect class="karmi" x="5700" y="0" width="1200" height="280"/> <!-- F12x21 -->
+  <path class="lasi" d="M5700 140 H6900"/>
+  <rect class="karmi" x="7970" y="0" width="960" height="280"/> <!-- FD10x22 -->
+  <rect class="karmi" x="10520" y="0" width="1000" height="280"/> <!-- F10x13 -->
+  <path class="lasi" d="M10520 140 H11520"/>
+  <rect class="karmi" x="1580" y="8620" width="1000" height="280"/> <!-- F10x13 -->
+  <path class="lasi" d="M1580 8760 H2580"/>
+  <rect class="karmi" x="4100" y="8620" width="1200" height="280"/> <!-- F12x21 -->
+  <path class="lasi" d="M4100 8760 H5300"/>
+  <rect class="karmi" x="5700" y="8620" width="1200" height="280"/> <!-- F12x21 -->
+  <path class="lasi" d="M5700 8760 H6900"/>
+  <rect class="karmi" x="8390" y="8620" width="1010" height="280"/> <!-- VD10x22 -->
+  <rect class="karmi" x="10460" y="8620" width="990" height="280"/> <!-- F10x13 -->
+  <path class="lasi" d="M10460 8760 H11450"/>
+  <rect class="karmi" x="12720" y="5010" width="280" height="1000"/> <!-- F10x5 -->
+  <path class="lasi" d="M12860 5010 V6010"/>
+  <rect class="karmi" x="12720" y="7050" width="280" height="1000"/> <!-- VD10x22 -->
+</g>
+
+<!-- Ulko-ovet: lehti aukeaa ulos, kuten piirustuksessa -->
+<g>
+  <path class="lehti" d="M2980 3730 L2980 2830"/>
+  <path class="kaari" d="M2980 2830 A900 900 0 0 0 2080 3730"/>
+  <path class="lehti" d="M2100 4230 L3000 4230"/>
+  <path class="kaari" d="M3000 4230 A900 900 0 0 1 2100 5130"/>
+  <path class="lehti" d="M2980 5230 L2980 6130"/>
+  <path class="kaari" d="M2980 6130 A900 900 0 0 1 2080 5230"/>
+  <path class="lehti" d="M9620 3030 L10520 3030"/>
+  <path class="kaari" d="M10520 3030 A900 900 0 0 1 9620 3930"/>
+  <path class="lehti" d="M9520 6050 L8620 6050"/>
+  <path class="kaari" d="M8620 6050 A900 900 0 0 1 9520 5150"/>
+  <path class="lehti" d="M12720 6060 L12720 5160"/>
+  <path class="kaari" d="M12720 5160 A900 900 0 0 0 11820 6060"/>
+  <path class="lehti" d="M9520 6160 L9520 5260"/>
+  <path class="kaari" d="M9520 5260 A900 900 0 0 0 8620 6160"/>
+  <path class="lehti" d="M8930 0 L8930 -900"/>
+  <path class="kaari" d="M8930 -900 A900 900 0 0 0 7970 0"/>
+  <path class="lehti" d="M9400 8900 L9400 9800"/>
+  <path class="kaari" d="M9400 9800 A900 900 0 0 1 8390 8900"/>
+  <path class="lehti" d="M13000 8050 L13900 8050"/>
+  <path class="kaari" d="M13900 8050 A900 900 0 0 0 13000 7050"/>
+</g>
+
+<!-- Karmiaukko ilman ovilehtea (eteinen - apukeittio) -->
+<g>
+  <path class="pieli" d="M9520 7000 H9620 M9520 7930 H9620"/>
+</g>
+</svg>

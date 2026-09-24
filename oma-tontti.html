@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-copy="omaTontti.sivuOtsikko">Luotokoti</title>
+<meta name="description" data-copy="omaTontti.sivuKuvaus" content="">
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<!-- Globaalit vaihtimet asetetaan ennen ensimmäistä maalausta, jotta
+     variantit eivät välähdä väärin päin. -->
+<script src="assets/asetukset.js"></script>
+
+<a class="skip" href="#main" data-copy="navi.ohita"></a>
+
+<header class="site-header">
+  <div class="wrap header-bar">
+    <a class="wordmark" href="index.html"><img src="assets/logo-luotokoti.svg" alt="Luotokoti" width="520" height="70"></a>
+
+    <button class="nav-toggle" type="button" data-nav-toggle
+            aria-expanded="false" aria-controls="site-nav">
+      <span class="nav-toggle__bars" aria-hidden="true"><i></i></span><span data-copy="navi.valikko"></span>
+    </button>
+
+    <nav class="site-nav" id="site-nav" data-copy-aria="navi.paavalikko">
+      <ul>
+        <li><a href="index.html" data-copy="navi.etusivu"></a></li>
+        <li><a href="talo.html" data-event="taso1_talo_katselu" data-copy="navi.talo"></a></li>
+        <li><a href="kohteet.html" data-event="taso2_kohteet" data-copy="navi.kohteet"></a></li>
+        <li><a href="oma-tontti.html" aria-current="page" data-copy="navi.omaTontti"></a></li>
+        <li><a href="meista.html" data-event="taso1_meista_katselu" data-copy="navi.meista"></a></li>
+      </ul>
+      <!-- Mobiilissa CTA on valikon sisällä, koska se ei mahdu headeriin
+           375 px leveydellä. Työpöydällä CTA on headerissa ja tämä piilossa. -->
+      <p class="nav-cta">
+        <a class="btn btn--primary" href="yhteystiedot.html"
+           data-event="taso3_yhteydenotto_valikko" data-copy="navi.yhteys"></a>
+      </p>
+    </nav>
+
+    <div class="header-tools">
+      <!-- Kielenvaihdin. Kaksi linkkiä, ei painiketta: kieli on osoitteessa
+           (?lang=sv), joten sivu on jaettavissa ja selaimen omat eleet
+           toimivat. proto.js täydentää href-osoitteet niin että muut
+           parametrit säilyvät, ja merkitsee nykyisen aria-current-arvolla.
+           Nimikkeet FI ja SV eivät ole copyssa: kielen nimi kirjoitetaan
+           kielen itsensä mukaan, joten se on sama kummalla kielellä. -->
+      <nav class="lang" data-copy-aria="navi.kieliValinta">
+        <a href="?lang=fi" data-kieli-linkki="fi" lang="fi" hreflang="fi">FI</a>
+        <a href="?lang=sv" data-kieli-linkki="sv" lang="sv" hreflang="sv">SV</a>
+      </nav>
+      <a class="btn btn--primary btn--nav" href="yhteystiedot.html"
+         data-event="taso3_yhteydenotto_header" data-copy="navi.yhteys"></a>
+    </div>
+
+  </div>
+</header>
+
+<div class="proto-bar">
+  <div class="wrap proto-bar__inner">
+    <span class="proto-bar__tag">Prototyyppi</span>
+      <div class="proto-group">
+        <span class="proto-group__label" id="lbl-omistusmalli">Omistusmalli</span>
+        <div class="proto-group__btns" role="group" aria-labelledby="lbl-omistusmalli">
+          <button class="proto-btn" type="button" data-asetus="omistusmalli" data-arvo="a" data-selite="Luotokoti omistaa tontin" aria-pressed="false">A</button>
+          <button class="proto-btn" type="button" data-asetus="omistusmalli" data-arvo="b" data-selite="varaus kunnan tontteihin" aria-pressed="false">B</button>
+        </div>
+      </div>
+      <div class="proto-group">
+        <span class="proto-group__label" id="lbl-sisalto">Sisältö</span>
+        <div class="proto-group__btns" role="group" aria-labelledby="lbl-sisalto">
+          <button class="proto-btn" type="button" data-asetus="sisalto" data-arvo="aukot" data-selite="merkityt aukot" aria-pressed="false">Aukot</button>
+          <button class="proto-btn" type="button" data-asetus="sisalto" data-arvo="placeholder" data-selite="kuvitteelliset arvot" aria-pressed="false">Placeholder</button>
+        </div>
+      </div>
+    <button class="notes-toggle" type="button" data-notes-toggle
+            aria-pressed="false" aria-label="Näytä muistiinpanot">
+      <span class="notes-toggle__label">Muistiinpanot</span>
+    </button>
+    <p class="proto-varoitus" data-copy="proto.varoitusLuvut"></p>
+    <p class="visually-hidden" role="status" data-asetus-status></p>
+  </div>
+</div>
+
+<main id="main">
+  <!-- 01 · Hero -->
+  <section class="hero" data-status="uusi" aria-labelledby="hero-h">
+    <div class="wrap">
+      <span class="eyebrow" data-copy="omaTontti.ylaOstopolku"></span>
+      <h1 id="hero-h" data-copy="omaTontti.heroOtsikko"></h1>
+      <p class="hero__sub" data-copy="omaTontti.heroAlarivi"></p>
+      <div class="btn-row">
+        <a class="btn btn--primary" href="#tarkistus" data-event="taso2_tonttilista_aloitus"
+           data-copy="omaTontti.ctaTarkistaKuusi"></a>
+        <a class="btn btn--ghost" href="kohteet.html" data-event="taso2_kohteet"><span data-copy="yhteinen.ctaKatsoKohteet"></span></a>
+      </div>
+
+      <aside class="note">
+        <p><span class="note__status">Uusi</span></p>
+        <dl>
+          <dt>Copy</dt>
+          <dd>Kirjoitettu rautalangan mukaan. Perustuu blokin 1 askeleeseen 1, jossa asiakas ohjataan kahteen polkuun.</dd>
+          <dt>Lähde</dt>
+          <dd>Luotokoti_innehållsstrategi, luku 6, Block 1, askel 1</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Avoin kysymys · kirjattu 18.8.2026</dt>
+          <dd>Aineisto kuvaa omalle tontille rakentamisen vain sivulauseessa. Onko tämä oikeasti tarjottu palvelu vai vasta suunnitelma? Koko sivu perustuu siihen että on.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 02 · Tarkistuslista — datavetoinen -->
+  <section class="section" id="tarkistus" data-status="uusi" aria-labelledby="lista-h">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" data-copy="omaTontti.ylaTarkistuslista"></span>
+        <h2 id="lista-h" data-copy="omaTontti.listaOtsikko"></h2>
+        <p data-copy="omaTontti.listaIngressi"></p>
+      </div>
+
+      <div class="caveat">
+        <p>
+          <strong data-copy="omaTontti.listaVarausOtsikko"></strong>
+          <span data-copy="omaTontti.listaVaraus"></span>
+        </p>
+      </div>
+
+      <div class="grid grid--split-wide">
+        <form data-checklist aria-labelledby="lista-h" onsubmit="return false"></form>
+
+        <div>
+          <h3 class="switch-label" id="tulos-h" data-copy="omaTontti.tulosOtsikko"></h3>
+          <div class="result" data-checklist-result data-level="low"
+               role="status" aria-live="polite" aria-labelledby="tulos-h"></div>
+        </div>
+      </div>
+
+      <aside class="note">
+        <p><span class="note__status">Uusi</span></p>
+        <dl>
+          <dt>Rakenne</dt>
+          <dd>Kohdat ja tulostasot tulevat tiedostosta <code>assets/tonttikriteerit.js</code>. Kolme tulosta: kaikki kuusi / vähintään neljä / alle neljä. Yksikään tulos ei torju kävijää — alin taso kertoo mitä selvitetään ja kutsuu keskusteluun.</dd>
+          <dt>Copy</dt>
+          <dd>Kohdat on kirjoitettu tässä vaiheessa Generon toimesta. Aineistossa ei ole yhtäkään tonttikriteeriä.</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Vahvistettava — tärkein tällä sivulla · kirjattu 18.8.2026</dt>
+          <dd>Kuusi kohtaa pitää käydä läpi Luotokodin rakennuspäällikön kanssa: ovatko ne oikeat, onko niitä kuusi vai kolme, ja onko jokin niistä ehdoton este eikä vain huomio.</dd>
+          <dt>Puuttuu · kirjattu 18.8.2026</dt>
+          <dd>Pienimmän koon kerrosalatarve (<code>[k-m²]</code>). Se on ensimmäisen kohdan ainoa luku, ja ilman sitä kohta kysyy jotain mihin kävijä ei voi vastata. Kolmen koon kerrosalat puuttuvat kaikki — ks. <code>AVOIMET.md</code> kohta 111.</dd>
+          <dt>Päätös</dt>
+          <dd>Pisteytys kohtelee kaikkia kuutta samanarvoisina, mikä on melko varmasti väärin: maaperä on selvitysasia, tieyhteys on ratkaistavissa. Kynnysarvot ovat yhdessä paikassa <code>TONTTIKYNNYS</code>-objektissa.</dd>
+          <dt>Rakennusoikeus muutti luonnetta</dt>
+          <dd>Kun talo oli yksi kokoonpano, rakennusoikeus oli este: joko riittää tai ei. Kolmella koolla se on <strong>mitoitus</strong> — se määrää minkä kokoisena talo rakennetaan, ei sitä rakennetaanko lainkaan. Kriteerin otsikko ja apuTeksti on kirjoitettu uudelleen tämän mukaan tiedostossa <code>assets/tonttikriteerit.js</code>.</dd>
+          <dt>Avoin kysymys · kirjattu 18.8.2026</dt>
+          <dd>Siirtyvätkö merkityt vastaukset yhteydenottoon? Nyt tulos ohjaa yhteystietosivulle mutta vastaukset eivät kulje mukana. Jos kulkisivat, myyjä tietäisi heti mistä keskustellaan.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 03 · Mitä hoidamme -->
+  <section class="section" data-status="valmis" aria-labelledby="hoidamme-h">
+    <div class="wrap">
+      <div class="grid grid--split">
+        <div class="measure">
+          <span class="eyebrow" data-copy="omaTontti.ylaHoidamme"></span>
+          <h2 id="hoidamme-h" data-copy="omaTontti.hoidammeOtsikko"></h2>
+          <p data-copy="omaTontti.hoidammeTeksti"></p>
+          <ul class="ticks">
+            <li data-copy="omaTontti.hoidammeTicks.0"></li>
+            <li data-copy="omaTontti.hoidammeTicks.1"></li>
+            <li data-copy="omaTontti.hoidammeTicks.2"></li>
+            <li><span class="gap">[liittymät — sisältyykö?]</span></li>
+          </ul>
+          <p class="small" data-copy="omaTontti.hoidammeTontti"></p>
+        </div>
+
+        <figure class="ph ph--wide" role="img"
+          aria-label="Kuvapaikka: elementtiasennus käynnissä, nosturi ja rakennustyömaa. Kuva puuttuu.">
+          <span class="ph__tag">Kuvapaikka</span>
+          <span class="ph__what">Elementtiasennus: nosturi, työmaa, tekijät</span>
+          <span class="ph__meta">Tämä kuva myy prosessia, ei taloa</span>
+        </figure>
+      </div>
+
+      <aside class="note">
+        <p><span class="note__status">Valmis</span></p>
+        <dl>
+          <dt>Copy</dt>
+          <dd>Suomennettu USP 2:sta ja blokin 1 askeleesta 3. Tontti on jätetty listalta pois, koska tässä polussa se on asiakkaan.</dd>
+          <dt>Lähde</dt>
+          <dd>Luotokoti_innehållsstrategi, luku 4 USP 2, luku 6 Block 1</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 04 · Talotiivistelmä — jaettu komponentti -->
+  <section class="section" data-status="uusi" aria-labelledby="talo-h">
+    <div class="wrap">
+      <!-- Ylärivi: teksti ja kuva. Avainluvut EIVÄT ole tässä palstassa —
+           ks. perustelu specs-listan yllä. -->
+      <div class="grid grid--split-wide">
+        <div class="measure">
+          <span class="eyebrow" data-copy="yhteinen.yla.talo"></span>
+          <h2 id="talo-h" data-copy="omaTontti.taloOtsikko"></h2>
+          <p data-copy="yhteinen.taloTiivistelmaIngressi"></p>
+          <!-- Vakiot yhtenä rivinä, ei taulukkomaisena nauhana (v5f).
+
+               Nauha käytti samaa kielioppia kuin kokovertailu sen alla:
+               hiusviiva, versaalilabel, Quicksand-arvo. Kaksi eri tietolajia
+               samalla kieliopilla luki yhtenä sotkuna, eikä silmä erottanut
+               kumpi on talon pysyvä ominaisuus ja kumpi koon mukaan muuttuva
+               luku. Vakiot eivät ole vertailtavaa dataa vaan tuotteen kuvaus,
+               joten ne luetaan lauseena — ja taulukko jää lohkon ainoaksi
+               dataobjektiksi.
+
+               Labelit (Malli / Pohjaratkaisu / Rakennustapa) jäivät pois, joten
+               pohjaratkaisun arvo kantaa nyt sanan itse: "Sama pohjaratkaisu
+               kaikissa koossa". Ks. AVOIMET.md kohta 177. -->
+          <p class="talo-vakiot">
+            <span data-talo="nimi" data-gap="mallin nimi"></span>
+            <span data-copy="yhteinen.taloPohjaratkaisuVakio"></span>
+            <span data-copy="yhteinen.phRakennustapa"></span>
+          </p>
+        </div>
+
+        <figure class="ph ph--talo" data-ph-kuva="paaty" role="img"
+          aria-label="Kuvapaikka: talomallin julkisivu. Kuva puuttuu prototyypistä.">
+          <span class="ph__tag">Kuvapaikka</span>
+          <span class="ph__what">Talomallin julkisivu</span>
+        </figure>
+      </div>
+
+
+      <!-- Kokovertailu. Sarakkeet ja luvut tulevat TALO.koot:sta talo.js:ssä —
+           yhtään kokokohtaista lukua ei ole markupissa. Taulukko on vertailu,
+           ei valitsin: valittua kokoa ei korosteta, koska valinta tehdään
+           talo.html:llä (ks. AVOIMET.md kohta 149).
+           Hintarivi: kokonaishinta ilman tonttia (taso 3) — tontti on jo
+           kävijän. "Alkaen" kantaa myös maaperäepävarmuuden, jonka
+           viikkolupaus ratkaisee. -->
+      <div class="taulukko-kaari">
+        <table class="koko-vertailu" data-koko-vertailu
+               data-vertailu-hinta="omaTontti.taloVertailuHinta">
+          <!-- Seloste on ruudunlukijalle, ei näkyville: kävijä näkee kolme
+               saraketta ja lukee niiden otsikot, joten teksti "Kolme kokoa
+               vertailtuna" toisti sen minkä taulukko jo sanoo — ja vei rivin
+               tilaa. Taulukko tarvitsee silti nimen: sivulla on useampi
+               taulukko, ja nimetön taulukko on ruudunlukijalla vain
+               "taulukko". (Poistettu näkyvistä 20.8.2026.) -->
+          <caption class="visually-hidden"
+                   data-copy="yhteinen.taloVertailuSeloste"></caption>
+        </table>
+      </div>
+      <!-- Käänteinen ja positiivinen viesti: pieni tontti ei sulje pois, se
+           mitoittaa. Tämä on kolmen koon suora seuraus omalle tontille
+           rakentavalle, ja se kuuluu talotiivistelmään eikä
+           tarkistuslistaan — lista kysyy, tiivistelmä kertoo. -->
+      <p class="small measure" data-copy="omaTontti.taloRakennusoikeus"></p>
+      <p class="vali-5">
+        <a class="link-arrow" href="talo.html" data-event="taso1_talo_katselu"
+           data-copy="yhteinen.ctaKatsoTalo"></a>
+      </p>
+
+      <aside class="note">
+        <p><span class="note__status">Uusi</span></p>
+        <dl>
+          <dt>Komponentti</dt>
+          <dd>Jaettu talotiivistelmä, sama etusivulla ja Kohteet-sivulla.</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Puuttuu · kirjattu 18.8.2026</dt>
+          <dd>Mallin nimi sekä kolmen koon pinta-alat ja huoneistotyypit. Pienimmän koon rakennusoikeustarve vaikuttaa suoraan tarkistuslistan ensimmäiseen kohtaan.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 05 · Hinta — jaettu komponentti -->
+  <section class="section" data-status="paatos" aria-labelledby="hinta-h">
+    <div class="wrap">
+      <div class="hintablokki">
+
+        <div class="hintablokki__sisalto">
+          <span class="eyebrow" data-copy="yhteinen.yla.hinta"></span>
+          <h2 id="hinta-h" data-copy="omaTontti.hintaOtsikko"></h2>
+          <p data-copy="omaTontti.hintaIngressi"></p>
+          <p class="facts__v vali-y5">
+            <span class="gap">[XXX XXX €]</span>
+          </p>
+          <p class="small" data-copy="omaTontti.hintaSelite"></p>
+          <!-- Kokoporrastus. Rivit tulevat TALO.koot:sta talo.js:ssä — kokojen
+               tiedot eivät ole missään sivun markupissa. Aktiivinen rivi
+               merkitään CSS:llä body[data-koko]-attribuutin perusteella, joten
+               talo-sivulla tehty valinta näkyy täällä ilman uudelleenrenderöintiä.
+
+               Miksi tämä on tärkeää: jos jokaisella lisämakuuhuoneella on hinta,
+               syntyy radikaali läpinäkyvyys myös lisistä. Jos hintaa ei ole,
+               kokovalinta lukee lisämyyntinä — siksi puuttuva hinta on merkitty
+               aukko eikä jätetty pois. -->
+          <div class="koko-hinta">
+            <p class="koko-hinta__h" id="koko-hinta-h" data-copy="yhteinen.kokoHintaOtsikko"></p>
+            <ul class="koko-hinta__lista" data-koko-porras aria-labelledby="koko-hinta-h"></ul>
+          </div>
+          <p class="vali-5">
+            <!-- KORJAUS 20.8.2026 (U-3): sama painikehierarkia kuin kohteet.html:llä.
+               Mitattu: seitsemästä näkyvästä painikkeesta viisi oli
+               ensisijaisia ja neljä niistä vei samaan osoitteeseen.
+               Ensisijaisiksi jäävät sivun kolme päätöskohtaa — hero,
+               tarkistuslistan tulos ja loppu-CTA — ja hintablokki sekä UKK
+               tukevat niitä toissijaisina. Yhtään CTA:ta ei poistettu. -->
+          <a class="btn btn--ghost" href="yhteystiedot.html" data-event="taso3_yhteydenotto_hintablokki"
+             data-copy="omaTontti.ctaHintaTontille"></a>
+          </p>
+        </div>
+
+
+
+      </div>
+
+      <!-- R4 · Kokonaishinta viikossa =====================================
+           Painoarvo: tämä ei ole alaviite vaan hintasektion toinen kappale.
+           Ilman sitä "kiinteä hinta ensimmäisestä tarjouksesta" jää
+           roikkumaan ilman selitystä, ja lupauksen ja todellisuuden välinen
+           ristiriita — hintaa ei voi antaa ennen maaperätutkimusta — jää
+           asiakkaan huomattavaksi. Parempi purkaa se itse.
+
+           Copy on valmis eikä sisällä aukkoja: workshop 18.8.2026 vahvisti
+           että Luotokoti tilaa tutkimuksen, se on asiakkaalle maksuton ja
+           hinta tulee viikossa. -->
+      <div class="lupaus vali-7">
+        <h3 data-copy="omaTontti.viikkoOtsikko"></h3>
+        <p data-copy="omaTontti.viikkoTeksti"></p>
+      </div>
+
+      <aside class="note">
+        <p><span class="note__status">Päätös</span></p>
+        <dl>
+          <dt>Komponentti</dt>
+          <dd>Jaettu hintablokki, sama kolmella sivulla.</dd>
+          <dt>Kokoporrastus</dt>
+          <dd>Rivit tulevat <code>TALO.koot</code>-taulukosta, ei markupista.
+              Aktiivinen rivi on se koko jonka kävijä valitsi talo-sivulla —
+              valinta säilyy <code>sessionStorage</code>ssa ja seuraa mukana.</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Estävä kysymys — kokojen hinnat · kirjattu 18.8.2026</dt>
+          <dd>Onko lisämakuuhuoneella kiinteä hinta? <strong>Ilman hintaa
+              kokovalinta lukee lisämyyntinä</strong> — ja se on ainoa asia
+              joka voi kääntää hintaläpinäkyvyyden brändin vahvuudesta sen
+              heikkoudeksi. Jos hinta on kiinteä, syntyy jotain mitä yksikään
+              kilpailija ei tarjoa: radikaali läpinäkyvyys myös lisistä, ja
+              suora vastalääke Kannustalon dokumentoituun virheeseen jossa
+              valinnat maksoivat 20&nbsp;000&nbsp;€ enemmän kuin viestittiin.</dd>
+          <dt>Ratkennut 18.8.2026</dt>
+          <dd>Perusmalli on <strong>kaksi makuuhuonetta</strong>, ja kolmas
+              ja neljäs ovat lisiä perushintaan (R2). Muistiinpano väitti
+              aiemmin perushinnaksi yhtä makuuhuonetta — se oli jäänne
+              vanhasta 1–3 datasta. Porrastus renderöityy portaikkona:
+              perusrivi on kokonaisluku, lisärivit <code>+</code>-merkillä.</dd>
+          <dt>Avoin kysymys · kirjattu 18.8.2026</dt>
+          <dd>Onko omalle tontille rakennettavan talon hinta sama kuin paketin hinta miinus tontti, vai eri? Jos eri, se pitää selittää — muuten se on ristiriidassa läpinäkyvyyslupauksen kanssa.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 06 · Näin se etenee -->
+  <section class="section" data-status="uusi" aria-labelledby="prosessi-h">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" data-copy="yhteinen.yla.prosessi"></span>
+        <h2 id="prosessi-h" data-copy="omaTontti.prosessiOtsikko"></h2>
+      </div>
+
+      <ol class="steps steps--row">
+        <li>
+          <div>
+            <h3 data-copy="omaTontti.prosessi.0.otsikko"></h3>
+            <p data-copy="omaTontti.prosessi.0.teksti"></p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3 data-copy="omaTontti.prosessi.1.otsikko"></h3>
+            <p data-copy="omaTontti.prosessi.1.teksti"></p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3 data-copy="omaTontti.prosessi.2.otsikko"></h3>
+            <p data-copy="omaTontti.prosessi.2.teksti"></p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3 data-copy="omaTontti.prosessi.3.otsikko"></h3>
+            <p data-copy="omaTontti.prosessi.3.teksti"></p>
+          </div>
+        </li>
+      </ol>
+
+      <aside class="note">
+        <p><span class="note__status">Uusi</span></p>
+        <dl>
+          <dt>Komponentti</dt>
+          <dd>Jaetut prosessivaiheet, sama rakenne muilla sivuilla.</dd>
+          <dt>Copy</dt>
+          <dd>Koottu blokista 1 ja USP 1:stä, mutta järjestys on sovitettu tähän polkuun: maaperätutkimus on nostettu omaksi askeleeksi, koska omalla tontilla se on ostajan suurin epävarmuustekijä.</dd>
+        </dl>
+        <dl>
+          <dt>Ratkennut 18.8.2026</dt>
+          <dd>Maaperätutkimus on asiakkaalle <strong>maksuton</strong>, ja Luotokoti tilaa sen (workshop, R4). Tämä oli sivun kaupallisesti tärkein avoin kysymys, koska maksullinen tutkimus olisi ollut ensimmäinen kohta jossa asiakas maksaa jotain — ja ristiriidassa lupauksen &rdquo;maksat vasta kun muutat sisään&rdquo; kanssa. Vastaus on nyt hintasektion lupauselementissä.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 07 · Mitä selvitämme puolestasi -->
+  <section class="section" data-status="uusi" aria-labelledby="selvitys-h">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" data-copy="omaTontti.ylaSelvitys"></span>
+        <h2 id="selvitys-h" data-copy="omaTontti.selvitysOtsikko"></h2>
+        <p data-copy="omaTontti.selvitysIngressi"></p>
+      </div>
+
+      <div class="grid grid--2">
+        <div class="card">
+          <h3 data-copy="omaTontti.selvitysMeOtsikko"></h3>
+          <ul class="ticks">
+            <li data-copy="omaTontti.selvitysMe.0"></li>
+            <li data-copy="omaTontti.selvitysMe.1"></li>
+            <li data-copy="omaTontti.selvitysMe.2"></li>
+            <li data-copy="omaTontti.selvitysMe.3"></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 data-copy="omaTontti.selvitysSinaOtsikko"></h3>
+          <ul class="ticks">
+            <li data-copy="omaTontti.selvitysSina.0"></li>
+            <li data-copy="omaTontti.selvitysSina.1"></li>
+            <li><span class="gap">[muut asiakirjat — täydennettävä]</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <aside class="note">
+        <p><span class="note__status">Uusi</span></p>
+        <dl>
+          <dt>Copy</dt>
+          <dd>Kirjoitettu rautalankavaiheessa. Vasen sarake perustuu tarkistuslistan kohtiin, oikea prosessin askeleeseen 1.</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Vahvistettava · kirjattu 18.8.2026</dt>
+          <dd>Kumpi lista on oikea? Jos Luotokoti tarvitsee asiakkaalta enemmän asiakirjoja, se kannattaa sanoa heti — muuten lupaus &rdquo;sinun ei tarvitse tietää&rdquo; ei pidä.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 08 · Rahoitus -->
+  <section class="section" data-status="valmis" aria-labelledby="rahoitus-h">
+    <div class="wrap">
+      <span class="eyebrow" data-copy="yhteinen.yla.rahoitus"></span>
+      <h2 id="rahoitus-h" data-copy="yhteinen.rahoitusOtsikko"></h2>
+      <p data-copy="yhteinen.rahoitusTeksti"></p>
+
+      <aside class="note">
+        <p><span class="note__status">Valmis</span></p>
+        <dl>
+          <dt>Copy</dt>
+          <dd>Blokki 3 tiivistettynä.</dd>
+          <dt>Lähde</dt>
+          <dd>Luotokoti_innehållsstrategi, luku 6, Block 3</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Avoin kysymys · kirjattu 18.8.2026</dt>
+          <dd>Omalla tontilla asiakas on todennäköisesti jo maksanut tontin. Vaikuttaako se pankin näkökulmaan tai maksuaikatauluun? Aineisto ei käsittele tätä.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 09 · Luottamus — jaettu komponentti -->
+  <section class="section" data-status="uusi" aria-labelledby="luottamus-h">
+    <div class="wrap">
+      <!-- 7/5 eikä 5/7: lainaukset lähtivät oikeasta palstasta omaksi
+           sektiokseen, ja kuvapaikka yksin ei tarvitse leveämpää puolta.
+           Kapeassa palstassa kolme lukua rinnakkain jäi 125 pikselin
+           sarakkeisiin ja selitteet tavutuivat kesken sanaa
+           ("ELEMENTTITA-LOA"). Luvut ovat lohkon sisältö, kuva sen kuva. -->
+      <div class="grid grid--split-wide">
+        <div class="measure">
+          <span class="eyebrow" data-copy="yhteinen.yla.luottamus"></span>
+          <h2 id="luottamus-h" data-copy="yhteinen.luottamusOtsikko"></h2>
+          <p data-copy="yhteinen.luottamusIngressi"></p>
+          <!-- Luottamusluvut (R6). Kaksi ensimmäistä ovat vahvistettuja,
+               kolmas on PÄÄTÖS: ehdokkaita ovat rakennusaika, "0 lisälaskua
+               sopimuksen jälkeen" ja takuuvuodet.
+
+               TÄRKEÄ, ÄLÄ POISTA: luvut ovat JRT:n, eivät Luotokodin. Uusi
+               brändi joka esittää ne omissa nimissään ilman selitystä on
+               haavoittuva heti kun joku tarkistaa Y-tunnuksen — ja
+               rakennusalalla se tarkistetaan. Suhteen muotoilu on Johannalla
+               työn alla, ja siihen asti selite on merkitty aukko. Aukon
+               poistaminen siksi että se näyttäisi siistimmältä olisi juuri
+               se virhe jota vastaan aukko on olemassa. -->
+          <ul class="facts luottamus__luvut vali-6">
+            <li>
+              <span class="facts__v" data-copy="yhteinen.luvut.0.arvo"></span>
+              <span class="facts__k" data-copy="yhteinen.luvut.0.selite"></span>
+            </li>
+            <li>
+              <span class="facts__v" data-copy="yhteinen.luvut.1.arvo"></span>
+              <span class="facts__k" data-copy="yhteinen.luvut.1.selite"></span>
+            </li>
+            <li>
+              <span class="facts__v" data-copy="yhteinen.luvut.2.arvo"
+                    data-gap="luku"></span>
+              <span class="facts__k" data-copy="yhteinen.luvut.2.selite"
+                    data-gap="kolmas luku — mikä?"></span>
+            </li>
+          </ul>
+          <p class="luottamus__lahde" data-copy="yhteinen.luottamusLahde"
+             data-gap="JRT-suhteen muotoilu"></p>
+        </div>
+
+        <figure class="ph ph--wide" role="img"
+          aria-label="Kuvapaikka: valmistunut Luotokoti-talo ja asukkaat pihalla. Kuva puuttuu prototyypistä.">
+          <span class="ph__tag">Kuvapaikka</span>
+          <span class="ph__what" data-copy="yhteinen.phValmisTalo"></span>
+          <span class="ph__meta" data-copy="yhteinen.phFotostil"></span>
+        </figure>
+      </div>
+
+      <aside class="note">
+        <p><span class="note__status">Uusi</span></p>
+        <dl>
+          <dt>Komponentti</dt>
+          <dd>Jaettu luottamusblokki, käytössä neljällä sivulla.</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Puuttuu kokonaan · kirjattu 18.8.2026</dt>
+          <dd>Kolmas luottamusluku, JRT-suhteen muotoilu ja kolme asiakaslainausta nimineen. Kaksi ensimmäistä lukua ovat vahvistettuja (R6).</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Asiakaslainaukset ----------------------------------------------------
+       Irrotettu luottamusblokista 20.8.2026, sama rakenne kuin etusivulla.
+       Luottamusblokissa oli kuusi merkittyä aukkoa samassa ruudussa — kolme
+       lukua, kuvapaikka, JRT-selite ja kolme lainausta — eikä lohkosta
+       erottunut mikä kohta odottaa mitä sisältöä. Nimikenttä EI ole
+       valinnainen: anonyymi lainaus ei tee luottamustyötä. -->
+  <section class="section" data-status="uusi" aria-labelledby="lainaukset-h">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" data-copy="yhteinen.yla.asukkaat"></span>
+        <h2 id="lainaukset-h" data-copy="yhteinen.lainauksetOtsikko"></h2>
+        <p data-copy="yhteinen.lainauksetIngressi"></p>
+      </div>
+
+      <ul class="lainaukset lainaukset--omalohko">
+        <li>
+          <blockquote>
+            <p><span class="gap">[lainaus]</span></p>
+            <footer>
+              <span class="gap lainaus__nimi">[nimi]</span>,
+              <span class="gap">[paikkakunta]</span>
+            </footer>
+          </blockquote>
+        </li>
+        <li>
+          <blockquote>
+            <p><span class="gap">[lainaus]</span></p>
+            <footer>
+              <span class="gap lainaus__nimi">[nimi]</span>,
+              <span class="gap">[paikkakunta]</span>
+            </footer>
+          </blockquote>
+        </li>
+        <li>
+          <blockquote>
+            <p><span class="gap">[lainaus]</span></p>
+            <footer>
+              <span class="gap lainaus__nimi">[nimi]</span>,
+              <span class="gap">[paikkakunta]</span>
+            </footer>
+          </blockquote>
+        </li>
+      </ul>
+
+      <aside class="note">
+        <p><span class="note__status">Uusi</span></p>
+        <dl>
+          <dt>Komponentti</dt>
+          <dd>Asiakaslainaukset. Sama sektio on etusivulla ja kaikilla
+              sivuilla joilla luottamusblokki on.</dd>
+          <dt>Lähde</dt>
+          <dd>Ei lähdettä. Yhtään asiakaslainausta ei ole aineistossa.</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Puuttuu kokonaan · kirjattu 18.8.2026</dt>
+          <dd>Kolme lainausta, jokaisessa nimi ja paikkakunta.
+              Ks. AVOIMET.md kohta 133.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 10 · Usein kysytyt -->
+  <section class="section" data-status="valmis" aria-labelledby="ukk-h">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" data-copy="yhteinen.yla.ukk"></span>
+        <h2 id="ukk-h" data-copy="omaTontti.faqOtsikko"></h2>
+      </div>
+
+      <div class="faq">
+        <details>
+          <summary data-copy="omaTontti.faqPurkuK"></summary>
+          <div class="faq__body">
+            <p><span class="gap">[purkutyöt — sisältyykö, ja millä ehdoilla?]</span></p>
+          </div>
+        </details>
+        <details>
+          <summary data-copy="omaTontti.faqPohjaK"></summary>
+          <div class="faq__body">
+            <p data-copy="omaTontti.faqPohjaV"></p>
+          </div>
+        </details>
+        <details>
+          <summary data-copy="omaTontti.faqEiSoviK"></summary>
+          <div class="faq__body">
+            <p data-copy-html="omaTontti.faqEiSoviVHtml"></p>
+            <p><a class="link-arrow" href="kohteet.html" data-event="taso2_kohteet"><span data-copy="yhteinen.ctaKatsoKohteet"></span></a></p>
+          </div>
+        </details>
+      </div>
+      <div class="ukk-cta">
+        <p data-copy="omaTontti.ukkCtaTeksti"></p>
+        <a class="btn btn--ghost" href="yhteystiedot.html"
+           data-event="taso3_yhteydenotto_ukk" data-copy="yhteinen.ctaPyydaHinta"></a>
+      </div>
+
+
+      <aside class="note">
+        <p><span class="note__status">Valmis</span></p>
+        <dl>
+          <dt>Copy</dt>
+          <dd>Toinen vastaus on blokista 4.</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Puuttuu · kirjattu 18.8.2026</dt>
+          <dd>Purkutyöt ja selvityksen maksuttomuus. Molemmat ovat tavallisia kysymyksiä omalla tontilla.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 11 · Kun tontti ei sovi -->
+  <section class="section" data-status="uusi" aria-labelledby="eisovi-h">
+    <div class="wrap">
+      <span class="eyebrow" data-copy="omaTontti.ylaEiSovi"></span>
+      <h2 id="eisovi-h" data-copy="omaTontti.eiSoviOtsikko"></h2>
+      <p data-copy="omaTontti.eiSoviTeksti"></p>
+      <p>
+        <a class="link-arrow" href="kohteet.html" data-event="taso2_kohteet"
+           data-copy="yhteinen.ctaKatsoKohteet"></a>
+      </p>
+
+      <aside class="note">
+        <p><span class="note__status">Uusi</span></p>
+        <dl>
+          <dt>Rakenne</dt>
+          <dd>Tämä sektio on tarkoituksella olemassa, jotta tarkistuslistan alin tulos ei jää umpikujaksi. Hyväksymiskriteeri: yksikään tulos ei torju kävijää.</dd>
+        </dl>
+        <dl class="note__q">
+          <dt>Avoin kysymys · kirjattu 18.8.2026</dt>
+          <dd>Onko olemassa tapauksia joissa Luotokoti todella kieltäytyy? Jos on, se kannattaa sanoa rehellisesti — se vahvistaa uskottavuutta enemmän kuin ympäripyöreä lupaus.</dd>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 12 · Loppu-CTA -->
+  <section class="section section--loppu" id="yhteys" data-status="uusi"
+           aria-labelledby="cta-h">
+    <div class="wrap">
+      <span class="eyebrow" data-copy="yhteinen.yla.seuraavaAskel"></span>
+      <h2 id="cta-h" data-copy="omaTontti.ctaOtsikko"></h2>
+      <p data-copy="omaTontti.ctaIngressi"></p>
+      <div class="btn-row">
+        <a class="btn btn--primary" href="yhteystiedot.html" data-event="taso3_yhteydenotto_loppucta"
+           data-copy="omaTontti.ctaHintaTontille"></a>
+        <a class="btn btn--ghost" href="talo.html" data-event="taso1_talo_katselu"><span data-copy="yhteinen.ctaKatsoTalo"></span></a>
+      </div>
+        <p class="cta-tuki">
+          <span data-copy="yhteinen.ctaEiSido"></span>
+          <span data-copy-html="yhteinen.ctaVastausaikaHtml"></span>
+        </p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <p class="wordmark footer-brand__nimi"><img src="assets/logo-luotokoti-vaalea.svg" alt="Luotokoti" width="520" height="70"></p>
+        <p class="small footer-brand__kuvaus"
+           data-copy="yhteinen.footerKuvaus"></p>
+      </div>
+
+      <nav data-copy-aria="navi.sivukartta">
+        <h2 data-copy="navi.footerSivut"></h2>
+        <ul>
+          <li><a href="index.html" data-copy="navi.etusivu"></a></li>
+          <li><a href="talo.html" data-copy="navi.talo"></a></li>
+          <li><a href="kohteet.html" data-copy="navi.kohteet"></a></li>
+          <li><a href="oma-tontti.html" data-copy="navi.omaTontti"></a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Luotokoti">
+        <h2>Luotokoti</h2>
+        <ul>
+          <li><a href="meista.html" data-copy="navi.meista"></a></li>
+          <li><a href="yhteystiedot.html" data-copy="navi.yhteys"></a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="footer-note">
+      <p>
+        <strong data-copy="proto.footerRautalankaOtsikko"></strong>
+        <span data-copy="proto.footerRautalanka"></span>
+      </p>
+      <p>
+        <strong data-copy="proto.footerFontitOtsikko"></strong>
+        <span data-copy="proto.footerFontit"></span>
+      </p>
+      <p>
+        <span data-copy="proto.footerAvoimetAlku"></span>
+        <code>AVOIMET.md</code><span data-copy="proto.footerAvoimet"></span>
+      </p>
+      <!-- Kuvitteellisten lukujen varoitus. Se oli ohjauspalkissa, joka on
+           piilotettu 20.8.2026 — ja placeholder on oletustila, joten ilman
+           tätä sivulla olisi kuvitteellisia hintoja ilman yhtään merkintää
+           siitä mistä ne ovat. Näkyy vain placeholder-tilassa: aukkotilassa
+           hakasulkeet kertovat saman asian itse. Ks. styles.css osio 47. -->
+      <p class="footer-note__ph">
+        <strong data-copy="proto.varoitusLuvutOtsikko"></strong>
+        <span data-copy="proto.varoitusLuvutFooter"></span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<!-- talo-data.js + talo.js myös täällä: hintablokin kokoporrastus
+     renderöidään TALO.koot:sta, ja valittu koko seuraa käyttäjää
+     talo-sivulta tänne sessionStoragen kautta. -->
+<script src="assets/talo-data.js"></script>
+<script src="assets/talo.js"></script>
+<script src="assets/tonttikriteerit.js"></script>
+<script src="assets/copy-data.js"></script>
+<script src="assets/copy-data-sv.js"></script>
+<script src="assets/placeholder-data.js"></script>
+<script src="assets/proto.js"></script>
+
+</body>
+</html>

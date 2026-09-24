@@ -1,0 +1,3482 @@
+/* ==========================================================================
+   Luotokoti — klikattava prototyyppi
+   Yksi tyylitiedosto. Ei build-työkaluja, ei frameworkia, ei kirjastoja.
+
+   SUUNTA: rauhallinen pohjoismainen. Vähäeleinen, mutta ei mitätön.
+   Erottuvuus tulee kolmesta asiasta, ei koristeista:
+
+     1  Epäsymmetria     Sisältö ei ole keskitetty. Otsikko istuu kapealla
+                         akselilla, sisältö leveällä, oikea marginaali on
+                         tarkoituksella iso. Jaot ovat 5/7 ja 7/5, ei 50/50.
+     2  Skaalakontrasti  Hero on hyvin suuri, kaikki muu hyvin hiljaista.
+                         Ei tasaista 1.25-porrasta vaan yksi iso hyppy:
+                         hero 44→88 px, h2 vain 24→32 px.
+     3  Tarkka detalji   Hiusviivat, kulmamerkit, taulukkonumerot,
+                         leveä kirjainväli labeleissa.
+                         Käsityötä, ei efektejä.
+
+   MITÄ POISTETTIIN, koska se luki geneerisenä:
+     · vuorottelevat taustapalkit → yksi paperinen pohja + yksi tumma osio
+     · korttiruudukot             → viivoin erotellut lohkot
+     · symmetriset 50/50-jaot     → 5/7 ja 7/5
+     · tasainen typografiaporras  → iso hyppy heron ja h2:n välillä
+     · pyöristykset ja varjot     → hiusviivat ja ilma
+
+   Sisältö
+   01 Tokenit              10 Listat, taulukot, prosessit
+   02 Reset, pohja, paperi 11 Vaihtimet
+   03 Typografia           12 Tonttitarkistuslista
+   04 Layout ja rytmi      13 Merkityt aukot
+   05 Header ja navigaatio 14 Muistiinpanotila
+   06 Painikkeet           15 Footer
+   07 Hero                 16 Talosivu (talo.html)
+   08 Lohkot               17 Liike
+   09 Kuvapaikat           18 Saavutettavuus
+   ========================================================================== */
+
+/* == 01 Tokenit ========================================================== */
+
+:root{
+  /* Brand Book 2026 — suoraan brändikirjasta, älä muuta */
+  --beige:#e8e0cc;
+  --olive:#665e31;
+  --charcoal:#4c4735;
+  --amber:#bf8254;
+  --seafoam:#b9c1c0;
+
+  /* Johdetut — laskettu paletista, ei uusia värejä paletin ulkopuolelta */
+  --paper:#faf8f3;
+  --ink:#2b2822;
+  --ink-soft:#4c4735;         /* = charcoal, 8.75:1 paperilla */
+  --ink-faint:#6b6552;        /* 4.9:1 paperilla — vain pienille labeleille */
+  --beige-panel:#f1ebdd;      /* lämmin paneeli, EI taustapalkki */
+  --amber-light:#d5af90;      /* amber vaalennettuna, 4.58:1 charcoalilla */
+
+  /* Hiusviivat. Lämmin ja hyvin hiljainen — tämä on koko rakenteen runko. */
+  --rule:rgba(76,71,53,.16);
+  --rule-soft:rgba(76,71,53,.09);
+  --rule-strong:rgba(76,71,53,.34);
+
+  /* Harmaat — vain kuvapaikoille, tarkoituksella paletin ulkopuolella */
+  --ph-ink:#4a4a44;
+  --ph-rule:rgba(74,74,68,.32);
+  --ph-fill:rgba(74,74,68,.045);
+  --ph-fill-solid:#f2f0eb;    /* läpinäkymätön ph-fill paperin päällä:
+                                 heron luoto-renkaat eivät näy kuvan läpi */
+
+  /* Tumman pinnan tekstit. LISÄTTY 23.9.2026 (TARKASTUS.md D-21).
+     Nämä olivat viisi literaalia käyttöpaikoissaan, joista kolme oli lähes
+     sama vaalea (#e6e2d8 · #ded9cc · #dcd8cd, suurin ero 4/255) ja joita
+     piti pitää käsin synkassa. Osio 54 dokumentoi jo yhden vian joka syntyi
+     täsmälleen siitä: tumman osion kappale renderöityi kontrastisuhteella
+     1.00 eli näkymättömänä, ja korjauksen perustelu oli "jotta tummassa
+     osiossa on yhä yksi tekstiväri eikä kahta". Se perustelu on tokenin
+     määritelmä. #dcd8cd (6.53:1) yhdistettiin #ded9cc:hen (6.59:1).
+     Ei uusia värejä: samat arvot, yksi nimi kullekin roolille. */
+  --ink-on-dark:#e6e2d8;      /* leipäteksti tummalla, 7.18:1 charcoalilla */
+  --ink-on-dark-soft:#ded9cc; /* kuvapaikka ja alaviite,  6.59:1 */
+  --ink-on-dark-faint:#c9c4b6;/* ohjauspalkin label,      5.33:1 */
+
+  /* Typografia — yksi iso hyppy, sitten hiljaisuus */
+  --t-hero:  clamp(2.75rem, 1.45rem + 5.6vw, 5.5rem);
+  --t-h2:    clamp(1.5rem,  1.34rem + 0.72vw, 2rem);
+  --t-h3:    clamp(1.0625rem, 1.02rem + 0.2vw, 1.1875rem);
+  --t-lead:  clamp(1.1875rem, 1.09rem + 0.44vw, 1.4rem);
+  --t-body:  clamp(1.0625rem, 1.02rem + 0.22vw, 1.1875rem);  /* 17→19 px */
+  --t-small: 0.9375rem;                                       /* 15 px */
+  --t-label: 0.8125rem;                                       /* 13 px */
+  --t-figure:clamp(1.75rem, 1.4rem + 1.5vw, 2.75rem);
+
+  /* Välistys. Macro-whitespace: osiot hengittävät raskaasti. */
+  --s-1:.25rem; --s-2:.5rem;  --s-3:.75rem; --s-4:1rem;
+  --s-5:1.5rem; --s-6:2rem;   --s-7:3rem;   --s-8:4rem;
+  --s-9:6rem;   --s-10:9rem;
+  --section-y:clamp(3.5rem, 7vw, 8.5rem);
+
+  --wrap:74rem;
+  --measure:34rem;            /* luettava palsta, ei koskaan leveämpi */
+
+  --ff-head:"Quicksand","Trebuchet MS","Segoe UI",system-ui,sans-serif;
+  --ff-body:"Nunito Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+
+  /* Liike: massaa jäljittelevä käyrä, ei linear eikä ease-in-out */
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+}
+
+/* == 02 Reset, pohja, paperi ============================================= */
+
+*,*::before,*::after{box-sizing:border-box}
+
+html{
+  -webkit-text-size-adjust:100%;
+  scroll-behavior:smooth;
+  scroll-padding-top:6rem;
+}
+
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--ff-body);
+  font-size:var(--t-body);
+  line-height:1.65;
+  font-variant-numeric:tabular-nums;   /* numerot pysyvät sarakkeissa */
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* Paperinen rakeisuus. Ainoa tekstuuri koko sivustolla: 3,5 % kohinaa
+   kiinteänä kerroksena. Tekee beigestä lämpimän eikä litteän — vastaa
+   brändin arvoa "jordnära". Ei ota klikkejä eikä vieritä mukana. */
+body::after{
+  content:"";
+  position:fixed; inset:0;
+  z-index:80;
+  pointer-events:none;
+  opacity:.035;
+  mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+img,svg{max-width:100%;height:auto;display:block}
+
+hr{border:0;border-top:1px solid var(--rule);margin:var(--s-8) 0}
+
+::selection{background:var(--beige);color:var(--ink)}
+
+/* == 03 Typografia ======================================================= */
+
+h1,h2,h3,h4{
+  font-family:var(--ff-head);
+  color:var(--ink);
+  margin:0 0 var(--s-4);
+  text-wrap:balance;
+}
+
+/* Hero: iso, tiukka, hallittu. Sivun ainoa typografinen tapahtuma. */
+h1{
+  font-size:var(--t-hero);
+  font-weight:600;
+  line-height:.97;
+  letter-spacing:-.035em;
+  margin-bottom:var(--s-5);
+}
+
+/* h2 on tarkoituksella pieni. Kontrasti heroon tekee rytmin. */
+h2{
+  font-size:var(--t-h2);
+  font-weight:600;
+  line-height:1.2;
+  letter-spacing:-.015em;
+  max-width:26em;
+}
+
+h3{
+  font-size:var(--t-h3);
+  font-weight:700;
+  line-height:1.35;
+  letter-spacing:-.005em;
+  margin-bottom:var(--s-2);
+}
+
+h4{font-size:var(--t-body);font-weight:700;line-height:1.35;margin-bottom:var(--s-2)}
+
+p,ul,ol,dl,table{margin:0 0 var(--s-4)}
+p:last-child,ul:last-child,ol:last-child,dl:last-child{margin-bottom:0}
+p{max-width:var(--measure);text-wrap:pretty}
+
+strong,b{font-weight:700}
+
+a{
+  color:var(--olive);
+  text-decoration-thickness:1px;
+  text-underline-offset:.2em;
+  text-decoration-color:var(--amber-light);
+  transition:text-decoration-color .25s var(--ease);
+}
+a:hover{text-decoration-color:var(--amber)}
+
+/* Pieni label. Leveä kirjainväli on yksi täsmädetaljeista. */
+.eyebrow,.switch-label{
+  display:block;
+  font-family:var(--ff-head);
+  font-size:var(--t-label);
+  font-weight:600;
+  letter-spacing:.17em;
+  text-transform:uppercase;
+  color:var(--ink-faint);
+  margin:0 0 var(--s-4);
+}
+
+.small{font-size:var(--t-small);line-height:1.6;color:var(--ink-soft)}
+.small p{max-width:none}
+
+/* Luettava palsta. HUOM: tätä EI voi yhdistää .wrap-luokkaan samaan
+   elementtiin — molemmat asettavat max-widthin samalla spesifisyydellä
+   (0,1,0), ja .wrap on tiedostossa myöhemmin, joten se voittaa. Yksitoista
+   elementtiä viidellä sivulla oli kirjoitettu muotoon `wrap measure` ja
+   luokka ei tehnyt mitään; ks. TARKASTUS.md D-15. Palsta rajataan .wrapin
+   SISÄLLÄ omalla elementillään, kuten index.html ja talo.html tekevät. */
+.measure{max-width:var(--measure)}
+
+/* Osionumero korteissa. Pieni ja hiljainen, ei iso lihava numero. */
+.numeral{
+  display:block;
+  font-family:var(--ff-head);
+  font-size:var(--t-label);
+  font-weight:600;
+  letter-spacing:.14em;
+  color:var(--ink-faint);
+  margin-bottom:var(--s-3);
+}
+
+/* == 04 Layout ja rytmi ================================================== */
+
+.wrap{
+  width:100%;
+  max-width:var(--wrap);
+  margin-inline:auto;
+  padding-inline:clamp(1.25rem,5vw,3rem);
+}
+
+/* Osiot erotellaan hiusviivalla ja ilmalla — ei taustapalkeilla. Tämä yksin
+   poistaa tyypillisimmän geneerisen sivuston tunnusmerkin. */
+.section{
+  position:relative;
+  padding-block:var(--section-y);
+  border-top:1px solid var(--rule);
+}
+
+/* v3: sektionumerointi poistettu. Se oli puhdasta CSS-numerointia vasemmassa
+   kaistassa, mutta numero ei viitannut mihinkään mitä lukija voi käyttää:
+   sektioita lisättiin ja poistettiin, jolloin jokainen numero siirtyi eikä
+   yksikään niistä ollut pysyvä tunniste. Samalla poistui kaista (--rail),
+   joka oli olemassa vain numeroa varten — ilman numeroa se olisi jättänyt
+   sektiot sisennettyä headerista ja herosta ilman syytä.
+
+   Epäsymmetria ei ollut numeron varassa: se tulee 5/7- ja 7/5-jaoista,
+   kapeasta `.measure`-palstasta ja isosta oikeasta marginaalista. */
+
+/* Yksi tumma osio sivua kohti — koko sivuston ainoa sävytapahtuma. */
+.section--dark{
+  background:var(--charcoal);
+  color:var(--paper);
+  border-top-color:transparent;
+}
+.section--dark h1,.section--dark h2,.section--dark h3,.section--dark h4{color:var(--paper)}
+.section--dark .eyebrow,.section--dark .switch-label{color:var(--beige)}
+.section--dark .small,.section--dark p{color:var(--ink-on-dark)}
+.section--dark a{color:var(--beige)}
+.section--dark hr{border-top-color:rgba(250,248,243,.22)}
+
+/* Entiset taustapalkit neutralisoidaan tarkoituksella: merkkaus säilyy
+   sivuilla, mutta ne eivät enää maalaa palkkeja. */
+.section--beige{background:none}
+
+/* Ruudukot. Epäsymmetria on oletus. */
+.grid{display:grid;gap:var(--s-6)}
+
+@media (min-width:48rem){
+  .grid--2{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-7)}
+  .grid--3{grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-7)}
+}
+@media (min-width:64rem){
+  /* 5/7 — ei 50/50 */
+  .grid--split{grid-template-columns:5fr 7fr;gap:clamp(2rem,5vw,5rem);align-items:start}
+  /* 7/5 — sisältö painaa vasemmalle, kuvapaikka oikealle */
+  .grid--split-wide{grid-template-columns:7fr 5fr;gap:clamp(2rem,5vw,5rem);align-items:start}
+}
+
+/* Osion otsikkolohko istuu kapealla akselilla, ei koko leveydellä. */
+.section-head{
+  max-width:38rem;
+  margin-bottom:clamp(2rem,4vw,3.5rem);
+}
+.section-head p{color:var(--ink-soft)}
+.section-head h2{margin-bottom:var(--s-4)}
+
+/* == 05 Header ja navigaatio ============================================= */
+
+.skip{
+  position:absolute;
+  left:var(--s-4); top:var(--s-2);
+  z-index:100;
+  transform:translateY(-250%);
+  background:var(--olive);
+  color:#fff;
+  padding:var(--s-2) var(--s-4);
+  font-weight:700;
+  text-decoration:none;
+}
+.skip:focus{transform:translateY(0)}
+
+.site-header{
+  position:sticky; top:0; z-index:60;
+  background:color-mix(in srgb,var(--paper) 90%,transparent);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--rule);
+}
+
+.header-bar{
+  display:flex;
+  flex-wrap:nowrap;
+  align-items:center;
+  gap:var(--s-4);
+  min-height:60px;
+  padding-block:var(--s-3);
+}
+@media (min-width:75rem){ .header-bar{min-height:76px} }
+
+/* Logotyyppi. Oikea brändiaineisto: assets/logo-luotokoti.svg (oliivi,
+   vaaleille pinnoille) ja -vaalea.svg (beige, footerin tumma pohja).
+   Väri on kiinni tiedostossa, joten hover on läpinäkyvyys eikä värinvaihto.
+   Korkeus on annettu ja leveys tulee logon omasta kuvasuhteesta (7,44:1). */
+.wordmark{
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+  flex:none;
+}
+/* Kosketuskohde vain headerissa, jossa logo on linkki. Ladottu sanamerkki
+   oli 82 x 31 px (TARKASTUS D-3); logo on 17 px korkea, joten korkeus tulee
+   linkiltä eikä kuvalta. 44 px ei kasvata palkkia, koska valikkonappi on jo
+   sen korkuinen. Footerissa logo ei ole linkki, joten sääntö ei kuulu sinne. */
+.header-bar .wordmark{min-height:44px}
+.wordmark img{
+  display:block;
+  height:1.0625rem;
+  width:auto;
+  transition:opacity .25s var(--ease);
+}
+@media (min-width:48rem){ .wordmark img{height:1.1875rem} }
+.header-bar .wordmark:hover img{opacity:.72}
+
+.nav-toggle{
+  display:inline-flex; align-items:center; gap:var(--s-3);
+  margin-left:auto;
+  background:none;
+  border:1px solid var(--rule-strong);
+  border-radius:999px;
+  padding:var(--s-2) var(--s-4);
+  font:inherit; font-family:var(--ff-head);
+  font-size:var(--t-label); font-weight:600;
+  letter-spacing:.06em;
+  color:var(--ink); cursor:pointer;
+  transition:border-color .25s var(--ease);
+}
+.nav-toggle:hover{border-color:var(--olive)}
+.nav-toggle__bars{position:relative;width:14px;height:9px;flex:none}
+.nav-toggle__bars::before,
+.nav-toggle__bars::after,
+.nav-toggle__bars i{
+  content:""; position:absolute; left:0; right:0; height:1px;
+  background:var(--ink);
+  transition:transform .3s var(--ease-out),opacity .2s var(--ease);
+}
+.nav-toggle__bars::before{top:0}
+.nav-toggle__bars i{top:4px}
+.nav-toggle__bars::after{bottom:0}
+/* Hampurilainen muuttuu ristiksi */
+.nav-toggle[aria-expanded="true"] .nav-toggle__bars::before{transform:translateY(4px) rotate(45deg)}
+.nav-toggle[aria-expanded="true"] .nav-toggle__bars::after{transform:translateY(-4px) rotate(-45deg)}
+.nav-toggle[aria-expanded="true"] .nav-toggle__bars i{opacity:0}
+
+.site-nav{display:none}
+.site-nav ul{list-style:none;margin:0;padding:0;display:flex}
+.site-nav a{
+  display:block;
+  color:var(--ink);
+  text-decoration:none;
+  font-family:var(--ff-head);
+  font-weight:600;
+  transition:color .25s var(--ease);
+}
+.site-nav a:hover{color:var(--olive)}
+
+.header-tools{display:flex;align-items:center;gap:var(--s-4);flex:none}
+
+/* Kielenvaihtaja. Kaksi linkkiä, ks. osio 51. */
+.lang{display:flex;align-items:center;gap:var(--s-1)}
+.lang a{
+  font:inherit; font-family:var(--ff-head);
+  font-size:var(--t-label); font-weight:600;
+  letter-spacing:.06em;
+  padding:var(--s-1) var(--s-2);
+  border:0; background:none; cursor:pointer;
+  color:var(--ink-faint);
+  border-bottom:1px solid transparent;
+  text-decoration:none;
+}
+.lang [aria-current="true"]{color:var(--ink);border-bottom-color:var(--amber);cursor:default}
+.lang a:not([aria-current="true"]):hover{color:var(--olive)}
+
+.notes-toggle{
+  display:inline-flex; align-items:center; gap:var(--s-2);
+  border:1px solid var(--rule-strong);
+  background:none;
+  border-radius:999px;
+  padding:var(--s-2) var(--s-4);
+  font:inherit; font-family:var(--ff-head);
+  font-size:var(--t-label); font-weight:600;
+  letter-spacing:.06em;
+  color:var(--ink); cursor:pointer;
+  white-space:nowrap;
+  transition:background-color .25s var(--ease),border-color .25s var(--ease),color .25s var(--ease);
+}
+.notes-toggle::before{
+  content:"";
+  width:7px;height:7px;border-radius:50%;flex:none;
+  border:1px solid var(--olive);
+  transition:background-color .25s var(--ease);
+}
+.notes-toggle:hover{border-color:var(--olive)}
+.notes-toggle[aria-pressed="true"]{background:var(--olive);color:#fff;border-color:var(--olive)}
+.notes-toggle[aria-pressed="true"]::before{background:#fff;border-color:#fff}
+.notes-toggle__label{display:none}
+@media (min-width:34rem){ .notes-toggle__label{display:inline} }
+
+/* Mobiilivalikko: absoluuttinen pudotusvalikko, jotta headerpalkki ei voi
+   koskaan rivittyä. v2:ssa navissa on viisi kohtaa kahdeksan sijaan, joten
+   vaakanavi mahtuu jo 992 px:stä (v1:ssä raja oli 1200 px). Linkkien nimiä
+   ei lyhennetä eikä fonttia pienennetä: kohderyhmässä on
+   eläkeläispariskuntia. */
+@media (max-width:61.99rem){
+  .site-nav{
+    position:absolute;
+    top:100%; left:0; right:0;
+    background:var(--paper);
+    border-bottom:1px solid var(--rule);
+    max-height:calc(100vh - 60px);
+    overflow-y:auto;
+  }
+  .site-nav[data-open="true"]{
+    display:block;
+    padding:var(--s-3) clamp(1.25rem,5vw,3rem) var(--s-7);
+  }
+  .site-nav ul{flex-direction:column}
+  .site-nav li + li{border-top:1px solid var(--rule-soft)}
+  .site-nav a{padding:var(--s-4) 0;font-size:var(--t-lead);letter-spacing:-.01em}
+  .site-nav a[aria-current="page"]{color:var(--olive)}
+  .site-nav a[aria-current="page"]::before{content:"— ";color:var(--amber)}
+}
+
+@media (min-width:62rem){
+  .nav-toggle{display:none}
+  .site-nav{display:block;margin-left:auto}
+  .site-nav ul{align-items:center;gap:var(--s-1)}
+  .site-nav a{
+    padding:var(--s-2) var(--s-3);
+    font-size:var(--t-small);
+    letter-spacing:-.005em;
+    white-space:nowrap;          /* linkin teksti ei taitu kahdelle riville */
+    border-bottom:1px solid transparent;
+  }
+  .site-nav a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--amber)}
+  .site-header .wrap{max-width:84rem}
+}
+
+/* == 06 Painikkeet ======================================================= */
+
+.btn{
+  display:inline-flex; align-items:center; gap:var(--s-3);
+  font-family:var(--ff-head);
+  font-size:var(--t-small);
+  font-weight:700;
+  line-height:1.2;
+  text-decoration:none;
+  padding:var(--s-3) var(--s-6);
+  border:1px solid transparent;
+  border-radius:999px;
+  cursor:pointer;
+  transition:background-color .3s var(--ease),color .3s var(--ease),
+             border-color .3s var(--ease),transform .3s var(--ease);
+}
+.btn:active{transform:scale(.985)}
+
+/* Ensisijainen: oliivi + valkoinen = 6.5:1. Amber ei koskaan pienen tekstin
+   taustana — valkoinen amberilla jää 3.2:1 eikä läpäise AA:ta. */
+.btn--primary{background:var(--olive);color:#fff;border-color:var(--olive)}
+.btn--primary:hover{background:var(--charcoal);border-color:var(--charcoal)}
+
+.btn--ghost{background:transparent;color:var(--olive);border-color:var(--rule-strong)}
+.btn--ghost:hover{border-color:var(--olive);background:rgba(102,94,49,.06)}
+
+.section--dark .btn--primary{background:var(--beige);color:var(--ink);border-color:var(--beige)}
+.section--dark .btn--primary:hover{background:#fff;border-color:#fff}
+.section--dark .btn--ghost{color:var(--beige);border-color:rgba(250,248,243,.4)}
+.section--dark .btn--ghost:hover{background:rgba(250,248,243,.1);border-color:var(--beige)}
+
+.btn-row{display:flex;flex-wrap:wrap;gap:var(--s-4);align-items:center}
+
+/* Tekstilinkki nuolella. Nuoli liikkuu, viiva ei. */
+.link-arrow{
+  display:inline-flex; align-items:baseline; gap:var(--s-2);
+  font-family:var(--ff-head);
+  font-weight:700;
+  font-size:var(--t-small);
+  text-decoration:none;
+  color:var(--olive);
+  padding-bottom:var(--s-2);
+  border-bottom:1px solid var(--rule-strong);
+  transition:border-color .3s var(--ease);
+}
+.link-arrow:hover{border-bottom-color:var(--olive)}
+.link-arrow::after{content:"→";transition:transform .3s var(--ease-out)}
+.link-arrow:hover::after{transform:translateX(4px)}
+.section--dark .link-arrow{color:var(--beige);border-bottom-color:rgba(250,248,243,.35)}
+.section--dark .link-arrow:hover{border-bottom-color:var(--beige)}
+
+/* == 07 Hero ============================================================= */
+
+/* Hyväksymiskriteeri: molempien polkukorttien on mahduttava taitteen
+   yläpuolelle 375 px leveydellä. Siksi mobiilissa tiukat välit ja kuvapaikka
+   vasta korttien jälkeen. */
+.hero{
+  position:relative;
+  padding-block:clamp(2.5rem,6vw,6rem) clamp(3rem,7vw,7rem);
+  border-top:0;
+  overflow:hidden;
+}
+
+/* Luoto-motiivi. Brändikirjan mukaan logotyypin toinen O muistuttaa pientä
+   saarta merikartalla ja sahatun puun vuosirenkaita. Tästä on tehty sivuston
+   ainoa graafinen elementti: epäsäännölliset samankeskiset renkaat hyvin
+   vaaleina. Kerran sivua kohti, koskaan ei tekstin päällä.
+   20.8.2026: väite on nyt tarkistettavissa oikeasta logotiedostosta
+   (assets/logo-luotokoti.svg, viides polku). Sanan LUOTOKOTI toinen O on
+   ainoa kirjain jonka ulkoreuna ja sisäaukko ovat epäsäännöllisiä ja
+   eri suuntiin kiertyneitä — motiivi vastaa muotoa, renkaiden määrä ei
+   tule logosta vaan on valinta. */
+.hero::after{
+  content:"";
+  position:absolute;
+  right:-14vw; top:50%;
+  width:min(54rem,88vw);
+  aspect-ratio:1;
+  transform:translateY(-50%);
+  pointer-events:none;
+  opacity:.55;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600' fill='none' stroke='%23b9c1c0' stroke-width='1.1'%3E%3Cellipse cx='300' cy='300' rx='38' ry='31' transform='rotate(-14 300 300)'/%3E%3Cellipse cx='300' cy='300' rx='68' ry='57' transform='rotate(6 300 300)'/%3E%3Cellipse cx='300' cy='300' rx='104' ry='84' transform='rotate(-9 300 300)'/%3E%3Cellipse cx='300' cy='300' rx='145' ry='121' transform='rotate(4 300 300)'/%3E%3Cellipse cx='300' cy='300' rx='191' ry='157' transform='rotate(-11 300 300)'/%3E%3Cellipse cx='300' cy='300' rx='242' ry='199' transform='rotate(7 300 300)'/%3E%3Cellipse cx='300' cy='300' rx='287' ry='239' transform='rotate(-5 300 300)'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+@media (max-width:63.99rem){
+  .hero::after{right:-40vw;top:9rem;transform:none;opacity:.32}
+}
+
+.hero h1{max-width:20em}
+.hero__sub{
+  font-size:var(--t-lead);
+  line-height:1.45;
+  letter-spacing:-.01em;
+  color:var(--ink-soft);
+  max-width:28em;
+  margin:0 0 clamp(2rem,4vw,3rem);
+}
+
+.hero__inner{position:relative;z-index:1}
+@media (min-width:64rem){
+  .hero__inner{
+    display:grid;
+    grid-template-columns:7fr 5fr;
+    gap:clamp(2rem,5vw,5rem);
+    align-items:center;
+  }
+}
+
+/* Kapea puhelin: hero kiristetään niin että molemmat polkukortit mahtuvat
+   taitteen yläpuolelle myös silloin kun selaimen palkit vievät tilaa
+   (~560 px käytettävissä 667 px:n laitteella). Iso otsikko on ilmeen ydin,
+   joten se pienenee vain sen verran kuin on pakko — muu tila otetaan
+   väleistä, ei typografiasta. */
+@media (max-width:36rem){
+  .hero{padding-block:var(--s-5) var(--s-7)}
+  .hero h1{font-size:2.375rem;margin-bottom:var(--s-4)}
+  .hero__sub{margin-bottom:var(--s-5)}
+  .path-card{padding:var(--s-4) 0}
+}
+
+.hero__paths{display:grid;gap:0;border-top:1px solid var(--rule)}
+.hero__visual{margin-top:clamp(2.5rem,5vw,3rem)}
+@media (min-width:64rem){ .hero__visual{margin-top:0} }
+
+/* Polkukortti ei ole kortti vaan viivoin eroteltu rivi. Iso kosketusalue,
+   ei reunuksia, ei varjoja, ei pyöristystä. */
+.path-card{
+  display:grid;
+  grid-template-columns:2.25rem 1fr auto;
+  align-items:baseline;
+  gap:var(--s-2) var(--s-4);
+  padding:var(--s-5) 0;
+  border-bottom:1px solid var(--rule);
+  text-decoration:none;
+  color:var(--ink);
+  transition:padding-left .35s var(--ease-out),border-color .3s var(--ease);
+}
+.path-card:hover{padding-left:var(--s-3);border-bottom-color:var(--rule-strong)}
+.path-card__n{
+  font-family:var(--ff-head);
+  font-size:var(--t-label);
+  font-weight:600;
+  letter-spacing:.1em;
+  color:var(--ink-faint);
+}
+.path-card__t{
+  font-family:var(--ff-head);
+  font-weight:600;
+  font-size:clamp(1.1875rem,1.1rem + .5vw,1.5rem);
+  line-height:1.2;
+  letter-spacing:-.02em;
+  margin:0;
+}
+.path-card__d{
+  grid-column:2/-1;
+  font-size:var(--t-small);
+  color:var(--ink-soft);
+  margin:0;
+  max-width:34em;
+}
+.path-card__go{
+  color:var(--olive);
+  font-size:var(--t-lead);
+  line-height:1;
+  transition:transform .35s var(--ease-out);
+}
+.path-card:hover .path-card__go{transform:translateX(5px)}
+
+/* == 08 Lohkot (ent. kortit) ============================================= */
+
+/* Kortit korvattu viivoin erotelluilla lohkoilla: ei reunusta, ei varjoa,
+   ei pyöristystä, ei täyttöä — pelkkä yläviiva ja ilmaa. Tämä poistaa
+   korttisopan joka teki layoutista geneerisen. */
+.card{
+  display:flex;
+  flex-direction:column;
+  gap:var(--s-3);
+  padding:var(--s-5) 0 0;
+  border-top:1px solid var(--rule);
+  background:none;
+}
+.card h3{margin:0}
+.card p{margin:0}
+
+/* Lämmin paneeli. Ainoa täytetty pinta — käytössä siellä missä sisältö
+   ansaitsee painoa (hinta, loppu-CTA). Lohko, ei taustapalkki. */
+.card--beige{
+  background:var(--beige-panel);
+  border-top:1px solid var(--rule);
+  border-bottom:1px solid var(--rule);
+  padding:clamp(1.5rem,3vw,2.5rem);
+  gap:var(--s-4);
+}
+.section--dark .card,
+.section--dark .card--beige{border-color:rgba(250,248,243,.22);background:none}
+
+/* == 09 Kuvapaikat ======================================================= */
+
+/* Tarkoituksella tyhjä ja tekninen: mitoitettu kehys, ei harmaa laatikko.
+   Ei stock-kuvia — muuten asiakas reagoi kuviin eikä rakenteeseen.
+   Kulmamerkit tekevät tyhjyydestä piirustuksen eivätkä rikkinäisen kuvan. */
+.ph{
+  position:relative;
+  margin:0;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:flex-end;
+  gap:var(--s-2);
+  padding:var(--s-5);
+  aspect-ratio:4/3;
+  color:var(--ph-ink);
+  background:var(--ph-fill);
+  border:1px solid var(--ph-rule);
+}
+.ph::before,.ph::after{
+  content:"";
+  position:absolute;
+  width:12px;height:12px;
+  pointer-events:none;
+}
+.ph::before{top:7px;left:7px;border-top:1px solid var(--ph-rule);border-left:1px solid var(--ph-rule)}
+.ph::after{bottom:7px;right:7px;border-bottom:1px solid var(--ph-rule);border-right:1px solid var(--ph-rule)}
+
+.ph--wide,.ph--photo{aspect-ratio:16/9}
+.ph--square{aspect-ratio:1/1}
+.ph--portrait{aspect-ratio:3/4}
+.ph--floorplan{aspect-ratio:4/3}
+@media (min-width:48rem){ .ph--floorplan{min-height:26rem} }
+
+/* Sivun tärkein puuttuva sisältö. Näiden pitää tuntua epämukavalta. */
+.ph--critical{
+  border-color:var(--ph-ink);
+  background:repeating-linear-gradient(-45deg,transparent 0 11px,rgba(74,74,68,.05) 11px 22px);
+  min-height:15rem;
+}
+.ph--critical .ph__tag{color:var(--ph-ink);border-color:var(--ph-ink)}
+
+.ph__tag{
+  font-family:var(--ff-head);
+  font-size:var(--t-label);
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ph-ink);
+  border:1px solid var(--ph-rule);
+  padding:var(--s-1) var(--s-3);
+  border-radius:999px;
+}
+.ph__what{
+  font-family:var(--ff-head);
+  font-weight:600;
+  font-size:var(--t-body);
+  line-height:1.3;
+  letter-spacing:-.01em;
+  max-width:28em;
+}
+.ph__meta{font-size:var(--t-small);line-height:1.5;max-width:34em;opacity:.85}
+
+/* Kuvapaikka tummassa osiossa. Perii muuten tumman harmaan tekstin tummalle
+   pohjalle (1.04:1, käytännössä lukukelvoton) — käännetään vaaleaksi. */
+.section--dark .ph{
+  color:var(--ink-on-dark-soft);
+  border-color:rgba(250,248,243,.3);
+  background:rgba(250,248,243,.05);
+}
+.section--dark .ph::before,
+.section--dark .ph::after{border-color:rgba(250,248,243,.3)}
+.section--dark .ph__tag{color:var(--ink-on-dark-soft);border-color:rgba(250,248,243,.38)}
+.section--dark .ph--critical{
+  border-color:var(--ink-on-dark-soft);
+  background:repeating-linear-gradient(-45deg,transparent 0 11px,rgba(250,248,243,.07) 11px 22px);
+}
+.section--dark .ph--critical .ph__tag{color:var(--ink-on-dark-soft);border-color:var(--ink-on-dark-soft)}
+
+/* == 10 Listat, taulukot, prosessit ====================================== */
+
+.ticks{list-style:none;padding:0;margin:0;display:grid}
+.ticks li{
+  display:grid;
+  grid-template-columns:1.5rem 1fr;
+  gap:var(--s-4);
+  align-items:baseline;
+  padding:var(--s-3) 0;
+  border-bottom:1px solid var(--rule-soft);
+}
+.ticks li::before{
+  content:"";
+  width:9px;height:9px;
+  border:1px solid var(--olive);
+  border-radius:50%;
+  transform:translateY(-.1em);
+}
+.section--dark .ticks li{border-bottom-color:rgba(250,248,243,.16)}
+.section--dark .ticks li::before{border-color:var(--beige)}
+
+/* Prosessiaskelmat. Numero on pieni ja hiljainen, ei iso pallo. */
+.steps{list-style:none;padding:0;margin:0;counter-reset:step;display:grid}
+.steps > li{
+  counter-increment:step;
+  display:grid;
+  grid-template-columns:2.75rem 1fr;
+  gap:var(--s-4);
+  align-items:start;
+  padding:var(--s-5) 0;
+  border-top:1px solid var(--rule);
+}
+.steps > li::before{
+  content:counter(step,decimal-leading-zero);
+  font-family:var(--ff-head);
+  font-size:var(--t-label);
+  font-weight:600;
+  letter-spacing:.1em;
+  color:var(--ink-faint);
+  padding-top:.25em;
+}
+.steps h3,.steps h4{margin:0 0 var(--s-2)}
+.steps p{margin:0}
+@media (min-width:64rem){
+  .steps--row{grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s-7)}
+  .steps--row > li{grid-template-columns:1fr;gap:var(--s-3)}
+}
+
+/* Taulukot: tietolehti, ei kortti. */
+table{width:100%;border-collapse:collapse;font-size:var(--t-body);margin:0}
+caption{
+  caption-side:top;
+  text-align:left;
+  font-size:var(--t-small);
+  color:var(--ink-soft);
+  padding-bottom:var(--s-4);
+}
+th,td{text-align:left;padding:var(--s-4) var(--s-4) var(--s-4) 0;vertical-align:top}
+thead th{
+  font-family:var(--ff-head);
+  font-size:var(--t-label);
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-faint);
+  border-bottom:1px solid var(--rule-strong);
+  padding-bottom:var(--s-3);
+}
+tbody th,tbody td{border-bottom:1px solid var(--rule-soft)}
+tbody tr:last-child th,tbody tr:last-child td{border-bottom:1px solid var(--rule)}
+/* .col-empty POISTETTU 23.9.2026 (D-24): tyhjän taulukkosarakkeen merkintä,
+   käytössä vain puretussa sisältyy/ei sisälly -taulukossa. */
+
+/* Vertailublokki: 9 vaihetta vs. 2 vaihetta */
+.compare{display:grid;gap:clamp(2rem,4vw,3.5rem)}
+@media (min-width:56.25rem){ .compare{grid-template-columns:1fr 1fr;gap:clamp(2rem,5vw,4.5rem)} }
+.compare__col{border-top:1px solid var(--rule);padding-top:var(--s-5)}
+.compare__col--ours{border-top:1px solid var(--olive)}
+.compare__col h3{margin:0 0 var(--s-2)}
+.compare__col > .small{margin:0 0 var(--s-5)}
+.compare ol{list-style:none;counter-reset:c;padding:0;margin:0;display:grid}
+.compare li{
+  counter-increment:c;
+  display:grid;grid-template-columns:2rem 1fr;gap:var(--s-3);
+  font-size:var(--t-small);
+  padding:var(--s-3) 0;
+  border-bottom:1px solid var(--rule-soft);
+}
+.compare li::before{
+  content:counter(c,decimal-leading-zero);
+  font-family:var(--ff-head);font-weight:600;
+  font-size:var(--t-label);letter-spacing:.08em;
+  color:var(--ink-faint);
+}
+.compare--gone li{color:var(--ink-faint)}
+.compare--gone s{text-decoration-color:var(--amber);text-decoration-thickness:1px}
+.compare--gone li strong{color:var(--ink)}
+.compare__result{
+  margin-top:var(--s-5);
+  padding-top:var(--s-4);
+  border-top:1px solid var(--rule-strong);
+  font-family:var(--ff-head);
+  font-weight:700;
+  font-size:var(--t-small);
+}
+
+/* FAQ: viivoin eroteltu, ei laatikoita */
+.faq{display:grid}
+.faq details{border-top:1px solid var(--rule)}
+.faq details:last-child{border-bottom:1px solid var(--rule)}
+.faq summary{
+  cursor:pointer;
+  padding:var(--s-5) 0;
+  font-family:var(--ff-head);
+  font-weight:600;
+  font-size:var(--t-body);
+  letter-spacing:-.01em;
+  list-style:none;
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:var(--s-5);
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{
+  content:"+";
+  flex:none;
+  font-family:var(--ff-head);
+  font-size:var(--t-lead);
+  line-height:1;
+  color:var(--olive);
+  transition:transform .3s var(--ease-out);
+}
+.faq details[open] summary::after{content:"−";transform:rotate(180deg)}
+.faq__body{padding:0 0 var(--s-6);max-width:var(--measure)}
+.faq__body > :last-child{margin-bottom:0}
+
+/* Avainluvut: tietolehden rivit */
+.facts{list-style:none;padding:0;margin:0;display:grid}
+@media (min-width:34rem){ .facts{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--s-7)} }
+@media (min-width:64rem){ .facts{grid-template-columns:repeat(4,minmax(0,1fr))} }
+.facts li,.facts > div{border-top:1px solid var(--rule);padding:var(--s-4) 0}
+.facts dt,.facts .facts__k{
+  display:block;
+  font-size:var(--t-label);
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  font-weight:600;
+  color:var(--ink-faint);
+  margin-bottom:var(--s-2);
+}
+.facts dd,.facts .facts__v{
+  display:block;
+  margin:0;
+  font-family:var(--ff-head);
+  font-size:var(--t-figure);
+  font-weight:600;
+  line-height:1.05;
+  letter-spacing:-.03em;
+}
+.section--dark .facts li,.section--dark .facts > div{border-top-color:rgba(250,248,243,.22)}
+
+/* == 11 Vaihtimet ======================================================== */
+
+/* .switch POISTETTU 23.9.2026 (TARKASTUS.md D-24). Segmentoitu valitsin oli
+   kokovalitsimen edeltäjä, eikä yksikään sivu käyttänyt sitä enää. Luokka
+   .switch-label elää yhä (oma-tontti.html), koska se saa tyylinsä osion 03
+   säännöstä `.eyebrow,.switch-label` — säiliön poisto ei siis koske sitä. */
+
+[data-variant]:not([data-variant-active="true"]){display:none}
+
+/* == 12 Tonttitarkistuslista ============================================= */
+
+.checklist{list-style:none;padding:0;margin:0 0 var(--s-6);display:grid}
+.checklist li{margin:0;border-top:1px solid var(--rule)}
+.checklist li:last-child{border-bottom:1px solid var(--rule)}
+.checklist label{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:var(--s-4);
+  align-items:start;
+  padding:var(--s-4) 0;
+  cursor:pointer;
+}
+.checklist input{
+  width:1.25rem;height:1.25rem;
+  margin:.15em 0 0;
+  accent-color:var(--olive);
+  flex:none;cursor:pointer;
+}
+.checklist__t{
+  display:block;
+  font-family:var(--ff-head);
+  font-weight:600;
+  letter-spacing:-.01em;
+  transition:color .25s var(--ease);
+}
+.checklist input:checked ~ .checklist__text .checklist__t{color:var(--olive)}
+.checklist__h{display:block;font-size:var(--t-small);color:var(--ink-soft);margin-top:var(--s-1)}
+
+.result{border-top:2px solid var(--olive);padding-top:var(--s-5)}
+.result[data-level="low"]{border-top-color:var(--ph-rule)}
+.result[data-level="mid"]{border-top-color:var(--amber)}
+.result[data-level="high"]{border-top-color:var(--olive)}
+.result__score{
+  font-family:var(--ff-head);
+  font-size:var(--t-label);
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  color:var(--ink-faint);
+  margin:0 0 var(--s-3);
+}
+.result h3{margin:0 0 var(--s-3);font-size:var(--t-lead);letter-spacing:-.015em}
+
+/* Varoitus: kriteerit ovat ehdotuksia, eivät vahvistettuja */
+.caveat{
+  border-left:2px solid var(--amber);
+  padding:var(--s-2) 0 var(--s-2) var(--s-5);
+  font-size:var(--t-small);
+  color:var(--ink);
+  margin:0 0 clamp(2rem,4vw,3rem);
+  max-width:44rem;
+}
+.caveat strong{font-family:var(--ff-head)}
+.caveat p{max-width:none;margin:0}
+
+/* == 13 Merkityt aukot =================================================== */
+
+/* Hakasulkeinen aukko. Ei saa koskaan näyttää oikealta sisällöltä. */
+.gap{
+  font-family:var(--ff-body);
+  font-size:.94em;
+  font-weight:600;
+  font-variant-numeric:normal;
+  color:var(--ink-soft);
+  background:rgba(191,130,84,.11);
+  box-shadow:0 -1px 0 rgba(191,130,84,.55) inset,0 -1px 0 rgba(191,130,84,.55);
+  padding:.06em .3em;
+  white-space:nowrap;
+}
+/* Aukko avainluku- tai hintapaikassa. Sitä ei ladota lukukoossa: puuttuva
+   tieto ei saa huutaa 44 pikselin kokoisena, eikä nowrap mahdu kapeaan
+   sarakkeeseen (aiheutti vaakavierityksen 1280 px:llä). */
+/* Vain oikea aukko kutistetaan. Placeholder-arvo (.gap--demo) on varsinainen
+   luku, ja sen pitää näkyä lukukoossa — muuten sivun tärkein numero
+   renderöityy leipätekstin kokoisena. Löytyi placeholder-kierroksella. */
+.facts__v .gap:not(.gap--demo),
+.facts dd .gap:not(.gap--demo){
+  font-size:var(--t-body);
+  letter-spacing:0;
+  white-space:normal;
+}
+
+.gap--block{
+  display:block;
+  white-space:normal;
+  box-shadow:none;
+  background:none;
+  border-left:2px solid var(--amber);
+  padding:var(--s-2) 0 var(--s-2) var(--s-5);
+  margin-block:var(--s-5);
+  max-width:44rem;
+}
+.section--dark .gap{
+  color:var(--paper);
+  background:rgba(191,130,84,.28);
+  box-shadow:0 -1px 0 var(--amber-light) inset,0 -1px 0 var(--amber-light);
+}
+
+/* == 14 Muistiinpanotila ================================================= */
+
+/* Oletuksena pois. Pois päältä sivusto näyttää tavalliselta sivustolta. */
+.note{display:none}
+
+body.notes .note{
+  display:block;
+  margin-top:var(--s-6);
+  border-top:1px solid var(--charcoal);
+  border-left:2px solid var(--olive);
+  padding:var(--s-4) 0 var(--s-4) var(--s-5);
+  font-size:var(--t-small);
+  line-height:1.55;
+  color:var(--ink);
+  background:rgba(76,71,53,.035);
+  max-width:52rem;
+}
+body.notes .note > * + *{margin-top:var(--s-3)}
+body.notes .note p{max-width:none;margin:0}
+body.notes .note dl{margin:0;display:grid;gap:var(--s-2)}
+body.notes .note dt{
+  font-family:var(--ff-head);
+  font-weight:700;text-transform:uppercase;letter-spacing:.11em;
+  font-size:.8em;color:var(--ink-faint);
+}
+body.notes .note dd{margin:0}
+body.notes .note__q{border-top:1px solid var(--rule);padding-top:var(--s-3)}
+body.notes .note__q dt{color:var(--olive)}
+body.notes .section--dark .note{
+  background:rgba(250,248,243,.07);
+  border-top-color:var(--beige);
+  border-left-color:var(--beige);
+  color:var(--paper);
+}
+body.notes .section--dark .note dt{color:var(--beige)}
+body.notes .section--dark .note__q{border-top-color:rgba(250,248,243,.25)}
+body.notes .section--dark .note__q dt{color:var(--beige)}
+
+/* Statuslipuke. Samat värit kuin rautalangoissa:
+   VALMIS = oliivi, PÄÄTÖS = amber, UUSI = katkoviivareunus. */
+.note__status{
+  display:inline-block;
+  font-family:var(--ff-head);
+  font-weight:700;
+  font-size:.8em;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  padding:var(--s-1) var(--s-3);
+  border:1px solid transparent;
+}
+[data-status="valmis"] .note__status{background:var(--olive);color:#fff}
+[data-status="paatos"] .note__status{background:var(--amber);color:var(--ink)}  /* 4.6:1 */
+[data-status="uusi"]   .note__status{background:none;color:var(--ink);border:1px dashed var(--charcoal)}
+.section--dark[data-status="uusi"] .note__status{color:var(--paper);border-color:var(--beige)}
+
+/* Sektion reunamerkintä muistiinpanotilassa */
+body.notes [data-status]{position:relative}
+body.notes [data-status="valmis"]{box-shadow:inset 3px 0 0 var(--olive)}
+body.notes [data-status="paatos"]{box-shadow:inset 3px 0 0 var(--amber)}
+body.notes [data-status="uusi"]{box-shadow:inset 3px 0 0 var(--charcoal)}
+
+/* == 15 Footer =========================================================== */
+
+.site-footer{
+  background:var(--charcoal);
+  color:var(--paper);
+  padding-block:clamp(3rem,6vw,6rem) var(--s-6);
+}
+.site-footer a{color:var(--beige);text-decoration-color:rgba(250,248,243,.35)}
+.site-footer a:hover{text-decoration-color:var(--beige)}
+.site-footer h2{
+  color:var(--beige);
+  font-size:var(--t-label);
+  font-weight:600;
+  letter-spacing:.17em;
+  text-transform:uppercase;
+  margin-bottom:var(--s-4);
+  max-width:none;
+}
+/* Footerin logo on beige-versio ja hieman isompi: ympärillä on tilaa. */
+.site-footer .wordmark img{height:1.375rem}
+
+.footer-grid{display:grid;gap:clamp(2.5rem,5vw,4rem)}
+@media (min-width:48rem){ .footer-grid{grid-template-columns:6fr 3fr 3fr} }
+.footer-grid ul{list-style:none;padding:0;margin:0;display:grid}
+.footer-grid ul li + li{border-top:1px solid rgba(250,248,243,.14)}
+.footer-grid ul a{text-decoration:none;display:block;padding:var(--s-2) 0;font-size:var(--t-small)}
+
+.footer-note{
+  margin-top:clamp(2.5rem,5vw,4rem);
+  padding-top:var(--s-5);
+  border-top:1px solid rgba(250,248,243,.2);
+  font-size:var(--t-small);
+  line-height:1.55;
+  color:var(--ink-on-dark-soft);
+  display:grid;
+  gap:var(--s-3);
+  max-width:58rem;
+}
+.footer-note p{max-width:none;margin:0}
+.footer-note strong{color:var(--paper)}
+.footer-note code{font-size:.92em;background:rgba(250,248,243,.1);padding:.05em .35em}
+
+/* == 16 Talosivu (talo.html) ============================================= */
+
+/* Sivuston ainoa tuotesivu. Useimmat tämän osion tyylit korostavat puuttuvaa
+   sisältöä sen sijaan että täyttäisivät tilan. */
+
+.page-talo main{padding-bottom:calc(60px + var(--s-5))}
+@media (min-width:75rem){ .page-talo main{padding-bottom:0} }
+
+/* Aineistolistat SIIRRETTY 23.9.2026 (TARKASTUS.md D-20 ja D-24).
+
+   .item-list / .item-list--tick / .item__* piirsivät täsmälleen saman
+   merkin kuin .ticks (9 × 9 px oliivipallura, left:0, sisennys 1,75 rem) —
+   mitattuna samat pikselit. Ero oli vain pystytäyte ja se kummalla puolella
+   erotinviiva on. Osio 30 huomasi päällekkäisyyden jo v4:ssä
+   ("sama kuvio kuin .item-list--tick -komponentissa, joka oli jo oikein")
+   mutta ei yhdistänyt komponentteja. Nyt lista on yksi komponentti kahdella
+   rytmillä: .ticks (yksirivinen) ja .ticks--kuvaus (otsikko + selite).
+   Ks. osio 58.
+
+   .item-list--empty poistettu samalla: sitä ei käyttänyt yksikään sivu.
+
+   .incl / .col-empty poistettu: kaksisarakkeinen sisältyy/ei sisälly
+   -taulukko purettiin 20.8.2026 (osio 45), eikä luokkia luotu enää
+   missään. */
+
+/* Valintalohkot */
+.opts{list-style:none;margin:0;padding:0;display:grid;gap:var(--s-6)}
+@media (min-width:48rem){ .opts{grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-7)} }
+.opt{
+  display:flex;flex-direction:column;gap:var(--s-3);
+  margin:0;padding:var(--s-5) 0 0;
+  border-top:1px solid var(--rule);
+  background:none;
+}
+.opt h3{margin:0}
+.opt p{margin:0}
+/* Kun valintoja ei ole tiedossa, yläviiva on katkoviivainen amber — se ei saa
+   näyttää valmiilta sisällöltä. */
+.opts[data-tyhja="true"] .opt{border-top:1px dashed var(--amber)}
+
+/* Hinta valinnan vieressä. Rakenteessa alusta asti, ei jälkikäteen. */
+.opt__hinta{
+  margin-top:auto;
+  padding-top:var(--s-4);
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--s-2);
+  font-size:var(--t-small);
+}
+.opt__k{
+  font-family:var(--ff-head);
+  font-weight:600;text-transform:uppercase;letter-spacing:.14em;
+  font-size:var(--t-label);
+  color:var(--ink-faint);
+}
+
+/* Tekniset tiedot */
+.specs{margin:0;display:grid}
+.specs dt{
+  font-family:var(--ff-head);
+  font-weight:600;
+  letter-spacing:-.005em;
+  padding-top:var(--s-4);
+}
+.specs dd{margin:0;padding-bottom:var(--s-4);border-bottom:1px solid var(--rule-soft)}
+@media (min-width:34rem){
+  .specs{grid-template-columns:minmax(10rem,16rem) 1fr;column-gap:var(--s-6)}
+  .specs dt{padding:var(--s-4) 0;border-bottom:1px solid var(--rule-soft)}
+  .specs dd{padding:var(--s-4) 0}
+}
+
+/* == 17 Liike ============================================================ */
+
+/* Sisääntulo: hidas, painava, hillitty. Vain transform ja opacity, joten
+   selain ei laske layoutia uudelleen. IntersectionObserver proto.js:ssä —
+   ei scroll-kuuntelijaa. */
+/* TÄRKEÄ: piilotus on kytketty html.js-reveal -luokkaan, jonka proto.js
+   lisää vasta kun se on varmistanut että IntersectionObserver toimii.
+   Ilman tätä koko sivusto olisi näkymätön aina kun JS ei aja animaatiota —
+   ja niin kävikin kehityksen aikana. Sisältöä ei koskaan piiloteta
+   oletuksena. proto.js:ssä on lisäksi varmistusajastin. */
+.js-reveal [data-reveal]{
+  opacity:0;
+  transform:translateY(14px);
+  transition:opacity .7s var(--ease-out),transform .7s var(--ease-out);
+  transition-delay:var(--reveal-delay,0ms);
+}
+.js-reveal [data-reveal="in"]{opacity:1;transform:none}
+
+/* == 18 Saavutettavuus =================================================== */
+
+.visually-hidden{
+  position:absolute!important;
+  width:1px;height:1px;
+  margin:-1px;padding:0;overflow:hidden;
+  clip-path:inset(50%);
+  white-space:nowrap;border:0;
+}
+
+:focus-visible{outline:2px solid var(--olive);outline-offset:3px}
+.section--dark :focus-visible,
+.site-footer :focus-visible{outline-color:var(--beige)}
+
+@supports not selector(:focus-visible){
+  a:focus,button:focus,input:focus,summary:focus{outline:2px solid var(--olive);outline-offset:3px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+  }
+  [data-reveal]{opacity:1;transform:none;transition:none}
+  .path-card:hover{padding-left:0}
+  .link-arrow:hover::after,.path-card:hover .path-card__go{transform:none}
+  .btn:active{transform:none}
+}
+
+/* == 19 Globaalit vaihtimet (v2) ========================================== */
+
+/* Näkyvyys hoidetaan pelkällä CSS:llä. Markupia ei kahdenneta
+   sivuversioiksi: jokainen variantti on sivulla kerran, ja
+   body[data-omistusmalli] valitsee näytettävän.
+
+   v4: hintamalli-vaihdin ja variantit b/c on poistettu. D2 ratkesi
+   workshopissa 18.8.2026 malliin A, ja suljettu päätös ohjauspalkissa
+   antaisi ymmärtää että asia on yhä auki.
+   Näin sama hintablokki toimii kolmella sivulla ilman JS-renderöintiä, ja
+   piilotettu variantti on poissa myös ruudunlukijalta. */
+
+.v-omistus{display:none}
+body[data-omistusmalli="a"] .v-omistus[data-malli="a"],
+body[data-omistusmalli="b"] .v-omistus[data-malli="b"]{display:block}
+
+/* Kun variantti on itse sektio, se käyttäytyy sektiona eikä lohkona. */
+section.v-omistus{display:none}
+body[data-omistusmalli="a"] section.v-omistus[data-malli="a"],
+body[data-omistusmalli="b"] section.v-omistus[data-malli="b"]{display:block}
+
+/* -- Prototyypin ohjauspalkki --------------------------------------------
+   Tarkoituksella eri näköinen kuin sivusto: tämä on työkalu prototyypin
+   ympärillä, ei osa suunnitelmaa. Ei sticky, jottei syö taitetta eikä
+   kilpaile sivuston oman headerin kanssa.
+
+   Korkeus on kriittinen: etusivun molempien polkukorttien on mahduttava
+   taitteen yläpuolelle 375 px leveydellä, joten palkki on yksirivinen ja
+   mahdollisimman matala myös puhelimessa. */
+.proto-bar{
+  background:var(--charcoal);
+  color:var(--paper);
+  font-family:var(--ff-head);
+  font-size:.75rem;
+  line-height:1;
+}
+.proto-bar__inner{
+  display:flex;
+  align-items:center;
+  gap:var(--s-4);
+  flex-wrap:nowrap;
+  overflow-x:auto;
+  scrollbar-width:none;
+  padding:var(--s-2) clamp(1.25rem,5vw,3rem);
+  min-height:34px;
+}
+.proto-bar__inner::-webkit-scrollbar{display:none}
+
+.proto-bar__tag{
+  font-weight:700;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--amber-light);
+  flex:none;
+}
+@media (max-width:34rem){ .proto-bar__tag{display:none} }
+
+.proto-group{display:flex;align-items:center;gap:var(--s-2);flex:none}
+.proto-group__label{
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--ink-on-dark-faint);
+  white-space:nowrap;
+}
+.proto-group__btns{display:flex;gap:2px}
+.proto-btn{
+  font:inherit;
+  font-weight:700;
+  min-width:24px;
+  padding:4px 7px;
+  border:1px solid rgba(250,248,243,.28);
+  background:none;
+  color:var(--paper);
+  cursor:pointer;
+  transition:background-color .2s var(--ease),border-color .2s var(--ease);
+}
+.proto-btn:hover{background:rgba(250,248,243,.14)}
+.proto-btn[aria-pressed="true"]{
+  background:var(--beige);
+  border-color:var(--beige);
+  color:var(--ink);
+}
+.proto-bar .notes-toggle{
+  margin-left:auto;
+  flex:none;
+  font-size:.75rem;
+  padding:4px var(--s-3);
+  color:var(--paper);
+  border-color:rgba(250,248,243,.28);
+}
+.proto-bar .notes-toggle::before{border-color:var(--beige)}
+.proto-bar .notes-toggle:hover{background:rgba(250,248,243,.14);border-color:rgba(250,248,243,.5)}
+.proto-bar .notes-toggle[aria-pressed="true"]{
+  background:var(--beige);color:var(--ink);border-color:var(--beige);
+}
+.proto-bar .notes-toggle[aria-pressed="true"]::before{background:var(--ink);border-color:var(--ink)}
+.proto-bar .notes-toggle__label{display:none}
+@media (min-width:48rem){ .proto-bar .notes-toggle__label{display:inline} }
+
+/* Sticky header alkaa ohjauspalkin alta, ei sen päältä. */
+.site-header{top:0}
+
+/* -- Alueet ja tonttilistaus --------------------------------------------- */
+
+.alueet{list-style:none;margin:0;padding:0;display:grid}
+.alue{
+  display:grid;
+  gap:var(--s-2) var(--s-5);
+  grid-template-columns:1fr auto;
+  align-items:baseline;
+  padding:var(--s-5) 0;
+  border-top:1px solid var(--rule);
+  text-decoration:none;
+  color:var(--ink);
+  transition:padding-left .35s var(--ease-out),border-color .3s var(--ease);
+}
+.alueet li:last-child .alue{border-bottom:1px solid var(--rule)}
+.alue:hover{padding-left:var(--s-3);border-top-color:var(--rule-strong)}
+.alue__nimi{
+  font-family:var(--ff-head);
+  font-weight:600;
+  font-size:var(--t-lead);
+  letter-spacing:-.015em;
+  margin:0;
+}
+.alue__meta{
+  grid-column:1/2;
+  display:flex;flex-wrap:wrap;gap:var(--s-2) var(--s-5);
+  font-size:var(--t-small);
+  color:var(--ink-soft);
+  margin:0;
+}
+.alue__meta span{white-space:nowrap}
+.alue__go{color:var(--olive);font-size:var(--t-lead);line-height:1;transition:transform .35s var(--ease-out)}
+.alue:hover .alue__go{transform:translateX(5px)}
+/* .alue__tila POISTETTU 23.9.2026 (TARKASTUS.md D-24). Kohteen tilamerkintä
+   oli oma elementtinsä listarivillä; osio 43 (v5c) korvasi sen jaetulla
+   .kohde-merkinta-komponentilla, jonka proto.js renderöi. Luokkaa ei luotu
+   enää missään. data-tila jää: se on yhä rivin oma tila-attribuutti. */
+.alue[data-tila="varattu"]{color:var(--ink-faint)}
+
+/* Tyhjä tila. Renderöityy automaattisesti kun KOHTEET on tyhjä (v4). */
+.tyhja-tila{
+  border-top:1px solid var(--olive);
+  padding-top:var(--s-5);
+}
+
+/* -- Kiitos-tila (yhteystiedot.html) ------------------------------------- */
+
+/* Lomaketta ei lähetetä mihinkään. Kiitos-tila on olemassa siksi, että
+   konversion loppu on nähtävissä workshopissa ja mittarointi voidaan
+   todentaa. Vaihto tapahtuu ilman sivulatausta. */
+.kiitos{display:none}
+body[data-lomake="lahetetty"] .kiitos{display:block}
+body[data-lomake="lahetetty"] .lomake-tila{display:none}
+
+.kiitos__merkki{
+  width:2.5rem;height:2.5rem;
+  border:1px solid var(--olive);
+  border-radius:50%;
+  display:grid;place-items:center;
+  color:var(--olive);
+  font-size:var(--t-lead);
+  margin-bottom:var(--s-5);
+}
+
+/* -- Lomake (ei lähetystä) ----------------------------------------------- */
+
+.kentat{display:grid;gap:var(--s-5);max-width:34rem;margin:0 0 var(--s-6)}
+.kentta{display:grid;gap:var(--s-2)}
+.kentta > span:first-child,.kentta > label{
+  font-family:var(--ff-head);
+  font-size:var(--t-small);
+  font-weight:700;
+}
+.kentta input,.kentta textarea,.kentta select{
+  font:inherit;
+  font-size:var(--t-body);
+  font-family:var(--ff-body);
+  color:var(--ink);
+  background:var(--paper);
+  border:0;
+  border-bottom:1px solid var(--rule-strong);
+  padding:var(--s-3) 0;
+  width:100%;
+}
+.kentta textarea{border:1px solid var(--rule-strong);padding:var(--s-3);min-height:7rem;resize:vertical}
+.kentta input:hover,.kentta textarea:hover{border-color:var(--olive)}
+.kentta__apu{font-size:var(--t-small);color:var(--ink-soft)}
+
+/* == 20 Headerin CTA ja taitteen budjetti (v2) ============================ */
+
+/* Yhteystiedot renderöityy navigaatiossa painikkeena, ei tavallisena
+   valikkokohtana. Puhelimessa 158 px leveä painike ei mahdu headeriin
+   (375 px: logo + valikkopainike + kielenvaihtaja + CTA = 529 px; luku oli
+   485 px kun logon paikalla oli 82 px leveä ladottu sanamerkki),
+   joten mobiilissa CTA on pudotusvalikon sisällä ja työpöydällä headerissa. */
+.btn--nav{
+  padding:var(--s-2) var(--s-4);
+  font-size:var(--t-label);
+}
+.nav-cta{margin-top:var(--s-4)}
+.nav-cta .btn{width:100%;justify-content:center}
+
+@media (max-width:61.99rem){
+  .btn--nav{display:none}
+}
+@media (min-width:62rem){
+  .nav-cta{display:none}
+}
+
+/* Taitteen budjetti 375 px:llä. Ohjauspalkki (38 px) vei tilan jonka
+   polkukortit tarvitsivat, joten kapealla näytöllä kiristetään sekä palkkia
+   että heron välejä. Typografiaa ei pienennetä enempää — iso otsikko on
+   ilmeen ydin. Mitattu oikeassa 375 x 667 -kehyksessä, ei arvioitu. */
+@media (max-width:36rem){
+  .proto-bar{font-size:.7rem}
+  .proto-bar__inner{min-height:26px;padding-block:3px;gap:var(--s-3)}
+  .proto-btn{padding:3px 6px;min-width:21px}
+  .proto-bar .notes-toggle{padding:3px var(--s-2)}
+
+  .hero{padding-block:var(--s-3) var(--s-6)}
+  .hero h1{margin-bottom:var(--s-3)}
+  .hero__sub{margin-bottom:var(--s-4)}
+  .path-card{padding:var(--s-3) 0;gap:var(--s-1) var(--s-4)}
+  .path-card__d{font-size:.875rem}
+}
+
+/* == 21 Korjaus: mobiilivalikon CTA:n kontrasti ========================== */
+
+/* .site-nav a (0,1,1) voitti .btn--primary (0,1,0), joten pudotusvalikon
+   Yhteystiedot-painike peri navilinkin tumman värin ja jäi 2.25:1 oliivilla.
+   Tämä on selkeä AA-virhe ja koskee nimenomaan puhelinta, jossa CTA on
+   valikon sisällä. Nostetaan spesifisyys. */
+.site-nav .btn--primary{color:#fff}
+.site-nav .btn--primary:hover{color:#fff}
+
+/* == 22 Placeholder-sisältötila ============================================ */
+
+/* Placeholder-tilassa arvo näyttää tavalliselta tekstiltä — se on koko
+   pointti, koska "[XXX XXX €]" ei vie saman verran tilaa kuin "289 000 €".
+   Aukkomerkintä katoaa, mutta alkuperäinen aukko on tallessa
+   data-aukko-attribuutissa. */
+.gap--demo{
+  background:none;
+  box-shadow:none;
+  padding:0;
+  color:inherit;
+  font-weight:inherit;
+  font-variant-numeric:tabular-nums;
+  white-space:normal;
+}
+
+/* Muistiinpanotilassa placeholder-arvot merkitään takaisin näkyviin, jotta
+   työstössä näkee mikä on kuvitteellista ja mikä lähteestä. */
+body.notes .gap--demo{
+  background:rgba(191,130,84,.11);
+  box-shadow:0 -1px 0 rgba(191,130,84,.55) inset,0 -1px 0 rgba(191,130,84,.55);
+  padding:.06em .3em;
+}
+body.notes .gap--demo::after{
+  content:" (" attr(data-aukko) ")";
+  font-size:.82em;
+  color:var(--ink-faint);
+}
+
+/* Varoitus ohjauspalkissa. Näkyy vain placeholder-tilassa — kuvitteellisia
+   lukuja ei saa lukea faktoina. */
+.proto-varoitus{
+  display:none;
+  margin:0;
+  flex:none;
+  font-weight:700;
+  letter-spacing:.04em;
+  color:var(--ink);
+  background:var(--amber-light);
+  padding:3px var(--s-3);
+  white-space:nowrap;
+}
+body[data-sisalto="placeholder"] .proto-varoitus{display:block}
+
+/* Sisältövaihtimen painikkeet ovat sanoja, ei kirjaimia — hieman leveämmät. */
+.proto-group__btns [data-asetus="sisalto"]{min-width:0}
+
+/* Placeholder-lohko: asiakassitaatti ja henkilöesittely ------------------- */
+.gap--demo-lohko{
+  border-left:0;
+  padding:0;
+  margin-block:var(--s-5);
+  background:none;
+  max-width:none;
+}
+body.notes .gap--demo-lohko{
+  border-left:2px solid var(--amber);
+  padding-left:var(--s-5);
+}
+.sitaatti{margin:0;max-width:34rem}
+.sitaatti p{
+  font-family:var(--ff-head);
+  font-size:var(--t-lead);
+  font-weight:500;
+  line-height:1.4;
+  letter-spacing:-.015em;
+  margin:0 0 var(--s-4);
+  max-width:none;
+}
+.sitaatti footer{
+  font-size:var(--t-small);
+  color:var(--ink-faint);
+  font-family:var(--ff-head);
+  font-weight:600;
+}
+.section--dark .sitaatti footer{color:var(--beige)}
+
+/* == 23 Korjaus: lukuarvo myös listan ulkopuolella ========================= */
+
+/* .facts__v oli tyylitelty vain `.facts`-listan jälkeläisenä, mutta
+   hintablokissa se on itsenäinen elementti. Seuraus: sivun tärkein numero
+   (kokonaishinta) renderöityi leipätekstin kokoisena 19 px:nä eikä
+   lukukoossa. Löytyi kun aukot korvattiin placeholder-arvoilla — hakasulje
+   peitti virheen, koska sitä ei luettu numerona.
+   Tehdään luokka itseriittoiseksi. */
+.facts__v{
+  display:block;
+  font-family:var(--ff-head);
+  font-size:var(--t-figure);
+  font-weight:600;
+  line-height:1.05;
+  letter-spacing:-.03em;
+}
+/* == 24 CTA-tuki: riskinpoisto painikkeen alla ============================= */
+
+/* Riskinpoisto oli leipätekstissä painikkeen YLÄPUOLELLA, jossa se luetaan
+   ennen kuin epäröinti syntyy. Epäröinti syntyy sormi painikkeen päällä, joten
+   teksti kuuluu painikkeen alle. Sama muotoilu kaikkialla, jottei se lue
+   mainoslauseena vaan tosiasiana. */
+.cta-tuki{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:var(--s-2) var(--s-4);
+  margin:var(--s-4) 0 0;
+  font-size:var(--t-small);
+  color:var(--ink-soft);
+  max-width:none;
+}
+/* KORJATTU 20.8.2026, kaksi virhettä samassa säännössä.
+
+   1. Valitsin oli `.cta-tuki span`, joten pallo tuli myös
+      ctaVastausaikaHtml:n sisällä olevalle .gap-elementille: rivillä luki
+      "Vastaamme · kahden arkipäivän kuluessa" ja aukko luki omana
+      väitteenään keskellä lausetta. Nyt vain suorat lapset.
+
+   2. Kääre oli inline-flex ja pallo flex-item. Lauseen sisällä oleva
+      .gap-elementti oli silloin myös flex-item, joten sen kahden puolen
+      välit tulivat flexin gapista eivätkä sanavälistä — "Vastaamme_
+      _kahden arkipäivän_ _kuluessa". Kääre on nyt inline-block ja pallo
+      inline-block marginaalilla, joten lause rivittyy sanavälein. */
+.cta-tuki>span{display:inline-block}
+.cta-tuki>span::before{
+  content:"";
+  display:inline-block;
+  width:5px;height:5px;border-radius:50%;
+  background:var(--olive);
+  margin-right:var(--s-2);
+  /* Pallo x-korkeuden puoliväliin. baseline jättäisi sen rivin alle. */
+  vertical-align:.18em;
+}
+.section--dark .cta-tuki{color:var(--ink-on-dark)}
+.section--dark .cta-tuki>span::before{background:var(--beige)}
+
+/* UKK:n jälkeinen konversiorivi ------------------------------------------- */
+
+/* HIUSVIIVA POISTETTU 20.8.2026. Rivillä oli border-top, mutta UKK-listan
+   viimeinen kohta sulkeutuu jo omaan border-bottomiinsa
+   (.faq details:last-child). Yhdestä rajasta piirtyi siis kaksi viivaa
+   noin kahden rem:n päähän toisistaan, ja se luki listan jatkeena eikä
+   listan päätöksenä. Erotus tulee nyt välistyksestä, joka kasvoi sen
+   verran kuin viiva ja sen pehmuste veivät. */
+.ukk-cta{
+  margin-top:clamp(2rem,4vw,3rem);
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:var(--s-4) var(--s-5);
+}
+.ukk-cta p{margin:0;max-width:28em;font-family:var(--ff-head);font-weight:600}
+
+/* == 25 Korjaus: .facts konttilähtöiseksi ================================== */
+
+/* VIRHE: sarakemäärä oli sidottu selainikkunan leveyteen
+     @media (min-width:64rem){ .facts{grid-template-columns:repeat(4,1fr)} }
+   mutta komponentti asuu kapeassa palstassa. Mitattu seuraus:
+     · talotiivistelmä: kontti 574 px → 4 saraketta à 107,5 px
+     · luottamusblokki: kontti 410 px → 4 saraketta à 66,5 px, vaikka
+       kohteita on kaksi. Label "Toimitettuja taloja" tarvitsee ~130 px,
+       joten se vuoti naapurisarakkeeseen — siitä törmäys.
+     · arvo 41,6 px:n kokoisena 67 px sarakkeessa → joka arvo kahdelle
+       riville ("24 / taloa", "Luoto / 118", "118 / m²").
+
+   KORJAUS: auto-fit seuraa konttia eikä ikkunaa, ja arvo saa listan sisällä
+   maltillisemman koon. Iso lukukoko jää hintablokin yksittäiselle numerolle,
+   jolla on koko palstan leveys käytössä. */
+
+:root{
+  /* Listan sisäinen lukuarvo: 22 → 28 px. Mahtuu 11 rem sarakkeeseen. */
+  --t-fact:clamp(1.375rem, 1.2rem + 0.55vw, 1.75rem);
+}
+
+.facts{
+  grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));
+  gap:var(--s-5) var(--s-6);
+}
+/* Kumotaan ikkunaan sidotut sarakemäärät. */
+@media (min-width:34rem){ .facts{grid-template-columns:repeat(auto-fit,minmax(11rem,1fr))} }
+@media (min-width:64rem){ .facts{grid-template-columns:repeat(auto-fit,minmax(11rem,1fr))} }
+
+.facts li,.facts > div{min-width:0}
+
+/* Listan sisällä maltillinen koko — tulee .facts__v -perussäännön jälkeen. */
+.facts .facts__v,
+.facts dd{
+  font-size:var(--t-fact);
+  line-height:1.15;
+  letter-spacing:-.02em;
+  text-wrap:balance;
+}
+
+/* Label saa katketa siististi, ei koskaan vuotaa sarakkeen yli. */
+.facts dt,.facts .facts__k{
+  min-width:0;
+  overflow-wrap:break-word;
+  hyphens:auto;
+}
+
+/* == 26 Korjaus: prosessiaskelmien pystysuora kohdistus ==================== */
+
+/* VIRHE: askel 01 oli 31 px muita alempana (93 px vs. 62 px li:n alusta).
+   Syy: li on grid jossa kaksi auto-riviä (numero, sisältö). Kun .steps--row
+   venyttää kaikki li:t samaan korkeuteen, align-content:normal jakoi
+   ylijäävän tilan riveille — vähiten sisältöä sisältävä askel levisi eniten.
+   Korjaus: rivit pakataan alkuun. */
+.steps > li{align-content:start}
+
+/* == 27 Korjaus: Rakennustapa poikkesi muista avainluvuista ================ */
+
+/* .facts__v--teksti POISTETTU 23.9.2026 (TARKASTUS.md D-24). Luokka tehtiin
+   talotiivistelmän "Elementtitalo"-arvolle, joka oli inline-tyylillä väärän
+   kokoinen. Osio 48 (v5f) siirsi vakiot omaksi riviksi (.talo-vakiot), eikä
+   arvo ole enää avainlukulistassa — ratkaistu ongelma, kuollut luokka. */
+
+/* == 28 Tekstimuotoiset avainarvot ========================================= */
+
+/* Puhelinnumero, sähköposti, osoite ja Y-tunnus eivät ole lukuja vaan
+   tietoja. Numerokoossa (26 px) osoite rivittyi kahdelle riville 238 px
+   sarakkeessa. Ne ladotaan luettavassa koossa, mutta säilyttävät
+   tietolehden rakenteen. */
+.facts--teksti .facts__v,
+.facts--teksti dd{
+  font-size:var(--t-lead);
+  line-height:1.35;
+  letter-spacing:-.01em;
+  font-variant-numeric:normal;
+}
+
+/* == 29 Hero: kuva saa pääroolin ========================================== */
+
+/* VIRHE: kuva sai heron oikeasta laidasta 5/12 osaa ja 16:9-suhteen, joten se
+   oli noin 440 × 247 px valtavan otsikon vieressä. Talokauppa myydään kuvalla
+   — se on tuote, ei koriste. Lisäksi luoto-motiivin renkaat kulkivat kuvan
+   läpi, koska kuvapaikan tausta on läpikuultava. Yhdessä nämä tekivät
+   kuvasta heikoimman elementin sivulla.
+
+   KORJAUS
+     · suhteet käännetty: teksti 5, kuva 7
+     · kuva venyy tekstipalstan korkuiseksi (align-items:stretch)
+     · kuva vuotaa palstan reunan yli sisennyksen verran; alle 1184 px:n
+       näytöillä se osuu selaimen reunaan, sitä leveämmillä keskitetyn
+       sisältöalueen reunaan (mitattu: 45–55 % näytön leveydestä)
+     · kuvapaikan tausta läpinäkymätön, joten renkaat kiertävät kuvaa
+       eivätkä leikkaa sitä
+   Mobiilissa mitään ei muutu: kuva on korttien jälkeen, joten taitekriteeri
+   pysyy voimassa. */
+
+/* Läpinäkymätön vastine ph-fillille paperin päällä — renkaat eivät näy läpi. */
+.hero__visual .ph{background:var(--ph-fill-solid)}
+
+/* Mobiilissa ja tabletissa kuva on korttien jälkeen, joten se ei syö
+   taitetta. Siksi se saa siellä reilummat mitat kuin 16:9. */
+@media (max-width:63.99rem){
+  .hero__visual .ph{aspect-ratio:3/2}
+}
+
+@media (min-width:64rem){
+  .hero__inner{
+    grid-template-columns:5fr 7fr;
+    gap:clamp(2rem,4vw,4rem);
+    align-items:stretch;          /* kuva tekstipalstan korkuiseksi */
+  }
+
+  /* Kuva vuotaa oikeaan reunaan: se ei ole palstan sisällä oleva kuvitus
+     vaan heron oma pinta. */
+  .hero__visual{
+    display:flex;
+    margin-right:calc(-1 * clamp(1.25rem,5vw,3rem));
+  }
+  .hero__visual .ph{
+    aspect-ratio:auto;            /* korkeus tulee rivistä, ei suhteesta */
+    height:100%;
+    min-height:28rem;
+    flex:1;
+    padding:var(--s-6);
+  }
+  .hero__visual .ph__what{font-size:var(--t-lead)}
+
+  /* Motiivi on nyt kuvan takana, joten se kasvaa ja siirtyy hieman ylös:
+     renkaat kehystävät kuvaa sen ylä- ja alapuolelta. */
+  .hero::after{
+    right:-22vw;
+    width:min(64rem,96vw);
+    opacity:.6;
+  }
+}
+
+/* Erittäin leveillä näytöillä kuva ei kasva rajattomasti. */
+@media (min-width:100rem){
+  .hero__visual .ph{min-height:32rem}
+}
+
+/* == 30 Korjaus: .ticks ei saa olla grid ================================== */
+
+/* VIRHE: .ticks li oli display:grid sarakkeilla 24px 1008px. CSS-gridissä
+   jokainen suora lapsi on oma grid-kohde — myös anonyymi tekstisolmu. Rivi
+
+       <li>Tontti <span class="gap">8 500 €</span></li>
+
+   tuotti siis KAKSI kohdetta: teksti sarakkeeseen 2 ja span omalle rivilleen
+   sarakkeeseen 1, joka on 24 px leveä. Mitattu: arvon leveys 24 px, sijainti
+   li:n vasemmassa reunassa, korkeus 88 px eli kolme riviä.
+
+   Sitomattomat välilyönnit olivat PEITTÄNEET vian: NBSP:n takia "52 000 €"
+   oli yksi katkeamaton pala joka vuoti 24 px radan yli näkymättömästi.
+   "8 500 €" jäi ilman NBSP:tä (korvaussääntö vaati 2–3 numeroa ennen väliä)
+   ja paljasti sen kolmena rivinä.
+
+   KORJAUS: merkki absoluuttiseksi, sisältö normaaliin tekstivirtaan. Sama
+   kuvio kuin .item-list--tick -komponentissa, joka oli jo oikein. Nyt
+   `.ticks`-rivi kestää minkä tahansa inline-sisällön: arvon, tarkennuksen
+   suluissa, merkityn aukon. */
+
+.ticks li{
+  display:block;
+  position:relative;
+  padding:var(--s-3) 0 var(--s-3) 1.75rem;
+  border-bottom:1px solid var(--rule-soft);
+}
+.ticks li::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:calc(var(--s-3) + .42em);
+  width:9px;height:9px;
+  border:1px solid var(--olive);
+  border-radius:50%;
+  transform:none;
+}
+.section--dark .ticks li::before{border-color:var(--beige)}
+
+/* Arvo rivin lopussa: pieni väli ja oma paino, jotta se erottuu nimikkeestä. */
+.ticks .gap--demo{
+  margin-left:var(--s-2);
+  font-weight:700;
+  white-space:nowrap;
+}
+
+/* == 31 Toimialuekartta =================================================== */
+
+/* K10 KUVATARPEET.md:stä. Kartta ei ole generatiivisen AI:n työ: rannikkoviiva
+   tulee väärin ja paikannimet väärin kirjoitettuina. Tämä on piirretty
+   avoimesta aineistosta (Natural Earth 1:10m, public domain).
+
+   RAKENNE — kaksi kerrosta, ja jako on tarkoituksellinen:
+
+     1  geometria   assets/kartta-toimialue.svg <img>-elementissä.
+                    Yksi tiedosto, selain välimuistittaa sen molemmille
+                    sivuille. Toimii ilman JavaScriptiä.
+     2  nimet       HTML-tekstiä kartan päällä, sijoitettu prosentteina.
+
+   MIKSI NIMET EIVÄT OLE SVG:N SISÄLLÄ. SVG-teksti skaalautuu viewBoxin
+   mukana: 17 px työpöydällä on 7 px puhelimessa. Sen lisäksi kuvan sisällä
+   oleva teksti ei ole indeksoitavaa eikä käännettävää. Koska
+   ”Missä rakennamme” -sivu poistui versiossa 2 (AVOIMET.md 79), tämä on
+   yksi harvoista paikoista jossa paikkakuntien nimet esiintyvät koko
+   sivustolla — silloin ne eivät voi olla pikseleitä.
+
+   MIKSI KARTALLA EI OLE RENKAITA. Samankeskinen rengas on brändin motiivi
+   (logotyypin O, styles.css osio 02), mutta kartalla rengas pisteen ympärillä
+   lukee toimialueen säteenä. Aineisto ei kerro sädettä — copy sanoo vain
+   ”seudulla”. Kotipaikka merkitään siis pisteen koolla ja amber-alleviivauksella,
+   ei renkaalla, jottei kartta väitä enempää kuin tiedetään.
+
+   Prosenttisijoittelu pitää vain jos säiliön kuvasuhde on sama kuin viewBoxin
+   (v4: 3:4 — koko Suomi on pohjois-eteläsuuntainen). Siksi aspect-ratio on
+   säiliössä eikä kuvassa. */
+
+.kartta{margin:0}
+
+/* Kuvasuhde on tässä eikä kuvassa, koska prosenttisijoittelu nojaa siihen.
+   Lähdeviite jää tämän ulkopuolelle, muuten se olisi kartan päällä. */
+.kartta__ala{
+  position:relative;
+  aspect-ratio:3/4;
+  border:1px solid var(--rule);
+  background:var(--seafoam);        /* sama kuin SVG:n meri — ei välähdystä */
+}
+.kartta__kuva{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+/* Nimi + piste yhtenä kohteena. Piste osuu koordinaattiin, teksti asettuu
+   sen sivulle. Kääntö tehdään flexin suunnalla, ei kahdella säännöllä. */
+.kartta__nimi{
+  position:absolute;
+  left:var(--x);
+  top:var(--y);
+  display:flex;
+  align-items:center;
+  gap:.45em;
+  white-space:nowrap;
+  line-height:1.2;
+}
+.kartta__nimi--oikea{
+  flex-direction:row;
+  transform:translate(-4.5px,-50%);      /* piste keskelle koordinaattia */
+}
+.kartta__nimi--vasen{
+  flex-direction:row-reverse;
+  transform:translate(calc(-100% + 4.5px),-50%);
+}
+
+/* Paperinen kehä nostaa pisteen irti rantaviivasta ilman varjoa. */
+.kartta__piste{
+  flex:0 0 auto;
+  width:9px;height:9px;
+  border-radius:50%;
+  background:var(--olive);
+  box-shadow:0 0 0 2px var(--paper);
+}
+.kartta__teksti{
+  font-family:var(--ff-head);
+  font-weight:600;
+  font-size:var(--t-small);
+  letter-spacing:.005em;
+  color:var(--ink);
+}
+
+/* Kotipaikka. Isompi piste, tummempi sävy ja amber-kehä joka on kiinni
+   pisteessä. Kehä on merkintätyyli, ei sädettä: se ei irtoa pisteestä.
+   Alleviivaus kokeiltiin ja hylättiin — se valui KOTIPAIKKA-tarkenteen alle
+   ja luki linkkinä. Amber ei ole tekstinä missään (AVOIMET.md 78). */
+.kartta__nimi--koti .kartta__piste{
+  width:11px;height:11px;
+  background:var(--charcoal);
+  box-shadow:0 0 0 2px var(--paper),0 0 0 3px var(--amber);
+}
+.kartta__rooli{
+  display:block;
+  font-family:var(--ff-body);
+  font-weight:400;
+  font-size:var(--t-label);
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+}
+
+
+/* v4: koko Suomen mittakaavassa Luoto ja Kokkola ovat 20 km päässä eli
+   muutaman pikselin päässä toisistaan, ja KOTIPAIKKA-tarkenne valuu
+   naapurimerkinnän päälle. Kotipaikan nimi nostetaan pisteen yläpuolelle:
+   piste pysyy paikallaan, teksti väistää. Rannikon kohteet kasautuvat
+   samasta syystä — jos merkintöjä tulee lisää, kasautuminen on ratkaistava
+   uudelleen eikä sitä voi hoitaa yhdellä siirrolla. */
+.kartta__nimi--koti{align-items:flex-end}
+.kartta__nimi--koti .kartta__teksti{
+  position:relative;
+  bottom:.9em;
+}
+.kartta__nimi--koti .kartta__piste{margin-bottom:.15em}
+
+/* Mittakaavan lukema. Viiva on SVG:ssä, luku tässä — samasta syystä kuin
+   paikkakuntien nimet. Sijainti vastaa SVG:n translate(38,742). */
+.kartta__mitta{
+  position:absolute;
+  left:4.75%;
+  bottom:8.3%;
+  font-size:var(--t-label);
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  opacity:.75;
+}
+
+.kartta__lahde{
+  margin:var(--s-3) 0 0;
+  font-size:var(--t-label);
+  letter-spacing:.02em;
+  color:var(--ink-faint);
+}
+
+/* Puhelimessa kartta on koko leveydeltään, mutta nimet eivät kutistu mukana:
+   ne ovat HTML:ää. Ainoa mitä pienennetään on kotipaikan tarkenne, joka
+   muuten työntyisi Kokkolan päälle. */
+@media (max-width:47.9375rem){
+  .kartta__teksti{font-size:.875rem}
+  .kartta__rooli{font-size:.6875rem;letter-spacing:.1em}
+  .kartta__piste{width:8px;height:8px}
+  .kartta__nimi--koti .kartta__piste{width:10px;height:10px}
+}
+
+/* == 32 Modulaarisuus: kokovalinta (v3) =================================== */
+
+/* SUUNTA: kokovalinta ei saa näyttää konfiguraattorilta. Kolme painiketta,
+   hiusviivat, ei paneelia eikä korostusväriä — sama vähäeleinen kieli kuin
+   muualla. Jos tämä näyttäisi tuotekonfiguraattorin ensimmäiseltä ruudulta,
+   se romuttaisi vakiointiviestin joka on koko hinnan perusta.
+
+   Erottelu ohjauspalkin vaihtimiin (.proto-btn) on tarkoituksellinen: ne
+   ovat tummia ja teknisen näköisiä, koska ne ovat työkalu prototyypin
+   ympärillä. Tämä on sivuston omaa käyttöliittymää ja näyttää siltä. */
+
+.kokovalitsin{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:baseline;
+  gap:var(--s-3) var(--s-5);
+  padding-top:var(--s-4);
+  border-top:1px solid var(--rule);
+}
+.kokovalitsin__lbl{
+  font-family:var(--ff-head);
+  font-size:var(--t-label);
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-faint);
+  flex:none;
+}
+
+/* Kolme painiketta yhtenä ryhmänä: jaettu hiusviiva niiden välillä kertoo
+   että kyse on yhdestä valinnasta kolmella vastauksella, ei kolmesta
+   erillisestä toiminnosta. */
+.kokovalitsin__btns{
+  display:flex;
+  flex-wrap:wrap;
+  border:1px solid var(--rule-strong);
+}
+.kokovalitsin__btn{
+  appearance:none;
+  border:0;
+  border-left:1px solid var(--rule);
+  background:none;
+  cursor:pointer;
+  font-family:var(--ff-head);
+  font-size:var(--t-small);
+  font-weight:600;
+  letter-spacing:-.005em;
+  color:var(--ink-soft);
+  /* 44 px kosketuskohde: kohderyhmässä on eläkeläispariskuntia, ja tämä on
+     sivuston tärkein uusi kontrolli. Ei tingitä 24 px minimiin. */
+  min-height:44px;
+  padding:var(--s-2) var(--s-5);
+  transition:background .18s var(--ease),color .18s var(--ease);
+}
+.kokovalitsin__btn:first-child{border-left:0}
+.kokovalitsin__btn:hover{background:var(--beige-panel);color:var(--ink)}
+.kokovalitsin__btn[aria-pressed="true"]{
+  background:var(--charcoal);
+  color:var(--paper);
+}
+
+@media (max-width:29.9375rem){
+  /* Kolme nimeä ("3 makuuhuonetta") ei mahdu rinnakkain 375 px leveydellä
+     lukukelpoisena, joten ryhmä pinoutuu. Yksi valinta pysyy yhtenä
+     ryhmänä: kehys on ryhmän ympärillä, viivat rivien välissä. */
+  .kokovalitsin__btns{flex-direction:column;width:100%}
+  .kokovalitsin__btn{
+    border-left:0;
+    border-top:1px solid var(--rule);
+    text-align:left;
+  }
+  .kokovalitsin__btn:first-child{border-top:0}
+}
+
+/* -- Pohjapiirustus kolmessa tilassa --------------------------------------
+   Yksi kuvapaikka, ei kolme laatikkoa. aspect-ratio ei muutu, joten layout
+   ei hypähdä kun kävijä klikkaa 1 → 2 → 3.
+
+   Kaavio pohjalla on hiusviivainen jalanjälki, jonka leveys kasvaa koon
+   mukaan. Se ei esitä pohjaratkaisua — se esittää sen mikä
+   pohjaratkaisussa muuttuu: talon pituus. Tarkoituksena on että kolme
+   tilaa lukevat kolmena tilana jo ennen kuin piirustus on olemassa. */
+.ph--floorplan[data-pohja]{position:relative}
+.ph--floorplan[data-pohja]::after{
+  /* Korvaa .ph:n oikean alakulman merkin: jalanjälki on informatiivisempi
+     kuin kulmamerkki juuri tässä yhdessä kuvapaikassa.
+
+     Umpinainen paperitausta, ei omaa viivoitusta: kuvapaikan diagonaali
+     viivoitus on jo tiheä, ja toinen kuviointi sen päällä lukisi sotkuna.
+     Muoto on kaavio talon jalanjäljestä, ei pohjapiirustuksen korvike. */
+  content:"";
+  position:absolute;
+  left:var(--s-5);
+  top:var(--s-5);
+  height:42%;
+  /* Perusleveys = pienin koko. Aiemmin 30 %, joka ei vastannut mitään
+     kokoa — attribuutiton tila piirsi talon jota ei ole. */
+  width:46%;
+  background:var(--paper);
+  border:1px solid var(--ph-ink);
+  /* Kasvava pääty on amber: se on se osa jota ei ole päätetty. Sama väri
+     merkitsee muualla sivustolla vahvistamatonta tietoa. */
+  border-right:3px solid var(--amber);
+  transition:width .45s var(--ease-out);
+  pointer-events:none;
+}
+/* KORJATTU 20.8.2026. Leveydet oli kirjoitettu v3:n tunnuksille, joissa
+   koot olivat mh1–mh3. Nykyiset ovat mh2–mh4 (R2), joten neljä
+   makuuhuonetta ei osunut yhteenkään sääntöön ja putosi perusleveyteen
+   30 % — eli SUURIN koko piirsi PIENIMMÄN jalanjäljen. Kokovalitsin
+   näytti siis rikkinäiseltä juuri siinä kohdassa jossa sen pitäisi
+   näyttää talon kasvavan.
+
+   Kolme askelta, tasaväliset: pääty kasvaa yhtä paljon kummallakin
+   lisämakuuhuoneella. Jos oikeat pinta-alat kertovat muuta, nämä luvut
+   lasketaan niistä — ks. AVOIMET.md kohta 169. */
+body[data-koko="mh2"] .ph--floorplan[data-pohja]::after{width:46%}
+body[data-koko="mh3"] .ph--floorplan[data-pohja]::after{width:62%}
+body[data-koko="mh4"] .ph--floorplan[data-pohja]::after{width:78%}
+
+@media (prefers-reduced-motion:reduce){
+  .ph--floorplan[data-pohja]::after{transition:none}
+  .kokovalitsin__btn{transition:none}
+}
+
+/* Laajennussektion kysymyslista. Kysymykset ovat kokonaisia lauseita eivätkä
+   spesifikaation avaimia, joten vasen sarake tarvitsee selvästi enemmän tilaa
+   kuin teknisten tietojen "Lämmitys" tai "Takuu". Ilman tätä kolmen sanan
+   kysymys rivittyy kolmelle riville. */
+.specs--kysymykset{max-width:48rem}
+.specs--kysymykset dt{font-weight:600}
+@media (min-width:34rem){
+  .specs--kysymykset{grid-template-columns:minmax(18rem,28rem) 1fr}
+}
+
+/* == 33 Modulaarisuus: hintablokin kokoporrastus (v3) ===================== */
+
+/* Kolme riviä, aktiivinen korostettuna. Rivit tulevat TALO.koot:sta, joten
+   tämä komponentti näyttää samalta neljällä sivulla ilman kopiointia.
+
+   Aktiivinen rivi merkitään body[data-koko] -attribuutin kautta eikä
+   JavaScriptillä: valinta talo-sivulla näkyy tässä ilman uudelleenrenderöintiä
+   ja ilman että kaksi koodipolkua voi eriytyä. */
+.koko-hinta{
+  margin-top:var(--s-6);
+  padding-top:var(--s-4);
+  border-top:1px solid var(--rule);
+}
+.koko-hinta__h{
+  margin:0 0 var(--s-2);
+  font-family:var(--ff-head);
+  font-size:var(--t-label);
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-faint);
+}
+.koko-hinta__lista{list-style:none;margin:0;padding:0;display:grid}
+.koko-hinta__lista li{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:var(--s-3);
+  margin:0;
+  padding:var(--s-3) 0;
+  border-top:1px solid var(--rule-soft);
+  color:var(--ink-soft);
+}
+.koko-hinta__lista li:first-child{border-top:0}
+.koko-hinta__nimi{font-family:var(--ff-head);letter-spacing:-.005em}
+.koko-hinta__arvo{
+  font-variant-numeric:tabular-nums;
+  font-size:var(--t-small);
+  text-align:right;
+}
+
+/* Valitun koon korostus — POISTETTU 20.8.2026 kokonaan.
+
+   Rivi sai vasemman merkkiviivan ja tekstin "· VALITTU". Yritin ensin
+   kytkeä sen ehdolliseksi (vain kun valinta on tehty, sitten vain sivulla
+   jolla valitsin on), ja se oli väärä korjaus kahdesti: hintaporras on
+   HINTAPORTAIKKO, ei valintatila. Se kertoo mitä perusmalli maksaa ja
+   paljonko kolmas ja neljäs makuuhuone lisäävät. Valinnan tila kuuluu
+   kokovalitsimeen, joka kertoo sen jo painikkeiden aria-pressed-tilalla —
+   ja vain talo.html:llä, jossa valinta tehdään.
+
+   Poistettu samalla: body[data-koko-valittu], talo.js:n valintaTehty ja
+   valitsinSivulla(). data-koko jäi: pinta-ala, huoneistotyyppi ja
+   pohjapiirustus renderöityvät aina jostakin koosta. */
+
+/* == 34 Korjaus: tarkistuslistan fieldset (v3) ============================ */
+
+/* Kuusi toisiinsa liittyvää valintaruutua kuuluu fieldsettiin, jolla on
+   legend — ilman sitä ruudunlukija lukee kuusi irrallista valintaa ilman
+   tietoa siitä mihin kysymykseen ne vastaavat.
+
+   Selaimen oma fieldset-kehys ja legendin sijoittelu nollataan, jotta
+   visuaalinen ulkoasu ei muutu lainkaan. Legend on silti näkyvä teksti eikä
+   piilotettu: se on hyvä väliotsikko myös näkevälle. */
+.checklist-fs{
+  border:0;
+  margin:0;
+  padding:0;
+  min-width:0;                      /* fieldsetin oma min-content-oletus */
+}
+.checklist-fs__legend{
+  padding:0;
+  margin:0 0 var(--s-4);
+  font-family:var(--ff-head);
+  font-size:var(--t-label);
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-faint);
+}
+
+/* == 35 Korjaus: yksi h1, vaihtuva tekstisisältö (v3) ===================== */
+
+/* Valmiit tontit -sivulla oli kaksi <h1>:tä, toinen CSS:llä piilotettuna.
+   Nyt h1 on yksi ja vain sen tekstisisältö vaihtuu. Vaihtuva osa on
+   otsikon sisällä, joten se ei voi olla display:block. */
+.v-omistus--inline{display:none}
+body[data-omistusmalli="a"] .v-omistus--inline[data-malli="a"],
+body[data-omistusmalli="b"] .v-omistus--inline[data-malli="b"]{display:inline}
+
+/* == 36 Aluesektion numerokortit (v3) ==================================== */
+
+/* .facts--kortit POISTETTU 23.9.2026 (TARKASTUS.md D-24). Kolme lukua
+   kortteina aluesektiossa; yksikään sivu ei käytä luokkaa. Aluesektion
+   luvut tulevat nyt kohdedatasta .alue__meta-rivillä. */
+
+/* == 37 Kohteet: listaus ja merkinnät (v4) ================================ */
+
+/* SUUNTA: kohdekortti on sama .alue-rivi kuin ennen, ei uusi komponentti.
+   Kortti kasvoi kahdella rivillä (merkintä ylös, huomiolause ja CTA alas),
+   mutta rytmi, hiusviivat ja hover-liike ovat samat — muuten listaus lukisi
+   eri sivustona kuin muu prototyyppi.
+
+   Miksi ei korttiruudukkoa: kävijä vertailee kohteita keskenään, ja
+   vertailu tapahtuu pystysuunnassa. Ruudukko pakottaisi silmän
+   sahaamaan. */
+
+.alue--kohde{
+  grid-template-columns:1fr auto;
+  align-items:start;
+  row-gap:var(--s-2);
+}
+.alue--kohde .alue__nimi{grid-column:1/2}
+.alue--kohde .alue__go{grid-column:2/3;grid-row:2}
+
+/* Merkintä on rivin ensimmäinen asia, koska se on ostajan ensimmäinen
+   kysymys: voinko muuttaa tähän ja milloin. Amber merkitsee muualla
+   vahvistamatonta tietoa, joten ennakkomarkkinointi saa sen — se on
+   kohteista se, jota ei ole vielä päätetty rakentaa. */
+.kohde-merkinta{
+  grid-column:1/-1;
+  display:block;
+  font-family:var(--ff-head);
+  font-size:var(--t-label);
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-faint);
+  margin:0;
+}
+.kohde-merkinta[data-status="myynti"]{color:var(--olive)}
+.kohde-merkinta[data-status="ennakkomarkkinointi"]{color:var(--amber)}
+
+.alue__huomio{
+  grid-column:1/-1;
+  margin:0;
+  font-size:var(--t-small);
+  color:var(--ink-soft);
+  max-width:var(--measure);
+}
+.alue__cta{
+  grid-column:1/-1;
+  font-family:var(--ff-head);
+  font-size:var(--t-small);
+  font-weight:600;
+  color:var(--olive);
+  border-bottom:1px solid var(--rule-strong);
+  align-self:start;
+  justify-self:start;
+}
+.alue--kohde:hover .alue__cta{border-bottom-color:var(--olive)}
+
+/* Toteutunut on hiljaisempi: se ei kilpaile myynnissä olevien kanssa mutta
+   ei myöskään katoa — se on referenssi, ei arkisto. */
+.alue--kohde[data-tila="myyty"]{color:var(--ink-soft)}
+.alue--kohde[data-tila="myyty"] .kohde-merkinta{color:var(--ink-faint)}
+
+/* -- Suodattimet — POISTETTU v5c -----------------------------------------
+   Neljä natiivia <select>-valikkoa (sijainti · tila · koko · hinta)
+   poistettiin 20.8.2026 tyyleineen. Kohteita on kolme, ja rajaus lupaa
+   että jotain jää piiloon. Perustelu natiivivalikoista (näppäimistö,
+   ruudunlukija, puhelimen natiivi rulla, ei riippuvuutta) pätee edelleen,
+   jos rajaus palautetaan kohteiden määrän kasvaessa. Ks. AVOIMET.md 152. */
+
+/* == 38 Kohteen alasivu (v4) ============================================== */
+
+/* Toteutunut-variantti on CSS:llä, ei toisella sivulla — sama sääntö kuin
+   omistusmallissa. Attribuutti asetetaan renderöinnin yhteydessä kohteen
+   statuksesta (proto.js initKohde).
+
+   Toteutuneesta piilotetaan hinnat, vapaana-luvut ja varaus-CTA: myydystä
+   kohteesta ei osteta mitään, ja mennyt hinta olisi väärä lupaus tulevasta.
+   Tilalle tulee kuvagalleria ja aluekysely. */
+.v-toteutunut{display:none}
+body[data-kohde-tila="myyty"] .v-myynti{display:none}
+body[data-kohde-tila="myyty"] .v-toteutunut{display:block}
+/* Inline-konteksti: painikekääreet herossa ovat span-elementtejä
+   eivätkä lohkoja. */
+body[data-kohde-tila="myyty"] span.v-toteutunut{display:inline-block}
+
+.murupolku{
+  font-size:var(--t-small);
+  color:var(--ink-faint);
+  margin:0 0 var(--s-4);
+  display:flex;
+  flex-wrap:wrap;
+  gap:var(--s-2);
+}
+.murupolku a{color:var(--ink-soft)}
+
+/* -- Talot taulukkona -----------------------------------------------------
+   Taulukko eikä korttiruudukko: kävijä vertailee sarakkeita keskenään.
+   Kaari on oma elementtinsä, jottei koko sivu vieri vaakasuunnassa
+   375 px leveydellä — vain taulukko vierii. */
+.taulukko-kaari{overflow-x:auto}
+.talot-taulukko{
+  width:100%;
+  border-collapse:collapse;
+  font-size:var(--t-small);
+  /* Viisi saraketta ei mahdu 375 px leveyteen luettavana, joten taulukolle
+     annetaan vähimmäisleveys ja kaari vierii. */
+  min-width:34rem;
+}
+.talot-taulukko th,
+.talot-taulukko td{
+  text-align:left;
+  padding:var(--s-3) var(--s-4) var(--s-3) 0;
+  border-bottom:1px solid var(--rule);
+  vertical-align:baseline;
+}
+.talot-taulukko thead th{
+  font-family:var(--ff-head);
+  font-size:var(--t-label);
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-faint);
+  border-bottom-color:var(--rule-strong);
+}
+.talot-taulukko tbody th{font-family:var(--ff-head);font-weight:600}
+.talot-taulukko tr[data-tila="myyty"],
+.talot-taulukko tr[data-tila="varattu"]{color:var(--ink-faint)}
+
+.talo-tila{
+  display:inline-block;
+  font-family:var(--ff-head);
+  font-size:var(--t-label);
+  font-weight:600;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  padding:var(--s-1) var(--s-3);
+  border:1px solid var(--rule-strong);
+}
+tr[data-tila="vapaa"] .talo-tila{border-color:var(--olive);color:var(--olive)}
+tr[data-tila="varattu"] .talo-tila{border-color:var(--amber)}
+
+/* -- Aikajana -------------------------------------------------------------
+   Kolme vaihetta, aktiivinen merkitty. Vaakasuunnassa työpöydällä, pystyyn
+   puhelimessa — sama kuvio kuin prosessiaskelmissa. Mennyt vaihe on
+   hiljainen mutta ei poissa: kävijän pitää nähdä mistä on tultu. */
+.aikajana{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:grid;
+  gap:var(--s-5);
+}
+@media (min-width:44rem){
+  .aikajana{grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-6)}
+}
+.aikajana li{
+  padding-top:var(--s-4);
+  border-top:2px solid var(--rule);
+  color:var(--ink-faint);
+}
+.aikajana li[data-tila="ohi"]{border-top-color:var(--rule-strong);color:var(--ink-soft)}
+.aikajana li[data-tila="nyt"]{border-top-color:var(--olive);color:var(--ink)}
+.aikajana__t{
+  display:block;
+  font-family:var(--ff-head);
+  font-weight:600;
+  font-size:var(--t-h3);
+}
+.aikajana li[data-tila="nyt"] .aikajana__t::after{
+  content:" · nyt";
+  font-size:var(--t-label);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--olive);
+}
+.aikajana__d{display:block;margin-top:var(--s-2);font-size:var(--t-small)}
+
+/* -- Galleria -------------------------------------------------------------
+   Ensimmäinen kuva on leveä ja kaksi muuta sen alla: kohteesta on yksi
+   pääkuva ja pari tukikuvaa, ei kolmea tasavertaista. */
+.galleria{display:grid;gap:var(--s-4)}
+@media (min-width:44rem){
+  .galleria{grid-template-columns:1fr 1fr}
+  .galleria > :first-child{grid-column:1/-1}
+}
+
+/* -- Lähipalvelut ---------------------------------------------------------
+   Etäisyys on tarkistettavissa, adjektiivi ei. Rakenne on siksi
+   avain–arvo-pareja eikä leipätekstiä. */
+.palvelut{margin:0;display:grid}
+.palvelut > div{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  gap:var(--s-3);
+  padding:var(--s-3) 0;
+  border-top:1px solid var(--rule);
+}
+.palvelut dt{font-family:var(--ff-head);font-weight:600;margin:0}
+.palvelut dd{margin:0;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+
+.ph--nelio{aspect-ratio:1/1}
+
+/* == 39 Lupaus, luottamus ja huomautukset (v4) ============================ */
+
+/* R4-lupaus: hintasektion toinen kappale, ei alaviite. Vasen merkkiviiva
+   nostaa sen leipätekstistä ilman että se muuttuu CTA-blokiksi — se on
+   selitys, ei kehotus. */
+.lupaus{
+  max-width:var(--measure);
+  padding-left:var(--s-5);
+  border-left:2px solid var(--olive);
+}
+.lupaus h3{
+  margin:0 0 var(--s-3);
+  font-size:var(--t-h3);
+}
+.lupaus p{margin:0}
+
+/* Ehdollisen tiedon huomautus. Tarkoituksella hiljaisempi kuin .lupaus:
+   ehdollista lupausta ei koroteta lupaustasolle. */
+.huomautus{
+  margin-top:var(--s-5);
+  padding-left:var(--s-5);
+  border-left:1px solid var(--rule-strong);
+  font-size:var(--t-small);
+  color:var(--ink-soft);
+}
+
+/* Luottamusluvut: kolme lukua rinnakkain. Isompi kuin tavallinen .facts,
+   koska nämä ovat sivun ainoat vahvistetut määrät. */
+@media (min-width:34rem){
+  .luottamus__luvut{grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-5)}
+  .luottamus__luvut li{border-top:1px solid var(--rule-strong)}
+}
+.luottamus__luvut .facts__v{font-size:var(--t-figure);font-family:var(--ff-head)}
+
+/* JRT-suhteen selite. Pieni ja hiljainen mutta AINA näkyvissä: luvut ovat
+   JRT:n, eivät Luotokodin, ja uusi brändi joka esittää ne omissa nimissään
+   ilman selitystä on haavoittuva heti kun joku tarkistaa Y-tunnuksen. */
+.luottamus__lahde{
+  margin-top:var(--s-3);
+  font-size:var(--t-label);
+  color:var(--ink-faint);
+}
+
+.lainaukset{list-style:none;margin:var(--s-5) 0 0;padding:0;display:grid;gap:var(--s-4)}
+/* Ei hiusviivaa: ks. osio 49. Viiva erotti lainaukset toisistaan, mutta
+   se on sama merkki jolla sivun tietolohkot erotetaan — ja juuri siitä
+   lainaus luki tietolohkona. Erotus tulee nyt välistyksestä. */
+.lainaukset blockquote{margin:0}
+.lainaukset p{margin:0;font-size:var(--t-small)}
+.lainaukset footer{
+  margin-top:var(--s-2);
+  font-family:var(--ff-head);
+  font-size:var(--t-label);
+  color:var(--ink-faint);
+}
+
+/* Kaksi polkua rinnakkain: kohteessa vastaus on tiedossa, omalla tontilla
+   se selvitetään. Erottelu on tässä layoutissa eikä pelkässä copyssa,
+   jottei epävarmuus vuoda siihen polkuun johon se ei kuulu. */
+.polkuerottelu{display:grid;gap:var(--s-4)}
+@media (min-width:44rem){
+  .polkuerottelu{grid-template-columns:1fr 1fr;gap:var(--s-5)}
+}
+
+/* == 40 Segmentoiva lomake (v4) =========================================== */
+
+/* Ensimmäinen kysymys segmentoi. Radiot ovat isoja ja koko rivi on
+   klikattava: kohderyhmässä on eläkeläispariskuntia, ja tämä on lomakkeen
+   ensimmäinen kontrolli. */
+.kentta-ryhma{
+  border:0;
+  margin:0 0 var(--s-6);
+  padding:0;
+  min-width:0;
+}
+.kentta-ryhma legend{
+  padding:0;
+  margin:0 0 var(--s-4);
+  font-family:var(--ff-head);
+  font-size:var(--t-h3);
+  font-weight:600;
+}
+.valinnat-lista{list-style:none;margin:0;padding:0;display:grid}
+.valinnat-lista label{
+  display:flex;
+  align-items:center;
+  gap:var(--s-4);
+  min-height:44px;
+  padding:var(--s-3) 0;
+  border-top:1px solid var(--rule);
+  cursor:pointer;
+}
+.valinnat-lista li:last-child label{border-bottom:1px solid var(--rule)}
+.valinnat-lista input{width:1.25rem;height:1.25rem;accent-color:var(--olive);flex:none}
+
+/* Kohteesta tullut kävijä näkee mistä kohteesta on kysymys. Piilokenttä
+   yksin ei riitä: jos lomake ei kerro sitä ääneen, kävijä ei tiedä
+   lähteekö tieto mukaan. */
+.lomake-kohde{
+  margin:0 0 var(--s-5);
+  padding:var(--s-3) var(--s-4);
+  background:var(--beige-panel);
+  font-size:var(--t-small);
+}
+
+/* Lomakkeen valikot samannäköisiksi tekstikenttien kanssa. */
+.kentta select{
+  font-family:var(--ff-body);
+  font-size:var(--t-body);
+  color:var(--ink);
+  background:var(--paper);
+  border:1px solid var(--rule-strong);
+  border-radius:0;
+  min-height:44px;
+  padding:var(--s-3) var(--s-4);
+  width:100%;
+}
+
+/* == 41 Korjaus: kuvapaikka ei saa vuotaa palstan yli (v4) ================ */
+
+/* HAVAINTO 375 px:ssä: hero-kuvapaikka oli 427 px leveä 375 px:n näytöllä ja
+   leikkautui oikeasta reunasta. Syy on kahden säännön yhteisvaikutus:
+   .ph--photo antaa aspect-ratio 16/9 ja .ph--critical min-height 15rem, ja
+   selain laskee leveyden korkeudesta — 240 px × 16/9 = 427 px. Kumpikaan
+   sääntö ei ole yksin väärä, joten kumpaakaan ei muuteta.
+
+   Korjaus on kattoraja: kuvapaikka ei koskaan ylitä säiliötään. Kun raja
+   osuu, kuvasuhde antaa periksi ja korkeus jää min-heightiin — se on oikea
+   suunta, koska kuvapaikan tehtävä on näyttää paljonko tilaa kuva vie, ja
+   ruudun ulkopuolelle jäävä osa ei näytä mitään.
+
+   Havaittu talo.html:ssä (v3:sta asti) ja kohde.html:ssä. Sääntö on
+   yleinen, koska sama yhdistelmä syntyy uudelleen jokaisessa uudessa
+   hero-kuvapaikassa. */
+.ph{max-width:100%}
+
+/* == 42 Asiakaslainaukset omana lohkona (v5c) ============================== */
+
+/* HAVAINTO 20.8.2026, etusivu: luottamusblokki oli sekava. Oikeassa
+   palstassa oli kuvapaikan aukko ja sen alla kolme lainausaukkoa, vasemmassa
+   kolme lukua joista yksi oli aukko ja alla neljäs aukko. Kuusi merkittyä
+   aukkoa yhdessä ruudussa ei enää kerro mitä puuttuu — se lukee rikkinäisenä
+   osiona.
+
+   Lainaukset ovat nyt oma sektio. Kolme rinnakkaista lainausta lukee
+   kolmena referenssinä; pystyyn pinottuna kapeassa palstassa ne lukivat
+   yhtenä katkonaisena listana.
+
+   Vanha .lainaukset (osio 38) jää sellaisenaan: sama komponentti on yhä
+   luottamusblokin sisällä neljällä muulla sivulla, ja kapeassa palstassa
+   yksi palsta on siellä oikea ratkaisu. Variantti on siis lisäluokka. */
+.lainaukset--omalohko{margin-top:0}
+.lainaukset--omalohko p{font-size:var(--t-body)}
+
+@media (min-width:52rem){
+  .lainaukset--omalohko{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:var(--s-6);
+  }
+  /* Viivaa ei enää ole (osio 49). Rinnakkain erotus on palstaväli. */
+}
+
+/* == 43 Kohteen tila merkkilappuna (v5c) ================================== */
+
+/* HAVAINTO 20.8.2026: kohteen tila ei erottunut nopealla silmäilyllä. Koko
+   merkintä oli yksi versaalirivi (&rdquo;MYYNNISSÄ · MUUTTOVALMIS NYT&rdquo;)
+   hiusviivan värisenä, ja kolmen kohteen listasta ei nähnyt yhdellä
+   vilkaisulla kumpi on ostettavissa nyt ja kumpi vasta ennakossa. Tila oli
+   samalla typografisella tasolla kuin kaikki muu metatieto rivillä.
+
+   Korjaus: tila on täytetty merkkilappu, valmius sen vieressä hiljaisena.
+   Väriparit ovat samat kuin ennen ja ne kantavat saman merkityksen —
+   olive = ostettavissa, amber = ei vielä päätetty rakentaa — mutta täyttönä
+   ne luetaan ennen tekstiä eikä sen jälkeen.
+
+   Kontrasti: paper olivella 6,5:1 · charcoal amber-lightilla 4,58:1 (sama
+   pari kuin osiossa 01). Täyttö-amberia ei käytetä, koska paper amberilla
+   jää alle 3:1. */
+.kohde-merkinta{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:var(--s-2) var(--s-3);
+}
+.kohde-merkinta__tila{
+  display:inline-block;
+  padding:.15em var(--s-3) .2em;
+  border:1px solid var(--rule-strong);
+  border-radius:999px;
+  font-family:var(--ff-head);
+  font-size:var(--t-label);
+  font-weight:600;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  line-height:1.45;
+  color:var(--ink-soft);
+}
+.kohde-merkinta[data-status="myynti"] .kohde-merkinta__tila{
+  background:var(--olive);
+  border-color:var(--olive);
+  color:var(--paper);
+}
+.kohde-merkinta[data-status="ennakkomarkkinointi"] .kohde-merkinta__tila{
+  background:var(--amber-light);
+  border-color:var(--amber-light);
+  color:var(--charcoal);
+}
+/* Toteutunut jää ääriviivaksi: se on referenssi eikä tarjous, eikä se saa
+   kilpailla myynnissä olevien kanssa. */
+.kohde-merkinta[data-status="myyty"] .kohde-merkinta__tila{
+  background:transparent;
+  border-color:var(--rule-strong);
+  color:var(--ink-faint);
+}
+/* Valmius on aikatieto, ei tila. Se pysyy hiljaisena myös silloin kun
+   osion 37 sääntö värittää koko merkinnän. */
+.kohde-merkinta__valmius{
+  font-family:var(--ff-head);
+  font-size:var(--t-label);
+  font-weight:600;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--ink-faint);
+}
+
+/* == 44 Talotiivistelmän avainluvut koko leveydelle (v5c) ================== */
+
+/* HAVAINTO 20.8.2026, etusivu 1280 px: talotiivistelmässä oli aivan liikaa
+   tyhjää. Syy oli rakenteessa eikä välistyksessä. Viisi avainlukua asui
+   kahden palstan VASEMMASSA palstassa (n. 590 px), jossa auto-fit mahtui
+   kahteen 11 rem sarakkeeseen — eli viisi lukua latautui kolmelle riville
+   ja venytti vasemman palstan noin 250 px kuvapaikkaa pidemmäksi. Oikean
+   palstan alle jäi se 250 px tyhjänä.
+
+   Kuvapaikkaa EI koroteta tyhjän täytteeksi: kuvapaikan tehtävä on kertoa
+   paljonko kuva vie tilaa, ja väärä korkeus on väärä tieto kuvatarpeesta.
+
+   Korjaus: luvut nostetaan ulos palstasta koko sisältöleveydelle omaksi
+   nauhaksi. 1104 px:ssä viisi lukua on yksi rivi, palstat ovat lähes samaa
+   korkeutta ja tyhjä katoaa siirtymättä muualle. */
+.talo-specs{margin-top:clamp(2rem,4vw,3rem)}
+
+@media (min-width:56rem){
+  /* Viisi tasaista saraketta, ei auto-fit: auto-fit tekisi 1104 px:ssä
+     kuusi 11 rem raitaa ja jättäisi kuudennen tyhjäksi, jolloin viides
+     luku olisi kapeampi kuin naapurinsa ilman syytä. */
+  .talo-specs{grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--s-5)}
+}
+
+/* == 45 Talo-sivun IA-muutos: sisältyy-lista ja tumma loppu-CTA (v5c) ====== */
+
+/* -- Sisältyy-lista ilman poissulkusaraketta ------------------------------
+   Kaksisarakkeinen taulukko purettiin 20.8.2026: oikea sarake oli kolme
+   kysymysmerkkiriviä ja kappale siitä ettei listaa ole missään aineistossa,
+   eli puolet lohkon pinta-alasta kertoi puuttumisesta. Raja on nyt yksi
+   lause listan alla.
+
+   Viisi kohtaa yhdessä sarakkeessa on korkea pino; kahdessa sarakkeessa se
+   luetaan yhtenä listana ilman että lohko venyy ruudun mittaiseksi. */
+@media (min-width:48rem){
+  .sisaltyy-lista{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--s-7)}
+  /* Sarakkeen ensimmäiseltä riviltä ei viivaa, muilta kyllä — muuten
+     oikean sarakkeen ensimmäinen kohta näyttää irralliselta. */
+  .sisaltyy-lista li:nth-child(2){border-top:0}
+}
+.sisaltyy-raja{
+  margin-top:var(--s-6);
+  padding-top:var(--s-5);
+  border-top:1px solid var(--rule);
+  color:var(--ink-soft);
+}
+
+/* -- Loppu-CTA: ei tumma -------------------------------------------------
+   Loppu-CTA oli hetken charcoal, jotta se erottuisi beigeistä sektioista.
+   Se ratkaisi väärän ongelman: sivujen alalaidassa CTA on kiinni
+   footerissa, joka on myös charcoal — kaksi eri lohkoa sulautui yhdeksi
+   tummaksi massaksi, eikä kävijä nähnyt missä CTA loppuu ja footer alkaa.
+
+   Loppu-CTA on nyt beige ja footer charcoal, joten alalaidassa on kolme
+   erottuvaa pintaa: paperi, beige, charcoal. Ainoa tumma sektio sivustolla
+   on etusivun nimisektio, joka ei ole footerin vieressä.
+
+   .section--dark -variantit path-cardille ja haamupainikkeelle poistettiin
+   samalla: niitä ei käytä enää yksikään sivu, ja käyttämätön sääntö on
+   lupaus tuesta jota kukaan ei ole testannut. Ne ovat gitissä jos tumma
+   pinta palaa. (20.8.2026.) */
+
+
+/* == 46 Kokovertailu: vakiot ja koot kahtena tasona (v5c) ================== */
+
+/* HAVAINTO 20.8.2026 (neljä sivua): talotiivistelmän faktanauha sekoitti
+   kaksi eri asiaa. *Malli* ja *Rakennustapa* pätevät koosta riippumatta,
+   mutta *Pinta-ala* ja *Huoneet* tulivat yhdestä koosta — ja koska kaikki
+   viisi olivat vierekkäin samannäköisinä, yhden koon luvut luettiin talon
+   faktoina. Alaviite korjasi sen jälkikäteen sanalla *perusmalli*, joka ei
+   ole mikään kolmesta ostettavasta koosta.
+
+   Rakenne on nyt kaksi tasoa: faktanauha = vakiot, taulukko = koot. Miksi
+   taulukko eikä vaihtokytkin: kytkin piilottaa kaksi kolmesta vaihtoehdosta
+   ja vaatii vuorovaikutuksen ennen kuin mitään näkyy. Vertailu on tässä se
+   sisältö joka myy. Perustelu kokonaisuudessaan: talo.js
+   renderKokoVertailu(), AVOIMET.md kohta 158. */
+
+/* .talo-specs--vakiot POISTETTU 20.8.2026. Vakiot eivät ole enää
+   faktanauha vaan yksi rivi tekstipalstassa (osio 48), joten kolmen
+   sarakkeen sääntöä ei tarvita. .talo-specs jää: sama luokka on
+   talo.html:n hero-avainluvuissa, joissa lukuja on neljä. */
+
+.koko-vertailu{
+  /* Neljä saraketta (rivin otsikko + kolme kokoa) ei mahdu 375 px:n
+     leveyteen luettavana. Sama ratkaisu kuin kohdesivun talotaulukossa:
+     taulukko saa vähimmäisleveyden ja .taulukko-kaari vierii — sivu itse ei
+     vieri vaakasuunnassa koskaan. */
+  min-width:30rem;
+  margin-top:var(--s-6);
+}
+.koko-vertailu th,
+.koko-vertailu td{padding:var(--s-4) var(--s-5) var(--s-4) 0;vertical-align:baseline}
+
+/* Sarakeotsikko on koon nimi, ja se ladotaan samaksi versaalilabeliksi kuin
+   faktanauhan otsikot: kaksi tasoa luetaan yhtenä komponenttina eikä kahtena
+   irrallisena lohkona. Ei rivitystä — "2 makuuhuonetta" kahdella rivillä
+   tekisi sarakkeesta otsikon näköisen. */
+.koko-vertailu thead th{white-space:nowrap}
+
+/* 375 px: nowrap teki taulukosta 674 px leveän eli kaksi ruutua, ja vertailu
+   jonka toinen puoli on aina näkymättömissä ei ole vertailu. Kapeassa ruudussa
+   sarakeotsikko saa siis rivittyä ja välit kiristyvät — vaakavieritystä jää
+   yhä, mutta kolmas sarake on kurkistuksen päässä eikä ruudun mitan. */
+@media (max-width:47.99rem){
+  .koko-vertailu{min-width:22rem}
+  .koko-vertailu thead th{white-space:normal}
+  .koko-vertailu th,
+  .koko-vertailu td{padding-right:var(--s-4)}
+}
+
+/* Rivi- ja sarakeotsikoiden risteys ei ole otsikko kumpaankaan suuntaan (se
+   on tyhjä td), mutta viiva jatkuu sen yli — muuten otsikkorivin alaviiva
+   katkeaa ensimmäisen sarakkeen kohdalta. */
+.koko-vertailu__kulma{border-bottom:1px solid var(--rule-strong)}
+
+/* Rivin otsikko kertoo MITÄ mitataan, solu KUINKA PALJON. Otsikko on siksi
+   hiljainen ja arvo äänekäs. Arvot eivät ole lukukoossa (--t-figure) kuten
+   faktanauhassa: yhdeksän lukua 44 px:n koossa olisi toinen iso hyppy samassa
+   lohkossa, ja asteikossa on vain yksi (ks. AGENTS.md, typografia). */
+.koko-vertailu tbody th{
+  font-family:var(--ff-head);
+  font-size:var(--t-small);
+  font-weight:600;
+  color:var(--ink-soft);
+}
+.koko-vertailu tbody td{
+  font-family:var(--ff-head);
+  font-size:var(--t-h3);
+  font-weight:600;
+  letter-spacing:-.01em;
+}
+
+/* Kaavan rajaama koko — vain kohdesivulla, merkitään proto.js:ssä kohteen
+   suurinKoko-kentästä. Sarake ei katoa vaan hiljenee: koko on olemassa
+   tuotteessa vaikkei tällä tontilla, ja piilotettu sarake veisi kävijältä
+   tiedon siitä mitä hän voisi saada toisessa kohteessa.
+
+   Harmaus yksin ei riitä: merkintä on myös sanoina otsikossa, koska väri ei
+   välity ruudunlukijalle eikä tulosteeseen. */
+.koko-vertailu [data-rajattu="true"]{color:var(--ink-faint)}
+.koko-vertailu__rajattu{
+  display:block;
+  margin-top:var(--s-2);
+  font-family:var(--ff-body);
+  font-size:var(--t-label);
+  font-weight:400;
+  letter-spacing:.02em;
+  text-transform:none;
+  white-space:nowrap;
+}
+
+/* == 47 Pohjapiirustus: kuvatila (v5d) ==================================== */
+
+/* Kuvapaikalla on nyt KAKSI tilaa, ja ne ovat visuaalisesti vastakohtia:
+
+     data-pohja-tila="puuttuu"  epämukava tyhjä laatikko (§09 ja §32)
+     data-pohja-tila="kuva"     piirustus, ei kehystä eikä viivoitusta
+
+   Tila tulee datasta (TALO.koot[].pohja), ei kokovalinnasta: kolmen
+   makuuhuoneen pohja on olemassa, kaksi muuta ovat yhä aukkoja. Aukkotilan
+   kalusto — viivoitus, kulmamerkit, jalanjälkikaavio — jää markupiin,
+   koska se on totta kahdella kolmesta koosta.
+
+   aspect-ratio POISTETAAN, ei muuteta. Piirustuksen kuvasuhde tulee
+   SVG:stä (n. 1,08:1 kun terassi ja kuisti lasketaan mukaan). Jos laatikko
+   pakotettaisiin 4:3:een, kuva jäisi kirjekuoreen — ja prosenttiasemoidut
+   nimilaput osuisivat huoneiden viereen eivätkä huoneisiin. */
+.ph--floorplan[data-pohja-tila="kuva"]{
+  aspect-ratio:auto;
+  min-height:0;
+  padding:0;
+  display:block;
+  border:0;
+  background:none;
+  color:var(--ink);
+}
+.ph--floorplan[data-pohja-tila="kuva"]::before,
+.ph--floorplan[data-pohja-tila="kuva"]::after{content:none}
+.ph--floorplan[data-pohja-tila="kuva"] .ph__tag,
+.ph--floorplan[data-pohja-tila="kuva"] .ph__what,
+.ph--floorplan[data-pohja-tila="kuva"] .ph__meta{display:none}
+
+/* Aukkotilassa ei ole kuvaa eikä varausta. */
+.ph--floorplan[data-pohja-tila="puuttuu"] .pohja,
+.ph--floorplan[data-pohja-tila="puuttuu"] .pohja__varaus{display:none}
+
+.pohja{position:relative;display:block}
+.pohja__kuva{display:block;width:100%;height:auto}
+
+/* Nimilappu. Sama elementti kahdessa asemassa: piirustuksen päällä
+   absoluuttisesti (.pohja > .pohja__nimi) ja luettelossa normaalivirrassa.
+   Keskipisteet tulevat datasta prosentteina — samasta generaattorista kuin
+   geometria, jotta nimi ei voi valua väärään huoneeseen. */
+.pohja__nimi{
+  font-family:var(--ff-head);
+  font-size:var(--t-label);
+  font-weight:600;
+  line-height:1.25;
+  color:var(--ink);
+  white-space:nowrap;
+}
+.pohja__nimi span{
+  display:block;
+  font-family:var(--ff-body);
+  font-weight:400;
+  color:var(--ink-faint);
+}
+.pohja > .pohja__nimi{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  text-align:center;
+  pointer-events:none;
+}
+
+/* Kaksi esitystä, yksi data. Kapealla ruudulla nimet EIVÄT mahdu
+   piirustuksen sisään: 2,7 metriä leveä makuuhuone on 375 px:n näytöllä
+   noin 70 px, eikä sanaan "Makuuhuone" ole tilaa — ja WC (1,06 m) saisi
+   28 px. Silloin laput piilotetaan ja sama lista luetellaan kuvan alle.
+
+   Raja 48rem on sama kuin .ph--floorplanin min-heightilla: siitä ylöspäin
+   piirustus on noin 600 px leveä, jolloin kapein huone saa ~48 px. */
+.pohja__lista{
+  list-style:none;
+  margin:var(--s-5) 0 0;
+  padding:var(--s-4) 0 0;
+  border-top:1px solid var(--rule);
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(8rem,1fr));
+  gap:var(--s-3) var(--s-4);
+}
+@media (min-width:48rem){
+  .pohja__lista{display:none}
+}
+@media (max-width:47.999rem){
+  .pohja > .pohja__nimi{display:none}
+}
+
+/* Varaus. Geometria on luettu valokuvasta ±100 mm:n tarkkuudella, joten
+   kuvasta ei voi mitata. Hiljainen mutta ei piilotettu: se on täsmennys
+   eikä pienellä painettu varaus. */
+.pohja__varaus{
+  margin-top:var(--s-4);
+  font-family:var(--ff-body);
+  font-size:var(--t-label);
+  line-height:1.5;
+  color:var(--ink-faint);
+  max-width:var(--measure);
+}
+
+/* == 48 Korjaus: luettava palsta ei saa kumoutua vahingossa (v5d) ========= */
+
+/* HAVAINTO 20.8.2026, oma-tontti.html 1280 px: tarkistuslistan varauma
+   renderöityi 90 merkkiä / rivi (15 px). Sivun muut palstat olivat 45–73,
+   eli optimissa. Yksi kappale oli siis kaksi kertaa leveämpi kuin sen
+   naapurit, ja juuri se kappale on se jota kävijä lukee epäröidessään.
+
+   MITATTU SYY. Ei .small p, kuten D-2 arveli, vaan .caveat p (osio 12):
+
+     .caveat p{max-width:none}   →  678 px, 90 merkkiä
+
+   Kumpikin sääntö kirjoitettiin samasta syystä: laatikon sisällä haluttiin
+   koko leveys. Perustelu pätee laatikkoon, ei sen leipätekstiin — kehys saa
+   olla leveä, rivi ei.
+
+   Kaksi poikkeusta jäävät voimaan omilla säännöillään, ja ne ovat oikeita:
+   muistiinpanot (osio 14) ja footerin huomautus (osio 15) eivät ole
+   luettavaa leipätekstiä vaan työkalu ja alaviite. Kumpikaan ei osu tähän
+   sääntöön: yksikään elementti ei kanna sekä .small- että .note- tai
+   .footer-note-luokkaa (tarkistettu), joten kaskadi ei törmää.
+
+   .small p on tässä mukana vaikka se ei tällä hetkellä tuota yhtään
+   ylipitkää riviä. Se on sama vuoto odottamassa seuraavaa .small-lohkoa,
+   ja D-2 nimesi sen jo v2:ssa. */
+.small p,
+.caveat p{max-width:var(--measure)}
+
+/* == 49 Kosketuskohteet: ohjauspalkki ja kielenvaihdin (v5d) ============== */
+
+/* MITATTU 20.8.2026, 375 px ja 1280 px. D-3 kirjasi navilinkkien ja
+   kielenvaihtimen koot ja totesi, ettei kyse ole WCAG-virheestä vaan
+   mukavuudesta. Ohjauspalkin osalta se ei pidä paikkaansa:
+
+     .proto-btn      21 × 19 px      WCAG 2.2 AA 2.5.8 vaatii 24 × 24
+     .notes-toggle   25 × 15 px      (1280 px:llä 127 × 22)
+     .lang a         34 × 30 px      täyttää 24, alittaa 44
+     navilinkit      335 × 41 px     täyttää 24, alittaa 44
+
+   Palkki on prototyypin oma työkalu eikä osa sivustoa, mutta se on juuri se
+   mitä asiakas klikkaa workshopissa — ja kohderyhmässä on
+   eläkeläispariskuntia. Korkeus nostetaan pystypaddingilla, joten mikään ei
+   siirry eikä fonttikoko muutu: palkki näyttää samalta, se vain osuu.
+
+   44 px on mukavuusraja eikä normi. Ohjauspalkki jää siitä alle
+   tarkoituksella — se ei saa kasvaa sivuston oman headerin kokoiseksi —
+   mutta se ylittää nyt normin 24 px:n rajan selvästi. */
+.proto-btn{min-height:28px;min-width:28px;justify-content:center}
+.notes-toggle{min-height:28px}
+
+/* Sivuston oma kromi menee mukavuusrajaan asti. Kielenvaihdin ja
+   navilinkit kasvavat vain pystysuunnassa; leveys ja ladonta säilyvät. */
+.lang a{min-height:44px;display:inline-flex;align-items:center}
+.nav-toggle{min-height:44px}
+@media (max-width:61.99rem){
+  .site-nav a{min-height:44px;display:flex;align-items:center}
+}
+/* Footerin sivukartta on navigaatiota siinä missä headerin valikkokin, ja
+   sen linkit mitattiin 41 px:ksi (padding 8px 0, ei min-heightia). Kolmen
+   pikselin vaje, mutta sama lista ja sama sormi. */
+.footer-grid ul a{min-height:44px;display:flex;align-items:center}
+
+/* == 50 Pystyrytmi pois markupista (v5d) ================================== */
+
+/* HAVAINTO 20.8.2026: seitsemällä sivulla oli 79 inline-style-attribuuttia,
+   ja lähes kaikki kantoivat pystyvälistystä:
+
+     23 × margin-top:var(--s-6)      5 × margin-top:var(--s-7)
+     23 × margin-top:var(--s-5)      5 × margin-top:var(--s-4)
+      4 × margin:var(--s-5) 0        1 × margin-top:var(--s-3)
+
+   Tokenit olivat oikein, mutta rytmi asui 79 paikassa. Kaksi seurausta:
+   D-5:n havaintoa sivun tasaisesta rytmistä ei voi korjata keskitetysti, ja
+   styles.css:n osiointi ohitetaan joka kerta kun joku lisää kappaleen.
+
+   Ratkaisu on kaksiosainen, koska havainnossa on kahdenlaista tapausta.
+
+   1  TOISTUVA KOMPONENTTI saa oman luokan. Footerin brändilohko oli
+      identtinen kaikilla seitsemällä sivulla, kaksi inline-tyyliä
+      kummassakin — se on komponentti, ei välistyspäätös.
+
+   2  KERTALUONTOINEN VÄLI saa apuluokan, joka peilaa tokenia suoraan.
+      Nimi kertoo saman kuin token, joten mitään uutta asteikkoa ei
+      synny — ja koska luokka on greppailtavissa, rytmin voi vihdoin
+      mitata ja säätää yhdestä paikasta. */
+
+.footer-brand__nimi{margin:0 0 var(--s-3)}
+.footer-brand__kuvaus{color:var(--beige);max-width:26em}
+
+.vali-3{margin-top:var(--s-3)}
+.vali-4{margin-top:var(--s-4)}
+.vali-5{margin-top:var(--s-5)}
+.vali-6{margin-top:var(--s-6)}
+.vali-7{margin-top:var(--s-7)}
+/* Ylä- ja alaväli yhtä suurina: erottaa lohkon molemmista naapureistaan. */
+.vali-y5{margin:var(--s-5) 0}
+
+/* == 51 Korjaus: merkkiviivalla oli kaksi vastakkaista merkitystä (v5d) === */
+
+/* HAVAINTO 20.8.2026. Vasen värillinen merkkiviiva on prototyypin
+   toiseksi tihein merkintätapa heti hiusviivan jälkeen. Kun kaikki
+   esiintymät laskettiin, amber oli johdonmukainen ja oliivi ei:
+
+     amber 2px   .caveat · .gap--block · .ticks__d--q · .gap--demo-lohko
+                 Kaikki neljä tarkoittavat samaa: tietoa ei ole vahvistettu.
+                 Tämä on sääntö eikä sattuma, ja se saa jäädä.
+
+     oliivi 2px  .note      prototyypin muistiinpano, ei asiakascopya
+                 .lupaus    asiakkaalle annettu vahvistettu lupaus (R4)
+
+   Nämä kaksi ovat toistensa vastakohdat: toinen on merkintä siitä että
+   sivu on kesken, toinen on sivun sitovin lause. Muistiinpanotilassa ne
+   näkyvät rinnakkain identtisinä.
+
+   .lupaus siirtyy paneeliksi. --beige-panel on jo tokeneissa ja tarkoittaa
+   muualla korostettua sisältöä, ei merkintää — eli täsmälleen sitä mitä
+   lupaus on. Samalla lupaus lakkaa näyttämästä alaviitteeltä: se oli osion
+   39 alkuperäinen tavoite, johon merkkiviiva ei aivan yltänyt.
+
+   Oliivi jää siis yksinomaan muistiinpanon merkiksi, ja merkkiviivan
+   sanasto supistuu kolmeen yksiselitteiseen tasoon:
+     1px --rule-strong  ehdollinen tarkennus (.huomautus)
+     2px --amber        vahvistamaton
+     2px --olive        prototyypin muistiinpano */
+.lupaus{
+  padding:var(--s-5);
+  border-left:0;
+  background:var(--beige-panel);
+}
+
+/* == 52 Kaksi komponenttia jotka asuivat markupissa (v5d) ================= */
+
+/* Osion 50 siivouksessa jäi jäljelle kaksi inline-tyyliä, jotka eivät olleet
+   välistystä vaan komponentteja. Ne eivät kuulu apuluokkiin. */
+
+/* 1  .link-arrow <button>-elementtinä. Paluupainike kiitos-tilassa on
+      nappi eikä linkki — se ei vie mihinkään, se palauttaa lomakkeen — ja
+      nappi tarvitsee nollauksen. Nollaus tehdään tässä elementtivalitsimella,
+      jotta seuraava .link-arrow-nappi ei tarvitse omaa luokkaa eikä
+      inline-tyyliä. */
+button.link-arrow{
+  background:none;
+  border:0;
+  border-bottom:1px solid var(--rule-strong);
+  padding-left:0;
+  cursor:pointer;
+  font:inherit;
+  color:inherit;
+}
+
+/* 2  Selite merkityn aukon sisällä. Aukko kertoo mitä puuttuu, selite
+      kertoo miksi sitä ei ole täytetty arvaamalla — se on eri lause ja
+      tarvitsee oman rivinsä, mutta ei omaa kehystä. */
+.gap__selite{
+  display:block;
+  margin-top:var(--s-2);
+  white-space:normal;
+}
+
+/* == 53 Kohde-oletuksen syy (v5d) ========================================= */
+
+/* Oletuskohteeseen päädytään kahdesta syystä, ja huomautus kertoo kumpi.
+   Sama kuvio kuin osion 35 vaihtuvassa otsikossa: variantti on otsikon
+   sisällä, joten se ei voi olla display:block. Ks. kohde.html (T-8). */
+.v-oletus{display:none}
+[data-kohde-oletus="puuttuu"]    .v-oletus[data-syy="puuttuu"],
+[data-kohde-oletus="tuntematon"] .v-oletus[data-syy="tuntematon"]{display:inline}
+
+/* == 54 Korjaus: näkymätön kappale tummassa osiossa (v5d) ================= */
+
+/* HAVAINTO 20.8.2026, talo.html: tumman loppu-CTA:n ingressi "Talo on sama
+   molemmissa…" renderöityi kontrastisuhteella 1.00 — teksti oli
+   täsmälleen taustan värinen, eli näkymätön. Ei himmeä: näkymätön.
+
+   SYY on kaskadi, ei väärä väri. Kaksi sääntöä on samaa spesifisyyttä
+   (0,1,1), joten myöhempi voittaa:
+
+     rivi 248   .section--dark p{color:#e6e2d8}      vaalea tummalla
+     rivi 275   .section-head p{color:var(--ink-soft)}   = charcoal
+
+   --ink-soft on charcoal, ja tumman osion tausta ON charcoal.
+
+   Kumpikaan sääntö ei ole yksin väärä, eikä kumpaakaan siksi muuteta.
+   Vika ei myöskään ollut olemassa ennen tätä viikkoa: se syntyi silloin
+   kun tummaan osioon tuli ensimmäistä kertaa .section-head jossa on
+   kappale. Yhdistelmä on uusi, ei sääntö.
+
+   Korjaus nostaa spesifisyyttä (0,2,1) ja käyttää täsmälleen samaa arvoa
+   kuin osion 02 tumma leipäteksti, jotta tummassa osiossa on yhä yksi
+   tekstiväri eikä kahta.
+
+   Sääntö on yleinen tarkoituksella: sama yhdistelmä syntyy uudelleen heti
+   kun seuraava tumma osio saa section-headin.
+
+   23.9.2026: arvo #e6e2d8 on nyt tokeni --ink-on-dark (osio 01). Tämän
+   perustelun viimeinen kappale — "yksi tekstiväri eikä kahta" — oli
+   tokenin määritelmä jo silloin kun se kirjoitettiin. Ks. D-21. */
+.section--dark .section-head p{color:var(--ink-on-dark)}
+
+/* == 55 Korjaus: .caveat myös suorana kappaleena (v5d) ==================== */
+
+/* Osio 48 rajasi .caveat p -säännön, mutta komponentti esiintyy kahdessa
+   muodossa: <div class="caveat"><p> (oma-tontti) ja <p class="caveat">
+   (kohde.html, T-8:n huomautus). Jälkimmäiseen osio 48 ei osunut, ja se
+   mitattiin 94 merkkiä / rivi. Sama sääntö, molemmat muodot. */
+p.caveat{max-width:var(--measure)}
+
+/* == 56 Kuvapaikka: valokuvatila (v5e) =================================== */
+
+/* Kuvapaikalla on nyt kaksi tilaa, kuten pohjapiirustuksella osiossa 47:
+
+     (ei attribuuttia)      aukko — mitoitettu kehys, kulmamerkit, otsikko
+     data-ph-tila="kuva"    valokuva, ei kehystä eikä kulmamerkkejä
+
+   Tila tulee placeholder-tilasta (proto.js placeholderKuvat), ei
+   kuvapaikasta: valokuvat ovat kuvitteellista sisältöä siinä mielessä että
+   kuvamaailmaa ei ole päätetty, ja aukkotila on yhä oletus.
+
+   KUVASUHDE EI MUUTU. Se tulee yhä luokasta (.ph--wide, .ph--photo, heron
+   oma sääntö osiossa 29), ja kuva täyttää laatikon object-fit:coverilla.
+   Näin layout on aukko- ja kuvatilassa pikselintarkasti sama — juuri sitä
+   varten kuvapaikat on mitoitettu.
+
+   Kuva on absoluuttisesti asemoitu eikä height:100%, koska heron kuvapaikka
+   saa korkeutensa kolmella eri tavalla leveyden mukaan (aspect-ratio 16:9,
+   3:2 ja flex-rivin korkeus). inset:0 kestää kaikki kolme. */
+.ph[data-ph-tila="kuva"]{
+  display:block;
+  padding:0;
+  border:0;
+  background:none;
+  overflow:hidden;
+}
+.ph[data-ph-tila="kuva"]::before,
+.ph[data-ph-tila="kuva"]::after{content:none}
+.ph[data-ph-tila="kuva"] .ph__tag,
+.ph[data-ph-tila="kuva"] .ph__what,
+.ph[data-ph-tila="kuva"] .ph__meta{display:none}
+
+.ph__kuva{
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* == 47 Ohjauspalkki piilotettu (v5c) ===================================== */
+
+/* Asiakas halusi 20.8.2026 nähdä sivuston ilman prototyypin omia
+   kontrolleja. Palkkia EI ole poistettu markupista eikä sen JS:ää
+   (asetukset.js, initNotes) ole purettu: se on prototyypin työkalu, jolla
+   verrataan omistusmallia A/B ja sisältötilaa, ja poisto tekisi
+   palauttamisesta uudelleenrakentamisen. display:none riittää — se poistaa
+   palkin myös tabjärjestyksestä ja saavutettavuuspuusta.
+
+   PALAUTUS: poista tämä sääntö. Yksi rivi.
+
+   Seuraus jota ei saa unohtaa: kontrollien mukana katosi kuvitteellisten
+   lukujen varoitus, ja placeholder on oletustila (asetukset.js OLETUS).
+   Ilman varoitusta sivu näyttää kuvitteellisia hintoja kertomatta siitä
+   mitään, ja se on tämän prototyypin pahin yksittäinen väärinymmärrys.
+   Siksi varoitus on nyt footerissa, ja se näkyy vain placeholder-tilassa:
+   aukkotilassa hakasulkeet kertovat saman asian itse. */
+.proto-bar{display:none}
+
+.footer-note__ph{display:none}
+body[data-sisalto="placeholder"] .footer-note__ph{display:block}
+
+/* == 57 Korjaus: sisältyy-listan ensimmäinen pallura oli ylhäällä (v5e) === */
+
+/* Havainto: talo.html §08 (&rdquo;Sisältyy talon hintaan&rdquo;) — listan
+   ensimmäisen kohdan pallura ei ole samalla vaakalinjalla otsikkonsa kanssa.
+   Kaksisarakkeisessa asettelussa vika näkyy vierekkäin: vasemman sarakkeen
+   ensimmäinen pallura leijuu otsikon yläpuolella, oikean sarakkeen
+   (&rdquo;Maatyöt&rdquo;) osuu keskelle.
+
+   Syy: osiossa 16 on sääntö
+
+       .item-list--tick li:first-child::before{top:.55em}
+
+   joka on jäänne asettelusta, jossa ensimmäisellä rivillä ei ollut
+   ylätäytettä (`border-top:0`, siis myös `padding-top:0`). Nyt jokaisella
+   rivillä on `padding:var(--s-4) 0`, joten ensimmäinen rivi ei eroa muista
+   mitenkään — pelkkä yläviiva puuttuu, ja viiva ei vaikuta absoluuttisesti
+   sijoitetun merkin origoon (se on padding-box, ei border-box).
+
+   Mitattu 1280 px: rivi 1 pallura 12,9 px otsikkorivin keskikohdan
+   yläpuolella, rivit 2–5 kohdallaan. Korjauksen jälkeen kaikki viisi
+   samassa ±1,3 px:ssä.
+
+   Ei kosketa osioon 16 paikallaan, koska tämä on yksi havainto.
+
+   23.9.2026: komponentti on yhdistetty .ticks-listaan (osio 52), joten
+   sääntö ei ole enää erillinen korjaus vaan osa .ticks--kuvaus-variantin
+   perusmäärittelyä — mitattu arvo 1.35em siirtyi sinne sellaisenaan.
+   Tämä osio jää dokumentiksi siitä miksi arvo on se mikä on. */
+
+/* == 48 Talotiivistelmä: vakiot rivinä, kevyempi vertailu (v5f) ============ */
+
+/* HAVAINTO 20.8.2026: lohko oli liian levoton. Vika ei ollut välistyksessä
+   vaan siinä, että kaksi eri tietolajia oli ladottu SAMALLA KIELIOPILLA.
+   Vakiot (osio 46:n faktanauha) ja kokovertailu käyttivät molemmat
+   hiusviivaa, versaalilabelia ja Quicksand-arvoa, joten silmä näki kuusi
+   merkittyä arvoa yhtenä sotkuna eikä erottanut talon pysyvää ominaisuutta
+   koon mukaan muuttuvasta luvusta. Lohkossa oli lisäksi neljä eri
+   labelijärjestelmää: yläotsikko, vakioiden labelit, sarakeotsikot ja
+   riviotsikot.
+
+   Korjaus on rakenteellinen: vakiot lakkaavat olemasta taulukkomainen
+   nauha ja luetaan yhtenä rivinä tekstipalstassa. Taulukko jää lohkon
+   ainoaksi dataobjektiksi, ja labelijärjestelmiä on kolme neljän sijaan. */
+
+.talo-vakiot{
+  margin:var(--s-5) 0 0;
+  font-family:var(--ff-head);
+  /* Leipätekstin koko, ei --t-small: rivi on tuotteen kuvaus eikä alaviite,
+     ja ingressin alla se jäisi pienempänä huomaamatta. */
+  font-size:var(--t-body);
+  font-weight:600;
+  line-height:1.35;
+  color:var(--ink);
+  letter-spacing:-.005em;
+  display:flex;
+  flex-wrap:wrap;
+  /* Pystyväli pienempi kuin vaakaväli: rivittyessä osat pysyvät yhtenä
+     lauseena eivätkä hajoa listaksi. */
+  gap:var(--s-2) var(--s-3);
+}
+/* Erotin on piste, ei viiva: viiva on tässä lohkossa varattu taulukolle.
+   Sijainti x-korkeuden puolivälissä, ei perusviivalla.
+
+   Piste on EDELTÄVÄN osan perässä (::after), ei seuraavan edessä. Kun rivi
+   rivittyy kolmella osalla, ::before jättäisi pisteen aloittamaan uuden
+   rivin ja lause lukisi luettelona; ::after jättää sen edellisen rivin
+   loppuun, jossa se lukee jatkumisen merkkinä. */
+.talo-vakiot span:not(:last-child)::after{
+  content:"";
+  display:inline-block;
+  width:4px;height:4px;border-radius:50%;
+  background:var(--olive);
+  margin-left:var(--s-3);
+  vertical-align:.28em;
+}
+
+/* Talotiivistelmän kuvapaikka on 4:3 eikä 16:9 (K08). Kun vakiot siirtyivät
+   tekstipalstaan, palstat ovat lähes samankorkuiset ja 16:9 jätti kuvan
+   alle tyhjän kaistan. Pystympi rajaus näyttää myös enemmän rakennuksesta,
+   ja kuvapaikan mitat ovat kuvatarpeen mitat — ks. KUVATARPEET.md K08. */
+.ph--talo{aspect-ratio:4/3}
+
+/* -- Kokovertailu hiljaisemmaksi ---------------------------------------- */
+
+/* Sarakeotsikko oli versaali ja harvennettu, eli sama ladonta kuin
+   faktanauhan labeleissa. Nyt se on virkekokoinen ja ladotaan otsikkona:
+   taulukko lukee omana objektinaan eikä nauhan jatkeena. */
+.koko-vertailu thead th{
+  font-family:var(--ff-head);
+  font-size:var(--t-small);
+  font-weight:600;
+  color:var(--ink);
+  letter-spacing:0;
+  text-transform:none;
+  padding-bottom:var(--s-3);
+  border-bottom:1px solid var(--ink-soft);
+}
+.koko-vertailu__kulma{border-bottom:1px solid var(--ink-soft)}
+
+/* Riviotsikko kertoo mitä mitataan; se saa perääntyä, koska sarakeotsikko
+   ja arvo kantavat vertailun. Leipätekstin kirjasin erottaa sen arvoista
+   ilman että se vaatii omaa väriään. */
+.koko-vertailu tbody th{
+  font-family:var(--ff-body);
+  font-weight:400;
+  color:var(--ink-faint);
+  letter-spacing:.02em;
+}
+/* Rivien välinen viiva pehmeimmällä hiusviivalla: yhdeksän lukua tarvitsee
+   rivin, mutta ei niin vahvaa että taulukko lukisi ruudukkona. */
+.koko-vertailu tbody tr+tr th,
+.koko-vertailu tbody tr+tr td{border-top:1px solid var(--rule-soft)}
+
+/* Taulukko saa oman ilmansa: tiivis ryhmä (otsikko, ingressi, vakiot),
+   sitten selvä tauko ja vasta sen jälkeen data. */
+.taulukko-kaari{margin-top:clamp(3rem,6vw,5rem)}
+.koko-vertailu{margin-top:0}
+
+/* == 49 Lainaus erottuu lainaukseksi (v5f) ================================ */
+
+/* HAVAINTO 20.8.2026: lainaukset sekoittuivat informatiiviseen tekstiin.
+   Ne oli ladottu leipätekstin kirjasimella ja koolla, hiusviiva yllä ja
+   pieni nimirivi alla — eli täsmälleen sama ladonta kuin sivun muilla
+   tekstilohkoilla. Kävijä ei nähnyt yhdellä silmäyksellä, että kyseessä on
+   asiakkaan ääni eikä yrityksen oma väite. Referenssin koko arvo on siinä,
+   että puhuja on joku muu kuin myyjä; jos se ei näy, lainaus tekee
+   luottamustyön sijaan pelkkää täytettä.
+
+   Kolme signaalia, ei yhtä:
+
+   1. KIRJASIN. Lainaus ladotaan otsikkokirjasimella, muu leipäteksti
+      leipäkirjasimella. Ero näkyy ennen kuin sanaakaan on luettu.
+      Kursiivi olisi tavanomaisempi ratkaisu, mutta lopulliset kirjasimet
+      (Cocon Pro, Filson Soft) eivät ole vielä käytössä eikä niiden
+      kursiivileikkauksista ole tietoa — sijaiskursiivi olisi väärä lupaus.
+
+   2. LAINAUSMERKKI. Iso ” lainauksen edellä, riippuvana vasemmalla
+      marginaalilla: teksti pysyy samassa linjassa muun sisällön kanssa,
+      merkki roikkuu sen ulkopuolella. Merkki on koriste eikä sisältöä,
+      joten se on hiljainen ja aria-hidden CSS:n puolella (::before ei ole
+      ruudunlukijan sisältöä sivuston tukemissa selaimissa).
+
+   3. NIMI. Puhujan nimi on nyt musteen värinen ja lihavoitu, paikkakunta
+      hiljainen sen perässä. Aiemmin molemmat olivat samaa harmaata, ja
+      nimi on juuri se osa joka tekee lainauksesta referenssin.
+
+   Mitä EI tehty: ei laatikkoa, ei taustaväriä, ei värillistä reunaviivaa
+   lainauksen vasemmalla puolella. Sivuston kieli on hiusviiva ja
+   typografia, ja lainauslaatikko olisi ensimmäinen kortti tällä
+   sivustolla. */
+
+.lainaukset blockquote{
+  position:relative;
+}
+
+/* HIUSVIIVA POISTETTU 20.8.2026 (osiot 38 ja 42 siivottu samalla).
+   Lainauksen yllä oli hiusviiva — sama merkki jolla sivun tietolohkot,
+   faktarivit ja taulukon rivit erotetaan toisistaan. Se veti lainauksen
+   takaisin siihen kielioppiin josta se oli juuri erotettu: kirjasin ja
+   lainausmerkki sanoivat "puhetta", viiva sanoi "tietoa".
+
+   Erotus tulee nyt välistyksestä. Pinotussa variantissa väli kasvaa,
+   koska ilman viivaa kolme lainausta lukisi yhtenä katkonaisena tekstinä
+   jos ne ovat lähekkäin. */
+.lainaukset{gap:var(--s-7)}
+@media (min-width:52rem){
+  .lainaukset--omalohko{gap:var(--s-6)}
+}
+.lainaukset p{
+  font-family:var(--ff-head);
+  font-weight:400;
+  line-height:1.45;
+  letter-spacing:-.005em;
+  color:var(--ink);
+  /* Lainauksen palsta on kapeampi kuin leipätekstin: lyhyt rivi lukee
+     puheena, pitkä rivi asiakirjana. */
+  max-width:30rem;
+  /* Osio 38 latoi lainauksen --t-small-koossa eli pienempänä kuin sitä
+     ympäröivä leipäteksti. Puhe ei ole alaviite: koko on vähintään
+     leipätekstin, omassa lohkossaan sitä suurempi. */
+  font-size:var(--t-body);
+}
+.lainaukset--omalohko p{font-size:var(--t-lead)}
+
+/* Riippuva lainausmerkki. Ei marginaalia tekstille: merkki asemoidaan
+   tekstipalstan ulkopuolelle, joten lainaus pysyy samassa vasemmassa
+   linjassa kuin otsikko ja ingressi sen yllä. */
+.lainaukset blockquote::before{
+  content:"\201D";
+  position:absolute;
+  left:-.62em;
+  /* Merkin yläreuna ensimmäisen tekstirivin versaalikorkeuden tasalle.
+     Ilman yläpehmustetta lähtökohta on 0 ja translate hoitaa optisen
+     nousun; pelkkä top-arvo jättäisi merkin roikkumaan rivin alapuolelle. */
+  top:0;
+  transform:translateY(-.24em);
+  font-family:var(--ff-head);
+  font-size:2.75rem;
+  line-height:1;
+  font-weight:600;
+  /* Beige yksinään jäi paperia vasten niin vaaleaksi ettei signaali
+     kantanut. Oliivi laimennettuna paperiin pitää merkin koristeena mutta
+     tekee siitä nähtävän. */
+  color:color-mix(in srgb, var(--olive) 32%, var(--paper));
+  pointer-events:none;
+}
+/* Kapeassa ruudussa marginaalia ei ole, joten merkki jäisi ruudun
+   ulkopuolelle. Silloin se nousee tekstin yläpuolelle omalle rivilleen. */
+@media (max-width:33.99rem){
+  .lainaukset blockquote::before{
+    position:static;
+    display:block;
+    transform:none;
+    margin-bottom:calc(var(--s-2) * -1);
+  }
+}
+
+.lainaukset footer{
+  margin-top:var(--s-4);
+  font-family:var(--ff-body);
+  font-size:var(--t-small);
+  color:var(--ink-faint);
+}
+.lainaukset footer .lainaus__nimi{
+  font-family:var(--ff-head);
+  font-weight:600;
+  color:var(--ink-soft);
+}
+
+/* == 50 Loppu-CTA: erotus rakenteella, ei värillä (v5f) ==================== */
+
+/* Loppu-CTA oli hetken charcoal, jotta se erottuisi muista sektioista.
+   Se ratkaisi väärän ongelman: CTA on sivun viimeinen sektio, ja footer on
+   myös charcoal — kaksi eri lohkoa sulautui yhdeksi tummaksi massaksi eikä
+   kävijä nähnyt missä toinen loppuu ja toinen alkaa.
+
+   Väri ei ole tässä käytettävissä. Sivuston sääntö on yksi tumma osio
+   sivua kohti (osio 03), ja alalaidassa sen omistaa footer. Beige-luokka
+   taas on tarkoituksella neutralisoitu eikä maalaa palkkeja.
+
+   Erotus tulee siis rakenteesta, joka on tämän sivuston oma kieli:
+   vahvempi yläviiva, selvästi enemmän ilmaa ja otsikon yläpuolinen tila.
+   Lohko lukee pysähdyksenä ilman että se ottaa footerin värin.
+
+   VAIHTOEHTO jos tämä ei riitä: käännetään suunta ja tehdään footerista
+   vaalea, jolloin tumma pinta vapautuu CTA:lle. Se on brändipäätös eikä
+   layout-korjaus, joten sitä ei tehty tässä. Ks. AVOIMET.md kohta 180. */
+.section--loppu{
+  border-top:1px solid var(--rule-strong);
+  padding-block:clamp(4rem,8vw,7rem);
+}
+/* Otsikkolohko saa saman ilman: CTA:n tehtävä on olla viimeinen asia jonka
+   kävijä lukee, ei tiivein. */
+.section--loppu .section-head{margin-bottom:clamp(2.5rem,5vw,4rem)}
+
+
+/* == 51 Kielenvaihdin: kaksi linkkiä (v5h) ================================= */
+
+/* Vaihdin oli span + button: aktiivinen kieli tekstinä ja toinen
+   painikkeena, joka avasi viestin "ruotsinkielinen sisältö ei kuulu
+   prototyypin laajuuteen". Kun SV on oikea kieliversio, kumpikaan ei ole
+   oikea elementti — kieli on osoitteessa (?lang=sv), joten vaihto on
+   navigaatio ja navigaatio on linkki. Kaksi linkkiä myös lukee
+   ruudunlukijalla listana, ja aktiivinen on aria-current.
+
+   POISTETTU samalla: .lang__msg (viestilaatikko headerin alla) ja sen
+   mobiiliasemointi osiosta 12. Copy poistettiin copy-data.js:stä
+   (proto.kieliviesti) ja markup seitsemältä sivulta.
+
+   Ulkoasu ei muutu: linkit perivät saman typografian ja saman 44 px:n
+   kosketuskorkeuden kuin painike ennen (osio 49). text-decoration:none on
+   uusi rivi, koska span ja button eivät alleviivautuneet itsestään. */
+
+
+/* == 52 Merkkilista: yksi komponentti, kaksi rytmiä (v5i) ================== */
+
+/* HAVAINTO 23.9.2026 (TARKASTUS.md D-20). Sivustolla oli kaksi
+   merkkilistakomponenttia, ja ne piirsivät saman merkin:
+
+     .ticks             kohteet.html, oma-tontti.html   (6 esiintymää)
+     .item-list--tick   talo.html §08                   (1 esiintymä)
+
+   MITATTU 1280 px, molemmat identtiset: ::before 9 × 9 px, oliivi #665e31,
+   pyöristys 50 %, left:0, sisennys 1,75 rem. Ero oli vain kaksi asiaa:
+
+     pystytäyte      12 px   vs.  16 px
+     erotinviiva     alhaalla vs. ylhäällä (ei ensimmäisellä)
+
+   Toinen komponentti tuki lisäksi kaksirivistä kohtaa (otsikko + selite),
+   toinen ei. Se on oikea ero — mutta se on variantti, ei oma komponentti.
+
+   .ticks on nyt ainoa merkkilista. .ticks--kuvaus on sen variantti niille
+   listoille joissa kohdalla on otsikko ja selite: se palauttaa täsmälleen
+   entisen .item-list-rytmin, joten talo.html §08 ei muutu pikseliäkään.
+   Kaksisarakkeinen .sisaltyy-lista (osio 45) toimii ennallaan, koska sen
+   `li:nth-child(2){border-top:0}` on spesifisempi (0,2,1) kuin tämän
+   variantin yläviiva. */
+
+.ticks--kuvaus li{
+  display:grid;
+  /* PAKOLLISET NOLLAUKSET. Osio 10 määritteli .ticks li:n gridiksi, jossa on
+     `grid-template-columns:1.5rem 1fr` ja `align-items:baseline`. Osio 30
+     vaihtoi sen blokiksi mutta EI poistanut noita kahta — ne jäivät
+     lepäämään. Heti kun display:grid palautetaan tässä variantissa, ne
+     heräävät: otsikko menee 24 px:n sarakkeeseen (yksi sana riviä kohden) ja
+     selite sen päälle. Se on täsmälleen osion 30 dokumentoima virhe, ja se
+     toistui tätä varianttia kirjoitettaessa. Mitattu ja korjattu 23.9.2026. */
+  grid-template-columns:none;
+  align-items:normal;
+  gap:var(--s-1);
+  padding:var(--s-4) 0 var(--s-4) 1.75rem;
+  border-top:1px solid var(--rule-soft);
+  border-bottom:0;                      /* .ticks-perustan viiva pois */
+}
+.ticks--kuvaus li:first-child{border-top:0}
+/* Pallura otsikkorivin keskelle. Arvo on mitattu, ks. osio 57. */
+.ticks--kuvaus li::before{top:1.35em}
+
+.ticks__t{
+  font-family:var(--ff-head);
+  font-weight:600;
+  line-height:1.35;
+  letter-spacing:-.01em;
+}
+.ticks__d{
+  font-size:var(--t-small);
+  color:var(--ink-soft);
+  max-width:var(--measure);
+}
+
+/* Kohta joka löytyy vain sisäisestä aineistosta, ei julkisesta USP-listasta.
+   Amber 2 px = vahvistamaton, sama sanasto kuin osiossa 51. */
+.ticks__d--q{
+  color:var(--ink);
+  border-left:2px solid var(--amber);
+  padding:var(--s-1) 0 var(--s-1) var(--s-4);
+  margin-top:var(--s-2);
+}

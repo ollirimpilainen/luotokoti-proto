@@ -1,0 +1,298 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-8408 -2850 20366 14557"
+     width="900" height="643"
+     role="img" aria-label="Aksonometrinen leikkaus pohjapiirustuksesta: kolme makuuhuonetta, olohuone ja keittio, kylpyhuone, wc, apukeittio, eteinen, varasto seka terassi ja kuisti.">
+<!-- =====================================================================
+     Luotokoti — pohjapiirustus aksonometrisena projektiona.
+     
+     Aja projektin juuresta:   python3 tyokalut/aksonometria.py
+     Tuottaa:                  assets/aksonometria-3mh.svg
+     
+     MISTA GEOMETRIA TULEE
+     Tama tiedosto EI mittaa eika piirra mitaan. Se lukee saman geometrian kuin
+     pohjapiirustus — pohja.py:n SEINAT, TER, KUI, ITA, W ja H — ja projisoi sen.
+     Jos pohjan mitta muuttuu, se muuttuu myos taalla ilman etta tanne koskee.
+     Sama periaate kuin toimialuekartassa (kartta.py): merkinnat lasketaan
+     projektiosta, ei aseteta silmamaaraisesti.
+     
+     MIKSI SEINAN YLAPINTA ON CHARCOAL
+     Pohjapiirustuksessa seina on umpea charcoalia siksi etta se on LEIKATTU.
+     Aksonometriassa juuri se leikkauspinta on seinan ylapinta, joten se pysyy
+     charcoalina; sivut ovat seinapintaa ja siksi vaaleampia. Kuva ei siis ole
+     uusi piirros vaan sama piirustus nostettuna pystyyn.
+     
+     MIKSI LEIKKAUS ON 900 MM EIKA TAYSI SEINA
+     Huonekorkeutta ei ole missaan datassa — ei talo-data.js:ssa eika AVOIMET.md:ssa.
+     Taysikorkea seina jouduttaisiin siis keksimaan, ja se olisi keksitty luku
+     sivulla joka vaittaa esittavansa taloa. 900 mm on leikkauskonventio: se
+     lukee ilmiselvasti leikkaukseksi eika kattokorkeudeksi, joten se ei vaita
+     talosta mitaan. Sama ratkaisu kuin suunnan C julkisivulla, joka on
+     periaatekuva ja sanoo sen kuvatekstissa.
+     
+     Sivuvaikutuksena leikkaus on myos ainoa korkeus jolla huonejako nakyy:
+     taysi seina piilottaa pohjan, joka on koko kuvan tarkoitus.
+     
+     Koska ikkunapenkkien korkeuksia ei ole datassa, kuva ei myoskaan vaita
+     leikkaavansa ikkunoita: ikkuna on umpea seinaa, ovi on aukko. Ks. AUKOLLISET.
+     
+     MIKSI SYVYYSJARJESTYS ON TOPOLOGINEN LAJITTELU — JA MIKSI VAIN PEITTAVILLE
+     Maalarin algoritmi tarvitsee jarjestyksen takaa eteen. Katsoja on suunnassa
+     +x, +y, +z (katsesade on (1, 1, 1)), joten a on b:n edessa kun a on kokonaan
+     idassa (a.x0 >= b.x1) tai kokonaan etelassa (a.y0 >= b.y1).
+     
+     Pelkkana relaationa se on kuitenkin ristiriitainen: jos a on b:sta itaan JA
+     pohjoiseen, molemmat ehdot patevat eri suuntiin ja syntyy sykli. Nain kavi
+     30 seinan joukossa 274 parille, jolloin topologinen lajittelu epaonnistui ja
+     putosi varajarjestykseen — SEINAT-listan kirjoitusjarjestykseen, jolla ei ole
+     mitaan tekemista syvyyden kanssa. Seinat piirtyivat toistensa paalle.
+     
+     Ratkaisu: ristiriitaiset parit ovat vastakkaisilla lavistajilla eivatka
+     peita toisiaan ruudulla lainkaan, joten niiden jarjestyksella ei ole valia.
+     Jarjestysehto lisataan VAIN kun laatikoiden projisoidut rajaukset menevat
+     paallekkain. Silloin relaatio on syklitin ja lajittelu on tasmallinen.
+     
+     Lopputulos tarkistetaan: jokainen ruudulla peittava pari kaydaan lapi ja
+     varmistetaan etta edessa oleva on piirretty myohemmin. Ilman tarkistusta
+     sama virhe olisi jaanyt huomaamatta uudelleen — se nakyy vain harvoissa
+     kohdissa eika kaada mitaan.
+     
+     MIKSI TASSA EI OLE TEKSTIA
+     Sama paatos kuin pohjapiirustuksessa ja toimialuekartassa: huoneiden nimet
+     renderoidaan HTML:na kuvan paalle. Nimien paikat tulostuvat ajossa
+     prosentteina taman kuvan omasta projektiosta — ei pohjapiirustuksen
+     prosentteina, koska projektio on eri.
+     
+     MITEN NOUSULIIKE TOIMII
+     z kuvautuu projektiossa puhtaaksi pystysiirtymaksi, joten seinan siirto
+     alaspain leikkauskorkeuden verran laskee sen ylapinnan tasmalleen
+     lattiatasoon — ja koska ylapinta on charcoal, se on silloin sama umpea
+     seinakuvio kuin pohjapiirustuksessa. Animaatio on siis literaalisti pohjan
+     nouseminen pystyyn, ei sisaanhaivytys.
+     
+     Sivut eivat saa nakya lattian alla matkan aikana, joten jokainen seina
+     leikataan omalla pyyhkaisyalueellaan: taysikorkean seinan siluetti
+     yhdistettyna lattiatason jalanjalkeen. Leikkaus on unioni, koska clipPathin
+     lapset yhdistyvat SVG:ssa.
+     
+     Leikkaus ja liike ovat ERI ryhmissa, ja niiden on pysyttava erillaan:
+     CSS-muunnos SVG-elementissa siirtaa myos sen clip-pathin, jolloin seina
+     liukuu alas kokonaisena eika paljastu lainkaan. Ulompi ryhma pitaa
+     leikkauksen paikallaan, sisempi liikkuu.
+     
+     GENEROITU TIEDOSTO. Ala muokkaa kasin — aja tyokalut/aksonometria.py.
+     ===================================================================== -->
+<style>
+  /* Varit ovat brandikirjasta ja kiinteina, koska img-elementin sisalla
+     CSS-muuttujat eivat periydy. Sivulla inline-SVG:na varit tulevat sivun
+     omasta CSS:sta — kokoa.py riisuu taman lohkon.
+     HUOM: taman lohkon sisalto on XML:n merkkidataa, joten siina ei saa
+     esiintya pienempi-kuin-merkkia eika kahta peraakkaista viivaa. Kumpikaan
+     ei nay inline-SVG:na mutta molemmat rikkovat tiedoston img-elementissa,
+     ja main() pysayttaa ajon jos sellainen paasee syntymaan. */
+  .seina{fill:#4c4735} .seina-i{fill:#8d8672} .seina-e{fill:#a49d88}
+  .lattia{fill:#f1ebdd} .lattia-i{fill:#d8d0ba} .lattia-e{fill:#c9c0a8}
+  .taso{fill:#e8e0cc} .taso-i{fill:#d3cab2} .taso-e{fill:#c4baa0}
+  .v{fill:none;stroke:#4c4735;stroke-width:9;stroke-linejoin:round;opacity:.30}
+  /* Viiva on paksumpi kuin muut hiusviivat: sita on tarkoitus seurata
+     silmalla huoneesta nimeen. Leveydella 7 se jai alipikselin paksuiseksi
+     ja katosi. */
+  .viite{fill:none;stroke:#6b6552;stroke-width:16;opacity:.5}
+  .viite-p{fill:#6b6552;opacity:.5;stroke:none}
+
+  /* Nousuliike. Siirto 900 laskee seinan ylapinnan lattiatasoon,
+     jolloin kuva on pohjapiirustus; nollassa se on aksonometria. */
+  @keyframes lk-nousu{from{transform:translateY(900px)}to{transform:none}}
+  .s{animation:lk-nousu .9s cubic-bezier(.16,1,.3,1) both;
+     animation-delay:calc(var(--i) * 13ms)}
+  @media (prefers-reduced-motion:reduce){.s{animation:none}}
+</style>
+
+<defs>
+  <clipPath id="p4"><path d="M0 -1200 L6902 2785 L6902 3685 L6660 3825 L-242 -160 L-242 -1060 Z"/><path d="M0 -300 L6902 3685 L6660 3825 L-242 -160 Z"/></clipPath>
+  <clipPath id="p5"><path d="M7734 3265 L11258 5300 L11258 6200 L11016 6340 L7491 4305 L7491 3405 Z"/><path d="M7734 4165 L11258 6200 L11016 6340 L7491 4305 Z"/></clipPath>
+  <clipPath id="p6"><path d="M-242 -1060 L0 -920 L0 -20 L-7223 4150 L-7465 4010 L-7465 3110 Z"/><path d="M-242 -160 L0 -20 L-7223 4150 L-7465 4010 Z"/></clipPath>
+  <clipPath id="p7"><path d="M4044 9185 L4287 9325 L4287 10225 L3793 10510 L3551 10370 L3551 9470 Z"/><path d="M4044 10085 L4287 10225 L3793 10510 L3551 10370 Z"/></clipPath>
+  <clipPath id="p8"><path d="M2338 430 L2425 480 L2425 1380 L-563 3105 L-650 3055 L-650 2155 Z"/><path d="M2338 1330 L2425 1380 L-563 3105 L-650 3055 Z"/></clipPath>
+  <clipPath id="p9"><path d="M-1949 2905 L-1862 2955 L-1862 3855 L-4798 5550 L-4884 5500 L-4884 4600 Z"/><path d="M-1949 3805 L-1862 3855 L-4798 5550 L-4884 5500 Z"/></clipPath>
+  <clipPath id="p10"><path d="M-2988 805 L-1429 1705 L-1429 2605 L-1516 2655 L-3074 1755 L-3074 855 Z"/><path d="M-2988 1705 L-1429 2605 L-1516 2655 L-3074 1755 Z"/></clipPath>
+  <clipPath id="p11"><path d="M-1585 1715 L-1498 1765 L-1498 2665 L-1845 2865 L-1931 2815 L-1931 1915 Z"/><path d="M-1585 2615 L-1498 2665 L-1845 2865 L-1931 2815 Z"/></clipPath>
+  <clipPath id="p12"><path d="M-4200 1505 L-2641 2405 L-2641 3305 L-2728 3355 L-4287 2455 L-4287 1555 Z"/><path d="M-4200 2405 L-2641 3305 L-2728 3355 L-4287 2455 Z"/></clipPath>
+  <clipPath id="p13"><path d="M8002 3700 L8089 3750 L8089 4650 L5707 6025 L5621 5975 L5621 5075 Z"/><path d="M8002 4600 L8089 4650 L5707 6025 L5621 5975 Z"/></clipPath>
+  <clipPath id="p14"><path d="M4841 5525 L4928 5575 L4928 6475 L3871 7085 L3785 7035 L3785 6135 Z"/><path d="M4841 6425 L4928 6475 L3871 7085 L3785 7035 Z"/></clipPath>
+  <clipPath id="p15"><path d="M3005 6585 L3092 6635 L3092 7535 L2269 8010 L2182 7960 L2182 7060 Z"/><path d="M3005 7485 L3092 7535 L2269 8010 L2182 7960 Z"/></clipPath>
+  <clipPath id="p16"><path d="M1377 7525 L1464 7575 L1464 8475 L866 8820 L779 8770 L779 7870 Z"/><path d="M1377 8425 L1464 8475 L866 8820 L779 8770 Z"/></clipPath>
+  <clipPath id="p17"><path d="M675 7810 L3793 9610 L3793 10510 L3551 10650 L433 8850 L433 7950 Z"/><path d="M675 8710 L3793 10510 L3551 10650 L433 8850 Z"/></clipPath>
+  <clipPath id="p18"><path d="M4928 5575 L7612 7125 L7612 8025 L7526 8075 L4841 6525 L4841 5625 Z"/><path d="M4928 6475 L7612 8025 L7526 8075 L4841 6525 Z"/></clipPath>
+  <clipPath id="p19"><path d="M10773 5300 L11016 5440 L11016 6340 L5153 9725 L4910 9585 L4910 8685 Z"/><path d="M10773 6200 L11016 6340 L5153 9725 L4910 9585 Z"/></clipPath>
+  <clipPath id="p20"><path d="M5759 6155 L5846 6205 L5846 7105 L4088 8120 L4001 8070 L4001 7170 Z"/><path d="M5759 7055 L5846 7105 L4088 8120 L4001 8070 Z"/></clipPath>
+  <clipPath id="p21"><path d="M3083 6640 L4988 7740 L4988 8640 L4902 8690 L2996 7590 L2996 6690 Z"/><path d="M3083 7540 L4988 8640 L4902 8690 L2996 7590 Z"/></clipPath>
+  <clipPath id="p22"><path d="M927 5495 L1013 5545 L1013 6445 L-1117 7675 L-1204 7625 L-1204 6725 Z"/><path d="M927 6395 L1013 6445 L-1117 7675 L-1204 7625 Z"/></clipPath>
+  <clipPath id="p23"><path d="M-7465 3110 L-199 7305 L-199 8205 L-442 8345 L-7708 4150 L-7708 3250 Z"/><path d="M-7465 4010 L-199 8205 L-442 8345 L-7708 4150 Z"/></clipPath>
+  <clipPath id="p24"><path d="M927 5495 L2130 6190 L2130 7090 L2044 7140 L840 6445 L840 5545 Z"/><path d="M927 6395 L2130 7090 L2044 7140 L840 6445 Z"/></clipPath>
+</defs>
+
+<!-- Kappaleet takaa eteen. Muuttuja i on myos nousun porrastus. -->
+<g>
+  <path class="taso-e" d="M0 -120 L8227 4630 L8227 4750 L0 0 Z"/>
+  <path class="taso-i" d="M10392 3380 L10392 3500 L8227 4750 L8227 4630 Z"/>
+  <path class="taso" d="M2165 -1370 L10392 3380 L8227 4630 L0 -120 Z"/>
+  <path class="v" d="M2165 -1370 L10392 3380 L8227 4630 L0 -120 Z"/>
+</g>
+<g>
+  <path class="lattia-e" d="M-7708 4150 L3551 10650 L3551 10950 L-7708 4450 Z"/>
+  <path class="lattia-i" d="M11258 6200 L11258 6500 L3551 10950 L3551 10650 Z"/>
+  <path class="lattia" d="M0 -300 L11258 6200 L3551 10650 L-7708 4150 Z"/>
+  <path class="v" d="M0 -300 L11258 6200 L3551 10650 L-7708 4150 Z"/>
+</g>
+<g>
+  <path class="taso-e" d="M-3057 9015 L-459 10515 L-459 10635 L-3057 9135 Z"/>
+  <path class="taso-i" d="M1273 9515 L1273 9635 L-459 10635 L-459 10515 Z"/>
+  <path class="taso" d="M-1325 8015 L1273 9515 L-459 10515 L-3057 9015 Z"/>
+  <path class="v" d="M-1325 8015 L1273 9515 L-459 10515 L-3057 9015 Z"/>
+</g>
+<g>
+  <path class="taso-e" d="M4057 10537 L5183 11187 L5183 11307 L4057 10657 Z"/>
+  <path class="taso-i" d="M6655 10337 L6655 10457 L5183 11307 L5183 11187 Z"/>
+  <path class="taso" d="M5530 9687 L6655 10337 L5183 11187 L4057 10537 Z"/>
+  <path class="v" d="M5530 9687 L6655 10337 L5183 11187 L4057 10537 Z"/>
+</g>
+<g clip-path="url(#p4)"><g class="s" style="--i:4">
+  <path class="seina-e" d="M-242 -1060 L6660 2925 L6660 3825 L-242 -160 Z"/>
+  <path class="seina-i" d="M6902 2785 L6902 3685 L6660 3825 L6660 2925 Z"/>
+  <path class="seina" d="M0 -1200 L6902 2785 L6660 2925 L-242 -1060 Z"/>
+  <path class="v" d="M0 -1200 L6902 2785 L6660 2925 L-242 -1060 Z"/>
+</g></g>
+<g clip-path="url(#p5)"><g class="s" style="--i:5">
+  <path class="seina-e" d="M7491 3405 L11016 5440 L11016 6340 L7491 4305 Z"/>
+  <path class="seina-i" d="M11258 5300 L11258 6200 L11016 6340 L11016 5440 Z"/>
+  <path class="seina" d="M7734 3265 L11258 5300 L11016 5440 L7491 3405 Z"/>
+  <path class="v" d="M7734 3265 L11258 5300 L11016 5440 L7491 3405 Z"/>
+</g></g>
+<g clip-path="url(#p6)"><g class="s" style="--i:6">
+  <path class="seina-e" d="M-7465 3110 L-7223 3250 L-7223 4150 L-7465 4010 Z"/>
+  <path class="seina-i" d="M0 -920 L0 -20 L-7223 4150 L-7223 3250 Z"/>
+  <path class="seina" d="M-242 -1060 L0 -920 L-7223 3250 L-7465 3110 Z"/>
+  <path class="v" d="M-242 -1060 L0 -920 L-7223 3250 L-7465 3110 Z"/>
+</g></g>
+<g clip-path="url(#p7)"><g class="s" style="--i:7">
+  <path class="seina-e" d="M3551 9470 L3793 9610 L3793 10510 L3551 10370 Z"/>
+  <path class="seina-i" d="M4287 9325 L4287 10225 L3793 10510 L3793 9610 Z"/>
+  <path class="seina" d="M4044 9185 L4287 9325 L3793 9610 L3551 9470 Z"/>
+  <path class="v" d="M4044 9185 L4287 9325 L3793 9610 L3551 9470 Z"/>
+</g></g>
+<g clip-path="url(#p8)"><g class="s" style="--i:8">
+  <path class="seina-e" d="M-650 2155 L-563 2205 L-563 3105 L-650 3055 Z"/>
+  <path class="seina-i" d="M2425 480 L2425 1380 L-563 3105 L-563 2205 Z"/>
+  <path class="seina" d="M2338 430 L2425 480 L-563 2205 L-650 2155 Z"/>
+  <path class="v" d="M2338 430 L2425 480 L-563 2205 L-650 2155 Z"/>
+</g></g>
+<g clip-path="url(#p9)"><g class="s" style="--i:9">
+  <path class="seina-e" d="M-4884 4600 L-4798 4650 L-4798 5550 L-4884 5500 Z"/>
+  <path class="seina-i" d="M-1862 2955 L-1862 3855 L-4798 5550 L-4798 4650 Z"/>
+  <path class="seina" d="M-1949 2905 L-1862 2955 L-4798 4650 L-4884 4600 Z"/>
+  <path class="v" d="M-1949 2905 L-1862 2955 L-4798 4650 L-4884 4600 Z"/>
+</g></g>
+<g clip-path="url(#p10)"><g class="s" style="--i:10">
+  <path class="seina-e" d="M-3074 855 L-1516 1755 L-1516 2655 L-3074 1755 Z"/>
+  <path class="seina-i" d="M-1429 1705 L-1429 2605 L-1516 2655 L-1516 1755 Z"/>
+  <path class="seina" d="M-2988 805 L-1429 1705 L-1516 1755 L-3074 855 Z"/>
+  <path class="v" d="M-2988 805 L-1429 1705 L-1516 1755 L-3074 855 Z"/>
+</g></g>
+<g clip-path="url(#p11)"><g class="s" style="--i:11">
+  <path class="seina-e" d="M-1931 1915 L-1845 1965 L-1845 2865 L-1931 2815 Z"/>
+  <path class="seina-i" d="M-1498 1765 L-1498 2665 L-1845 2865 L-1845 1965 Z"/>
+  <path class="seina" d="M-1585 1715 L-1498 1765 L-1845 1965 L-1931 1915 Z"/>
+  <path class="v" d="M-1585 1715 L-1498 1765 L-1845 1965 L-1931 1915 Z"/>
+</g></g>
+<g clip-path="url(#p12)"><g class="s" style="--i:12">
+  <path class="seina-e" d="M-4287 1555 L-2728 2455 L-2728 3355 L-4287 2455 Z"/>
+  <path class="seina-i" d="M-2641 2405 L-2641 3305 L-2728 3355 L-2728 2455 Z"/>
+  <path class="seina" d="M-4200 1505 L-2641 2405 L-2728 2455 L-4287 1555 Z"/>
+  <path class="v" d="M-4200 1505 L-2641 2405 L-2728 2455 L-4287 1555 Z"/>
+</g></g>
+<g clip-path="url(#p13)"><g class="s" style="--i:13">
+  <path class="seina-e" d="M5621 5075 L5707 5125 L5707 6025 L5621 5975 Z"/>
+  <path class="seina-i" d="M8089 3750 L8089 4650 L5707 6025 L5707 5125 Z"/>
+  <path class="seina" d="M8002 3700 L8089 3750 L5707 5125 L5621 5075 Z"/>
+  <path class="v" d="M8002 3700 L8089 3750 L5707 5125 L5621 5075 Z"/>
+</g></g>
+<g clip-path="url(#p14)"><g class="s" style="--i:14">
+  <path class="seina-e" d="M3785 6135 L3871 6185 L3871 7085 L3785 7035 Z"/>
+  <path class="seina-i" d="M4928 5575 L4928 6475 L3871 7085 L3871 6185 Z"/>
+  <path class="seina" d="M4841 5525 L4928 5575 L3871 6185 L3785 6135 Z"/>
+  <path class="v" d="M4841 5525 L4928 5575 L3871 6185 L3785 6135 Z"/>
+</g></g>
+<g clip-path="url(#p15)"><g class="s" style="--i:15">
+  <path class="seina-e" d="M2182 7060 L2269 7110 L2269 8010 L2182 7960 Z"/>
+  <path class="seina-i" d="M3092 6635 L3092 7535 L2269 8010 L2269 7110 Z"/>
+  <path class="seina" d="M3005 6585 L3092 6635 L2269 7110 L2182 7060 Z"/>
+  <path class="v" d="M3005 6585 L3092 6635 L2269 7110 L2182 7060 Z"/>
+</g></g>
+<g clip-path="url(#p16)"><g class="s" style="--i:16">
+  <path class="seina-e" d="M779 7870 L866 7920 L866 8820 L779 8770 Z"/>
+  <path class="seina-i" d="M1464 7575 L1464 8475 L866 8820 L866 7920 Z"/>
+  <path class="seina" d="M1377 7525 L1464 7575 L866 7920 L779 7870 Z"/>
+  <path class="v" d="M1377 7525 L1464 7575 L866 7920 L779 7870 Z"/>
+</g></g>
+<g clip-path="url(#p17)"><g class="s" style="--i:17">
+  <path class="seina-e" d="M433 7950 L3551 9750 L3551 10650 L433 8850 Z"/>
+  <path class="seina-i" d="M3793 9610 L3793 10510 L3551 10650 L3551 9750 Z"/>
+  <path class="seina" d="M675 7810 L3793 9610 L3551 9750 L433 7950 Z"/>
+  <path class="v" d="M675 7810 L3793 9610 L3551 9750 L433 7950 Z"/>
+</g></g>
+<g clip-path="url(#p18)"><g class="s" style="--i:18">
+  <path class="seina-e" d="M4841 5625 L7526 7175 L7526 8075 L4841 6525 Z"/>
+  <path class="seina-i" d="M7612 7125 L7612 8025 L7526 8075 L7526 7175 Z"/>
+  <path class="seina" d="M4928 5575 L7612 7125 L7526 7175 L4841 5625 Z"/>
+  <path class="v" d="M4928 5575 L7612 7125 L7526 7175 L4841 5625 Z"/>
+</g></g>
+<g clip-path="url(#p19)"><g class="s" style="--i:19">
+  <path class="seina-e" d="M4910 8685 L5153 8825 L5153 9725 L4910 9585 Z"/>
+  <path class="seina-i" d="M11016 5440 L11016 6340 L5153 9725 L5153 8825 Z"/>
+  <path class="seina" d="M10773 5300 L11016 5440 L5153 8825 L4910 8685 Z"/>
+  <path class="v" d="M10773 5300 L11016 5440 L5153 8825 L4910 8685 Z"/>
+</g></g>
+<g clip-path="url(#p20)"><g class="s" style="--i:20">
+  <path class="seina-e" d="M4001 7170 L4088 7220 L4088 8120 L4001 8070 Z"/>
+  <path class="seina-i" d="M5846 6205 L5846 7105 L4088 8120 L4088 7220 Z"/>
+  <path class="seina" d="M5759 6155 L5846 6205 L4088 7220 L4001 7170 Z"/>
+  <path class="v" d="M5759 6155 L5846 6205 L4088 7220 L4001 7170 Z"/>
+</g></g>
+<g clip-path="url(#p21)"><g class="s" style="--i:21">
+  <path class="seina-e" d="M2996 6690 L4902 7790 L4902 8690 L2996 7590 Z"/>
+  <path class="seina-i" d="M4988 7740 L4988 8640 L4902 8690 L4902 7790 Z"/>
+  <path class="seina" d="M3083 6640 L4988 7740 L4902 7790 L2996 6690 Z"/>
+  <path class="v" d="M3083 6640 L4988 7740 L4902 7790 L2996 6690 Z"/>
+</g></g>
+<g clip-path="url(#p22)"><g class="s" style="--i:22">
+  <path class="seina-e" d="M-1204 6725 L-1117 6775 L-1117 7675 L-1204 7625 Z"/>
+  <path class="seina-i" d="M1013 5545 L1013 6445 L-1117 7675 L-1117 6775 Z"/>
+  <path class="seina" d="M927 5495 L1013 5545 L-1117 6775 L-1204 6725 Z"/>
+  <path class="v" d="M927 5495 L1013 5545 L-1117 6775 L-1204 6725 Z"/>
+</g></g>
+<g clip-path="url(#p23)"><g class="s" style="--i:23">
+  <path class="seina-e" d="M-7708 3250 L-442 7445 L-442 8345 L-7708 4150 Z"/>
+  <path class="seina-i" d="M-199 7305 L-199 8205 L-442 8345 L-442 7445 Z"/>
+  <path class="seina" d="M-7465 3110 L-199 7305 L-442 7445 L-7708 3250 Z"/>
+  <path class="v" d="M-7465 3110 L-199 7305 L-442 7445 L-7708 3250 Z"/>
+</g></g>
+<g clip-path="url(#p24)"><g class="s" style="--i:24">
+  <path class="seina-e" d="M840 5545 L2044 6240 L2044 7140 L840 6445 Z"/>
+  <path class="seina-i" d="M2130 6190 L2130 7090 L2044 7140 L2044 6240 Z"/>
+  <path class="seina" d="M927 5495 L2130 6190 L2044 6240 L840 5545 Z"/>
+  <path class="v" d="M927 5495 L2130 6190 L2044 6240 L840 5545 Z"/>
+</g></g>
+
+<!-- Viitteet pienille huoneille. Viiva kulkee projektion akselia. -->
+<g class="viitteet">
+  <path class="viite" d="M-2893 2510 L-4971 1310"/>
+  <circle class="viite-p" cx="-2893" cy="2510" r="115"/>
+  <path class="viite" d="M4421 7297 L2862 6397"/>
+  <circle class="viite-p" cx="4421" cy="7297" r="115"/>
+  <path class="viite" d="M5807 8097 L7885 9297"/>
+  <circle class="viite-p" cx="5807" cy="8097" r="115"/>
+  <path class="viite" d="M853 7632 L-2957 9832"/>
+  <circle class="viite-p" cx="853" cy="7632" r="115"/>
+  <path class="viite" d="M3274 8980 L6564 10880"/>
+  <circle class="viite-p" cx="3274" cy="8980" r="115"/>
+</g>
+</svg>

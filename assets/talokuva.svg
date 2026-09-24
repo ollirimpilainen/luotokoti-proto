@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1851 -566 2901 1161"
+     width="1000" height="400"
+     role="img" aria-label="Talo sisaankaynnin puolelta: paaty, pitka julkisivu ikkunoineen ja harjakatto.">
+<!-- =====================================================================
+     Luotokoti — talo ulkoa, valokuvan kuvakulmasta.
+     
+     Aja projektin juuresta:   python3 tyokalut/talokuva.py
+     Tuottaa:                  assets/talokuva.svg
+     
+     MISTA GEOMETRIA TULEE
+       runko 13000 x 8900        pohja.py
+       aukot ja karmikoodit      pohja.py POHJOIS / ETELA / ITASEINA
+       ulkotasot                 pohja.py TER / KUI / ITA
+       seinan korkeus 2826 mm    MITATTU valokuvasta homografialla
+       ikkunan ylareuna 290 mm   MITATTU, raystään alapuolella
+       kattokaltevuus 28 astetta PERIAATE, riktning-c-ritning.html
+     
+     Ikkunoiden korkeudet luetaan karmikoodeista (F12x21 = 1200 x 2100 mm).
+     Kiintea korkeus oli vaarin: kylpyhuoneen F10x5 on 500 mm korkea nauhaikkuna.
+     Tarkistus: F12x21 samalla saannolla antaa alareunan 436 mm sokkelin paalle,
+     mika on tasmalleen se mika valokuvasta mitattiin.
+     
+     MIKSI PERSPEKTIIVI EIKA AKSONOMETRIA
+     
+     Aksonometria sailyttaa mittasuhteet: 13 metrin julkisivu piirtyy aina 13
+     metrin mittaisena riippumatta siita kummassa paassa katsoja on. Valokuvassa
+     talo-sisaankaynti lahella oleva paaty suurenee ja pakeneva julkisivu
+     kutistuu nopeasti. Se on perspektiivin ominaisuus, eika sita saa
+     aksonometriasta millaan kulmalla — kokeiltiin nelja (25/12, 32/6, 38/3,
+     45/8) eika yksikaan osunut.
+     
+     VARIT EIVAT OLE TASSA TIEDOSTOSSA
+     Tahot saavat luokan, eivat kiinteaa varia, ja sivu valitsee tyylin. Samasta
+     kuvasta syntyy silloin paperinen versio suuntaan A ja hehkuva negatiivi
+     suuntaan B ilman etta geometriaa kahdennetaan. Oma tyylilohko on mukana
+     itsenaista kayttoa varten; design/kokoa.py riisuu sen.
+     
+     KAKSI ANSAA JOTKA MAKSOIVAT AIKAA
+     1. Takatahojen karsinta hylkasi kaikki seinat. Tason normaali riippuu
+        karkien kiertosuunnasta, ja se meni puolella tahoista vaarin pain.
+        Normaali kaannetaan nyt osoittamaan pois kappaleen sisalta.
+     2. Kuva oli peilikuva eika kameran siirtaminen auttanut. pohja.py:ssa
+        +y on ETELA, joten koordinaatisto on vasenkatinen; ristitulo olettaa
+        oikeakatisen. Ilman etumerkin kaantoa paaty jai kuvan vasempaan reunaan
+        kameran paikasta riippumatta.
+     
+     GENEROITU TIEDOSTO. Ala muokkaa kasin — aja tyokalut/talokuva.py.
+     ===================================================================== -->
+<style>
+  .katto{fill:#817b68} .katto-p{fill:#686350}
+  .seina-e{fill:#f8f5ee} .seina-i{fill:#c9c1ae}
+  .sokkeli{fill:#c9c1ae} .taso{fill:#d8d1bd} .taso-s{fill:#c6beab}
+  .aukko{fill:#7b7562}
+  .v{fill:none;stroke:#4c4735;stroke-width:2;stroke-linejoin:round;opacity:.22}
+  .av{fill:none;stroke:#4c4735;stroke-width:1.6;opacity:.5}
+  .r{fill:none;stroke:#4c4735;stroke-width:1.4;opacity:.13}
+  .rk{fill:none;stroke:#e8e0cc;stroke-width:1.8;opacity:.20}
+</style>
+  <path class="katto-p" d="M214.8 -418.2 L252.0 -426.0 L429.7 -47.8 L400.2 -46.2 Z"/>
+  <path class="v" d="M214.8 -418.2 L252.0 -426.0 L429.7 -47.8 L400.2 -46.2 Z"/>
+  <path class="katto" d="M-1230.9 -52.7 L-126.6 -220.0 L252.0 -426.0 L-756.3 -212.3 Z"/>
+  <path class="v" d="M-1230.9 -52.7 L-126.6 -220.0 L252.0 -426.0 L-756.3 -212.3 Z"/>
+  <path class="rk" d="M-729.6 -218.0 L-1207.5 -56.2"/>
+  <path class="rk" d="M-701.8 -223.9 L-1182.9 -59.9"/>
+  <path class="rk" d="M-673.0 -230.0 L-1157.1 -63.8"/>
+  <path class="rk" d="M-643.1 -236.3 L-1130.0 -68.0"/>
+  <path class="rk" d="M-612.0 -242.9 L-1101.4 -72.3"/>
+  <path class="rk" d="M-579.6 -249.8 L-1071.3 -76.9"/>
+  <path class="rk" d="M-545.9 -256.9 L-1039.5 -81.7"/>
+  <path class="rk" d="M-510.8 -264.3 L-1005.8 -86.8"/>
+  <path class="rk" d="M-474.2 -272.1 L-970.2 -92.2"/>
+  <path class="rk" d="M-435.9 -280.2 L-932.3 -97.9"/>
+  <path class="rk" d="M-395.9 -288.7 L-892.1 -104.0"/>
+  <path class="rk" d="M-354.0 -297.6 L-849.3 -110.5"/>
+  <path class="rk" d="M-310.2 -306.9 L-803.6 -117.4"/>
+  <path class="rk" d="M-264.3 -316.6 L-754.7 -124.8"/>
+  <path class="rk" d="M-216.0 -326.8 L-702.3 -132.8"/>
+  <path class="rk" d="M-165.3 -337.6 L-645.9 -141.3"/>
+  <path class="rk" d="M-112.0 -348.9 L-585.2 -150.5"/>
+  <path class="rk" d="M-55.8 -360.8 L-519.5 -160.4"/>
+  <path class="rk" d="M3.5 -373.4 L-448.4 -171.2"/>
+  <path class="rk" d="M66.1 -386.6 L-370.9 -183.0"/>
+  <path class="rk" d="M132.4 -400.7 L-286.3 -195.8"/>
+  <path class="rk" d="M202.7 -415.6 L-193.6 -209.8"/>
+  <path class="seina-i" d="M-161.6 374.3 L401.1 225.3 L395.6 -55.3 L214.8 -418.2 L-157.0 -222.9 Z"/>
+  <path class="v" d="M-161.6 374.3 L401.1 225.3 L395.6 -55.3 L214.8 -418.2 L-157.0 -222.9 Z"/>
+  <path class="r" d="M385.9 229.3 L380.0 -86.7"/>
+  <path class="r" d="M369.7 233.6 L363.4 -119.9"/>
+  <path class="r" d="M352.5 238.1 L345.8 -155.2"/>
+  <path class="r" d="M334.1 243.0 L327.1 -192.8"/>
+  <path class="r" d="M314.4 248.2 L307.1 -232.9"/>
+  <path class="r" d="M293.3 253.8 L285.8 -275.7"/>
+  <path class="r" d="M270.5 259.9 L263.0 -321.5"/>
+  <path class="r" d="M246.0 266.4 L238.5 -370.7"/>
+  <path class="r" d="M219.5 273.4 L212.2 -416.8"/>
+  <path class="r" d="M190.6 281.0 L184.4 -402.2"/>
+  <path class="r" d="M159.2 289.3 L154.1 -386.2"/>
+  <path class="r" d="M124.9 298.4 L120.9 -368.8"/>
+  <path class="r" d="M87.1 308.4 L84.4 -349.7"/>
+  <path class="r" d="M45.5 319.4 L44.1 -328.5"/>
+  <path class="r" d="M-0.7 331.7 L-0.7 -305.0"/>
+  <path class="r" d="M-52.2 345.3 L-50.7 -278.8"/>
+  <path class="r" d="M-110.0 360.6 L-106.8 -249.3"/>
+  <path class="aukko" d="M121.8 -94.4 L186.7 -78.4 L187.4 -8.5 L122.3 -18.1 Z"/>
+  <path class="av" d="M121.8 -94.4 L186.7 -78.4 L187.4 -8.5 L122.3 -18.1 Z"/>
+  <path class="aukko" d="M-56.4 -138.3 L40.2 -114.5 L41.1 320.6 L-57.7 346.8 Z"/>
+  <path class="av" d="M-56.4 -138.3 L40.2 -114.5 L41.1 320.6 L-57.7 346.8 Z"/>
+  <path class="sokkeli" d="M-162.2 439.8 L401.6 255.5 L401.1 225.3 L-161.6 374.3 Z"/>
+  <path class="v" d="M-162.2 439.8 L401.6 255.5 L401.1 225.3 L-161.6 374.3 Z"/>
+  <path class="seina-e" d="M-1216.4 230.5 L-161.6 374.3 L-157.0 -222.9 L-1199.3 -61.2 Z"/>
+  <path class="v" d="M-1216.4 230.5 L-161.6 374.3 L-157.0 -222.9 L-1199.3 -61.2 Z"/>
+  <path class="r" d="M-1196.3 233.2 L-1179.2 -64.3"/>
+  <path class="r" d="M-1175.5 236.0 L-1158.3 -67.5"/>
+  <path class="r" d="M-1153.7 239.0 L-1136.5 -70.9"/>
+  <path class="r" d="M-1131.0 242.1 L-1113.8 -74.4"/>
+  <path class="r" d="M-1107.3 245.3 L-1090.1 -78.1"/>
+  <path class="r" d="M-1082.6 248.7 L-1065.4 -82.0"/>
+  <path class="r" d="M-1056.7 252.2 L-1039.5 -86.0"/>
+  <path class="r" d="M-1029.5 255.9 L-1012.4 -90.2"/>
+  <path class="r" d="M-1001.1 259.8 L-984.1 -94.6"/>
+  <path class="r" d="M-971.3 263.9 L-954.3 -99.2"/>
+  <path class="r" d="M-939.9 268.2 L-923.1 -104.0"/>
+  <path class="r" d="M-906.9 272.7 L-890.3 -109.1"/>
+  <path class="r" d="M-872.2 277.4 L-855.8 -114.5"/>
+  <path class="r" d="M-835.5 282.4 L-819.4 -120.1"/>
+  <path class="r" d="M-796.8 287.7 L-781.0 -126.1"/>
+  <path class="r" d="M-755.8 293.3 L-740.4 -132.4"/>
+  <path class="r" d="M-712.4 299.2 L-697.5 -139.0"/>
+  <path class="r" d="M-666.3 305.5 L-651.9 -146.1"/>
+  <path class="r" d="M-617.3 312.2 L-603.5 -153.6"/>
+  <path class="r" d="M-565.0 319.3 L-552.0 -161.6"/>
+  <path class="r" d="M-509.2 326.9 L-497.1 -170.1"/>
+  <path class="r" d="M-449.5 335.0 L-438.4 -179.2"/>
+  <path class="r" d="M-385.4 343.8 L-375.6 -189.0"/>
+  <path class="r" d="M-316.5 353.2 L-308.1 -199.5"/>
+  <path class="r" d="M-242.1 363.3 L-235.5 -210.7"/>
+  <path class="aukko" d="M-1134.7 -40.0 L-1088.0 -45.9 L-1095.8 102.6 L-1142.6 102.3 Z"/>
+  <path class="av" d="M-1134.7 -40.0 L-1088.0 -45.9 L-1095.8 102.6 L-1142.6 102.3 Z"/>
+  <path class="aukko" d="M-1008.6 -55.9 L-937.5 -64.8 L-950.0 208.7 L-1021.3 202.3 Z"/>
+  <path class="av" d="M-1008.6 -55.9 L-937.5 -64.8 L-950.0 208.7 L-1021.3 202.3 Z"/>
+  <path class="aukko" d="M-911.9 -68.1 L-828.5 -78.6 L-840.5 218.6 L-924.3 211.0 Z"/>
+  <path class="av" d="M-911.9 -68.1 L-828.5 -78.6 L-840.5 218.6 L-924.3 211.0 Z"/>
+  <path class="aukko" d="M-708.6 -93.7 L-614.8 -105.5 L-627.3 310.8 L-722.2 297.9 Z"/>
+  <path class="av" d="M-708.6 -93.7 L-614.8 -105.5 L-627.3 310.8 L-722.2 297.9 Z"/>
+  <path class="aukko" d="M-502.9 -119.6 L-383.1 -134.8 L-387.6 107.3 L-508.4 106.5 Z"/>
+  <path class="av" d="M-502.9 -119.6 L-383.1 -134.8 L-387.6 107.3 L-508.4 106.5 Z"/>
+  <path class="sokkeli" d="M-1218.2 261.9 L-162.2 439.8 L-161.6 374.3 L-1216.4 230.5 Z"/>
+  <path class="v" d="M-1218.2 261.9 L-162.2 439.8 L-161.6 374.3 L-1216.4 230.5 Z"/>
+  <path class="taso" d="M-808.1 313.0 L-524.9 357.1 L-906.7 427.6 L-1172.6 359.7 Z"/>
+  <path class="v" d="M-808.1 313.0 L-524.9 357.1 L-906.7 427.6 L-1172.6 359.7 Z"/>
+  <path class="taso" d="M78.0 341.1 L283.1 363.1 L145.3 423.8 L-88.0 391.2 Z"/>
+  <path class="v" d="M78.0 341.1 L283.1 363.1 L145.3 423.8 L-88.0 391.2 Z"/>
+  <path class="taso-s" d="M-524.9 357.1 L-906.7 427.6 L-907.9 455.0 L-525.4 378.6 Z"/>
+  <path class="v" d="M-524.9 357.1 L-906.7 427.6 L-907.9 455.0 L-525.4 378.6 Z"/>
+  <path class="taso-s" d="M-1172.6 359.7 L-906.7 427.6 L-907.9 455.0 L-1173.8 381.4 Z"/>
+  <path class="v" d="M-1172.6 359.7 L-906.7 427.6 L-907.9 455.0 L-1173.8 381.4 Z"/>
+  <path class="taso-s" d="M283.1 363.1 L145.3 423.8 L145.5 450.9 L283.4 385.1 Z"/>
+  <path class="v" d="M283.1 363.1 L145.3 423.8 L145.5 450.9 L283.4 385.1 Z"/>
+  <path class="taso-s" d="M-88.0 391.2 L145.3 423.8 L145.5 450.9 L-88.1 415.6 Z"/>
+  <path class="v" d="M-88.0 391.2 L145.3 423.8 L145.5 450.9 L-88.1 415.6 Z"/>
+</svg>

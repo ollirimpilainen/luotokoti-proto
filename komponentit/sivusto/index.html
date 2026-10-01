@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Luotokodin lohkot</title>
+<meta name="robots" content="noindex, nofollow">
+<!-- Fontit vain Perusta-sivujen näytteille; katselin itse on järjestelmäfontilla. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600&display=swap">
+<link rel="stylesheet" href="katselin.css">
+</head>
+<body>
+<div class="app" id="app">
+
+  <nav class="side" aria-label="Lohkot">
+    <a class="side__brand" href="#sivu=aloitus">
+      <img src="../../assets/logo-luotokoti.svg" alt="Luotokoti">
+      <span>Lohkokirjasto</span>
+    </a>
+    <div class="side__search">
+      <input id="haku" type="search" placeholder="Etsi lohkoa tai storya" aria-label="Etsi lohkoa tai storya" autocomplete="off">
+      <kbd aria-hidden="true">/</kbd>
+    </div>
+    <div class="tree" id="puu"></div>
+    <dl class="side__legend" aria-label="Tilamerkit">
+      <div><dt><span class="status status--E">E</span></dt><dd>estää julkaisun</dd></div>
+      <div><dt><span class="status status--V">V</span></dt><dd>vaikuttaa</dd></div>
+      <div><dt><span class="status status--P">P</span></dt><dd>parannus</dd></div>
+      <div><dt><span class="status status--ok">✓</span></dt><dd>ei havaintoja</dd></div>
+    </dl>
+    <div class="side__foot" id="kattavuus" aria-live="polite">Luetaan sivuja…</div>
+  </nav>
+
+  <div class="main" id="main">
+    <div class="bar">
+      <div class="bar__left">
+        <button class="icon-btn" type="button" id="sivupalkki" aria-expanded="true" aria-controls="app" title="Näytä tai piilota sivupalkki">
+          <span class="ico"><svg viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.5"/></svg></span>
+          <span class="nakymaton">Sivupalkki</span></button>
+        <div class="tabs" role="tablist" aria-label="Näkymä">
+          <button type="button" role="tab" id="tab-canvas">Canvas</button>
+          <button type="button" role="tab" id="tab-docs">Docs</button>
+        </div>
+        <nav class="crumb" id="murupolku" aria-label="Sijainti"></nav>
+      </div>
+      <div class="bar__right" id="tyokalut">
+        <div class="seg" id="vp" role="group" aria-label="Leveys">
+          <button type="button" data-vp="0">Sovita</button><button type="button" data-vp="1440">1440</button><button type="button" data-vp="1024">1024</button><button type="button" data-vp="768">768</button><button type="button" data-vp="375">375</button>
+        </div>
+        <div class="seg" id="kieli" role="group" aria-label="Kieli">
+          <button type="button" data-arvo="fi">FI</button><button type="button" data-arvo="sv">SV</button>
+        </div>
+        <div class="seg" id="sisalto" role="group" aria-label="Sisältötila">
+          <button type="button" data-arvo="placeholder" title="Kuvitteelliset arvot: layout oikeanmittaisella tekstillä">Placeholder</button><button type="button" data-arvo="aukot" title="Merkityt aukot: mitä puuttuu">Aukot</button>
+        </div>
+        <button class="icon-btn icon-btn--labelled" type="button" id="aariviivat" aria-pressed="false">
+          <span class="ico"><svg viewBox="0 0 16 16"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-dasharray="2 1.5"/></svg></span>
+          <span class="icon-btn__label">Ääriviivat</span></button>
+        <button class="icon-btn icon-btn--labelled" type="button" id="lataa">
+          <span class="ico"><svg viewBox="0 0 16 16"><path d="M13.5 8A5.5 5.5 0 1 1 11.8 4M12 1.5V4.5H9" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></span>
+          <span class="icon-btn__label">Lataa</span></button>
+        <button class="icon-btn icon-btn--labelled" type="button" id="kopioi">
+          <span class="ico"><svg viewBox="0 0 16 16"><path d="M6.5 9.5l3-3M5 7.5L3.5 9a2.5 2.5 0 003.5 3.5L8.5 11M11 8.5L12.5 7A2.5 2.5 0 009 3.5L7.5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></span>
+          <span class="icon-btn__label">Kopioi linkki</span></button>
+        <a class="icon-btn icon-btn--labelled" id="avaa" href="#" target="_blank" rel="noopener">
+          <span class="ico"><svg viewBox="0 0 16 16"><path d="M9 2h5v5M14 2L7 9M12 10v4H2V4h4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></span>
+          <span class="icon-btn__label">Avaa erikseen</span></a>
+      </div>
+    </div>
+
+    <div class="stage" id="stage"></div>
+    <div class="docs" id="docs" hidden></div>
+
+    <section class="panel" id="panel" aria-label="Lisäpaneeli">
+      <div class="panel__resize" id="panel-resize" aria-hidden="true"></div>
+      <div class="panel__head">
+        <div class="tabs" role="tablist" id="paneeli-tabs" aria-label="Paneeli">
+          <button type="button" role="tab" data-paneeli="kontrollit">Kontrollit</button>
+          <button type="button" role="tab" data-paneeli="toiminnot">Toiminnot<span class="count" id="loki-n"></span></button>
+          <button type="button" role="tab" data-paneeli="koodi">Koodi</button>
+          <button type="button" role="tab" data-paneeli="tiedot">Tiedot</button>
+          <button type="button" role="tab" data-paneeli="muistiot">Muistiinpanot</button>
+        </div>
+        <button class="icon-btn" type="button" id="paneeli-kiinni" aria-expanded="true" aria-controls="panel-body" title="Pienennä paneeli">
+          <span class="ico"><svg viewBox="0 0 12 12"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span>
+          <span class="nakymaton">Pienennä paneeli</span></button>
+      </div>
+      <div class="panel__body" id="panel-body"></div>
+    </section>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="lohkot.js"></script>
+<script src="variantit.js"></script>
+<script src="../kirjasto.js"></script>
+<script src="tarkastus.js" onerror="window.LK_TARKASTUS=null"></script>
+<script src="lk.js"></script>
+<script src="mittaus.js" onerror="window.LK_MITTAUKSET=[]"></script>
+<script src="katselin.js"></script>
+</body>
+</html>

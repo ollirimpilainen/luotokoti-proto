@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Värinvaihto — Luotokoti</title>
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap">
+<link rel="stylesheet" href="../../assets/styles.css">
+<link rel="stylesheet" href="varinvaihto.css">
+<style>
+  /* Lab-sivun omat tyylit. Eivät kuulu komponenttiin eivätkä liity
+     talo.html:ään — tämä on työkalu siirtymätavan valintaan. */
+  .lab{border-top:1px solid var(--rule);padding-block:var(--section-y)}
+  .lab__ryhmat{display:grid;gap:var(--s-6);margin-block:var(--s-6)}
+  @media (min-width:64rem){.lab__ryhmat{grid-template-columns:7fr 5fr;gap:var(--s-8)}}
+  .lab__kuvaus{display:grid;gap:var(--s-5);border-top:1px solid var(--rule);padding-top:var(--s-6)}
+  @media (min-width:64rem){.lab__kuvaus{grid-template-columns:repeat(4,minmax(0,1fr))}}
+  .lab__tapa{padding-left:var(--s-4);border-left:1px solid var(--rule);transition:border-color .2s var(--ease)}
+  .lab__tapa[aria-current="true"]{border-left-color:var(--olive)}
+  .lab__tapa h3{margin:0 0 var(--s-2)}
+  .lab__tapa p{font-size:var(--t-small);line-height:1.55;color:var(--ink-soft);margin:0 0 var(--s-2)}
+  .lab__tapa .lab__arvio{color:var(--ink)}
+  .lab__loydokset{margin-top:var(--s-8);max-width:48rem}
+  .lab__loydokset li{margin-bottom:var(--s-3)}
+  .lab__palkki{background:var(--charcoal);color:var(--ink-on-dark);font-size:var(--t-small);padding:var(--s-2) 0}
+  .lab__palkki a{color:var(--ink-on-dark)}
+</style>
+</head>
+<body class="page-talo">
+
+<div class="lab__palkki">
+  <div class="wrap"><a href="../index.html">Blokkikirjasto</a> · Julkisivun
+    värinvaihto · ei osa sivustoa. <a href="../../talo.html">Talosivu</a></div>
+</div>
+
+<header class="site-header">
+  <div class="wrap header-bar">
+    <a class="wordmark" href="../../index.html"><img src="../../assets/logo-luotokoti.svg" alt="Luotokoti" width="520" height="70"></a>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- Sama hero kuin talo.html:ssä, kuvapaikan tilalla komponentti. -->
+  <section class="hero" aria-labelledby="hero-h">
+    <div class="wrap">
+      <span class="eyebrow" id="lab-yla"></span>
+      <h1 id="hero-h"></h1>
+      <p class="hero__sub" id="lab-sub"></p>
+
+      <figure class="vv-kehys" style="margin:0">
+        <div data-varinvaihto data-siirtyma="pyyhkaisy" data-sijoitus="alla"
+             data-vari="musta"></div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="lab" aria-labelledby="lab-h">
+    <div class="wrap">
+      <span class="eyebrow">Laboratorio</span>
+      <h2 id="lab-h">Neljä tapaa vaihtaa väri</h2>
+      <p class="small" style="max-width:var(--measure)">Vaihda tapaa ja kokeile
+        näytteitä yllä. Demossa on kaksi väriä, musta ja punainen, koska vain
+        niistä on kuva samasta kamerasta. Kolmas väri on yksi rivi dataan
+        heti kun arkkitehdin kuva tulee.</p>
+
+      <div class="lab__ryhmat">
+        <div class="kokovalitsin" style="border-top:0;padding-top:0">
+          <span class="kokovalitsin__lbl">Siirtymä</span>
+          <div class="kokovalitsin__btns" role="group" aria-label="Siirtymä" data-lab="siirtyma">
+            <button type="button" class="kokovalitsin__btn" value="hayvytys">A · Häivytys</button>
+            <button type="button" class="kokovalitsin__btn" value="pyyhkaisy">B · Pyyhkäisy</button>
+            <button type="button" class="kokovalitsin__btn" value="paljastus">C · Paljastus</button>
+            <button type="button" class="kokovalitsin__btn" value="vertailu">D · Vertailu</button>
+          </div>
+        </div>
+        <div class="kokovalitsin" style="border-top:0;padding-top:0">
+          <span class="kokovalitsin__lbl">Näytteet</span>
+          <div class="kokovalitsin__btns" role="group" aria-label="Näytteiden paikka" data-lab="sijoitus">
+            <button type="button" class="kokovalitsin__btn" value="alla">Kuvan alla</button>
+            <button type="button" class="kokovalitsin__btn" value="kuvassa">Kuvassa</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="lab__kuvaus">
+        <div class="lab__tapa" data-tapa="hayvytys">
+          <h3>A · Häivytys</h3>
+          <p>Uusi väri sulautuu vanhan päälle 0,7 sekunnissa. Useimpien
+            konfiguraattorien perustapa.</p>
+          <p class="lab__arvio">Turvallisin. Toimii myös kuvilla, jotka eivät
+            osu täysin päällekkäin. Hiljainen, sopii sivun sävyyn.</p>
+        </div>
+        <div class="lab__tapa" data-tapa="pyyhkaisy">
+          <h3>B · Pyyhkäisy</h3>
+          <p>Pehmeäreunainen raja kulkee talon poikki kuin maalattaisiin.
+            Suunta seuraa näytteiden järjestystä.</p>
+          <p class="lab__arvio">Tuntuu eniten väri&shy;valinnalta. Vaatii
+            linjatut kuvat: jos talo liikkuu kuvien välillä, sauma paljastaa
+            sen.</p>
+        </div>
+        <div class="lab__tapa" data-tapa="paljastus">
+          <h3>C · Paljastus</h3>
+          <p>Ympyrä kasvaa painetusta näytteestä, ja väri valuu kuvaan.</p>
+          <p class="lab__arvio">Kytkee valinnan ja tuloksen näkyvästi, mutta
+            on näyttävin. Paras kun näytteet ovat kuvassa.</p>
+        </div>
+        <div class="lab__tapa" data-tapa="vertailu">
+          <h3>D · Vertailu</h3>
+          <p>Edellinen väri vasemmalla, uusi oikealla. Rajaa voi vetää
+            itse, myös näppäimistöllä.</p>
+          <p class="lab__arvio">Ainoa tapa, jolla kaksi väriä näkyy yhtä aikaa.
+            Päätöksenteon työkalu, ei heron ensivaikutelma.</p>
+        </div>
+      </div>
+
+      <div class="lab__loydokset">
+        <h3>Käyttöliittymä</h3>
+        <ul class="small">
+          <li><strong>Näyte on pinta, ei väri.</strong> Laatta on rajaus samasta
+            kuvasta: konesaumakatto ylhäällä, pystyrimat alla. Viemällä hiiren
+            laatan päälle näkee pinnan lähempää.</li>
+          <li><strong>Nimi on iso ja vaihtuu kuvan tahdissa.</strong> Nimeä ei vielä
+            ole, joten sen paikalla on julkisivun kuvaus ja nimi on merkitty
+            aukoksi yläpuolelle.</li>
+          <li><strong>Edistysviiva</strong> valitun laatan alla täyttyy siirtymän
+            kestossa, joten valinta, kuva ja viiva ovat yksi liike.</li>
+          <li><strong>Kuvassa-tila</strong> on autokonfiguraattorien kisko. Puhelimessa
+            laatat ovat aina kuvan alla, koska kisko peittäisi talon.</li>
+          <li>Rakenne kestää lisää värejä: laattarivi, numerointi <code>01 / 03</code>
+            ja kisko kasvavat datasta.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="../../assets/talo-data.js"></script>
+<script src="../../assets/kuvat-data.js"></script>
+<script src="../../assets/copy-data.js"></script>
+<script>
+  // Heron tekstit samoista lähteistä kuin talo.html. Ei proto.js:ää:
+  // lab tarvitsee vain nämä kolme riviä.
+  (function () {
+    function aukko(t) { return '<span class="gap">[' + t + ']</span>'; }
+    document.getElementById('lab-yla').textContent = COPY.talo.ylaKonseptitalo;
+    document.getElementById('hero-h').innerHTML = TALO.nimi || aukko('Mallin nimi');
+    document.getElementById('lab-sub').innerHTML =
+      TALO.kenelle || aukko('Yksi lause: kenelle talo on suunniteltu');
+  })();
+</script>
+<script src="varinvaihto.js"></script>
+<script>
+  // Lab-kytkimet. Tila osoitteessa, jotta vaihtoehdon voi jakaa linkkinä.
+  // DOMContentLoaded, koska komponentti käynnistyy vasta silloin.
+  document.addEventListener('DOMContentLoaded', function () {
+    var vv = document.querySelector('[data-varinvaihto]').varinvaihto;
+    var p = new URLSearchParams(location.search);
+
+    function aseta(ryhma, arvo, paivitaOsoite) {
+      if (ryhma === 'siirtyma') vv.asetaSiirtyma(arvo);
+      else vv.asetaSijoitus(arvo);
+      document.querySelectorAll('[data-lab="' + ryhma + '"] button').forEach(function (b) {
+        b.setAttribute('aria-pressed', b.value === arvo ? 'true' : 'false');
+      });
+      if (ryhma === 'siirtyma') {
+        document.querySelectorAll('.lab__tapa').forEach(function (t) {
+          t.setAttribute('aria-current', t.getAttribute('data-tapa') === arvo ? 'true' : 'false');
+        });
+      }
+      if (paivitaOsoite) {
+        p.set(ryhma, arvo);
+        history.replaceState(null, '', '?' + p.toString());
+      }
+    }
+
+    ['siirtyma', 'sijoitus'].forEach(function (ryhma) {
+      document.querySelectorAll('[data-lab="' + ryhma + '"] button').forEach(function (b) {
+        b.addEventListener('click', function () { aseta(ryhma, b.value, true); });
+      });
+    });
+    aseta('siirtyma', p.get('siirtyma') || 'pyyhkaisy');
+    aseta('sijoitus', p.get('sijoitus') || 'alla');
+  });
+</script>
+</body>
+</html>

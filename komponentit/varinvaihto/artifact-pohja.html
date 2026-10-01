@@ -1,0 +1,161 @@
+<title>Risö 100+ värinvaihto</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap">
+<!-- Koostettu tiedostosta artifact-pohja.html (artifact.py). ÄLÄ MUOKKAA
+     koostettua tiedostoa: muutokset pohjaan, komponenttiin tai
+     styles.css:ään ja koostus uudelleen. -->
+<style>
+@@STYLES@@
+</style>
+<style>
+@@VVCSS@@
+</style>
+<style>
+  /* Esittelysivun omat tyylit. Sivusto on yksiteemainen (paperi), joten
+     tumma teema jätetään tarkoituksella pois: värit ja pohja tulevat
+     styles.css:n tokeneista, ja body asettaa pohjan itse. */
+  :root{color-scheme:light}
+  body{background:var(--paper);color:var(--ink)}
+  .esi__palkki{background:var(--charcoal);color:var(--ink-on-dark);font-size:var(--t-small);padding-block:var(--s-2)}
+  .esi{border-top:1px solid var(--rule);padding-block:var(--section-y)}
+  .esi__johdanto{max-width:var(--measure);color:var(--ink-soft)}
+  .esi__ryhmat{display:grid;gap:var(--s-6);margin-block:var(--s-6)}
+  @media (min-width:64rem){.esi__ryhmat{grid-template-columns:auto auto;justify-content:start;gap:var(--s-8)}}
+  .esi__tavat{display:grid;gap:var(--s-5);border-top:1px solid var(--rule);padding-top:var(--s-6)}
+  @media (min-width:48rem){.esi__tavat{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (min-width:64rem){.esi__tavat{grid-template-columns:repeat(4,minmax(0,1fr))}}
+  .esi__tapa{min-width:0;padding-left:var(--s-4);border-left:1px solid var(--rule);transition:border-color .2s var(--ease)}
+  .esi__tapa[aria-current="true"]{border-left-color:var(--olive)}
+  .esi__tapa h3{margin:0 0 var(--s-2)}
+  .esi__tapa p{font-size:var(--t-small);line-height:1.55;color:var(--ink-soft);margin:0}
+  .esi__kysymykset{margin-top:var(--s-8);max-width:44rem}
+  .esi__kysymykset ol{padding-left:1.25rem;display:grid;gap:var(--s-3);color:var(--ink-soft)}
+  .esi__kysymykset li::marker{font-variant-numeric:tabular-nums;color:var(--ink-faint)}
+</style>
+
+<div class="esi__palkki">
+  <div class="wrap">Luonnos talosivun heroon. Kuvat ovat arkkitehdin havainnekuvia.</div>
+</div>
+
+<header class="site-header">
+  <div class="wrap header-bar">
+    <span class="wordmark"><img src="@@LOGO@@" alt="Luotokoti" width="520" height="70"></span>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero" aria-labelledby="hero-h">
+    <div class="wrap">
+      <span class="eyebrow" id="esi-yla"></span>
+      <h1 id="hero-h"></h1>
+      <p class="hero__sub" id="esi-sub"></p>
+      <div data-varinvaihto data-siirtyma="pyyhkaisy" data-sijoitus="alla" data-vari="musta"></div>
+    </div>
+  </section>
+
+  <section class="esi" aria-labelledby="esi-h">
+    <div class="wrap">
+      <span class="eyebrow">Valittavaksi</span>
+      <h2 id="esi-h">Neljä tapaa vaihtaa väri</h2>
+      <p class="esi__johdanto">Vaihda tapaa alta ja kokeile värinäytteitä kuvan
+        alla. Demossa on kaksi väriä, koska arkkitehdin kuvista vain nämä kaksi
+        on kuvattu samasta kohdasta. Uudet värit lisätään, kun kuvat ovat
+        valmiit.</p>
+
+      <div class="esi__ryhmat">
+        <div class="kokovalitsin" style="border-top:0;padding-top:0">
+          <span class="kokovalitsin__lbl" id="esi-siirtyma">Siirtymä</span>
+          <div class="kokovalitsin__btns" role="group" aria-labelledby="esi-siirtyma" data-esi="siirtyma">
+            <button type="button" id="esi-s-a" class="kokovalitsin__btn" value="hayvytys">A · Häivytys</button>
+            <button type="button" id="esi-s-b" class="kokovalitsin__btn" value="pyyhkaisy">B · Pyyhkäisy</button>
+            <button type="button" id="esi-s-c" class="kokovalitsin__btn" value="paljastus">C · Paljastus</button>
+            <button type="button" id="esi-s-d" class="kokovalitsin__btn" value="vertailu">D · Vertailu</button>
+          </div>
+        </div>
+        <div class="kokovalitsin" style="border-top:0;padding-top:0">
+          <span class="kokovalitsin__lbl" id="esi-sijoitus">Näytteet</span>
+          <div class="kokovalitsin__btns" role="group" aria-labelledby="esi-sijoitus" data-esi="sijoitus">
+            <button type="button" id="esi-p-alla" class="kokovalitsin__btn" value="alla">Kuvan alla</button>
+            <button type="button" id="esi-p-kuvassa" class="kokovalitsin__btn" value="kuvassa">Kuvassa</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="esi__tavat">
+        <div class="esi__tapa" data-tapa="hayvytys">
+          <h3>A · Häivytys</h3>
+          <p>Uusi väri sulautuu vanhan päälle. Rauhallisin tapa, ja se sopii
+            sivuston hillittyyn sävyyn.</p>
+        </div>
+        <div class="esi__tapa" data-tapa="pyyhkaisy">
+          <h3>B · Pyyhkäisy</h3>
+          <p>Väri kulkee talon poikki kuin se maalattaisiin. Tuntuu eniten
+            siltä, että valitsee talolleen värin.</p>
+        </div>
+        <div class="esi__tapa" data-tapa="paljastus">
+          <h3>C · Paljastus</h3>
+          <p>Väri leviää painetusta näytteestä taloon. Näyttävin tapa. Toimii
+            parhaiten, kun näytteet ovat kuvassa.</p>
+        </div>
+        <div class="esi__tapa" data-tapa="vertailu">
+          <h3>D · Vertailu</h3>
+          <p>Edellinen ja uusi väri näkyvät rinnakkain, ja rajaa voi vetää.
+            Sopii vertailuun, ei heron ensivaikutelmaksi.</p>
+        </div>
+      </div>
+
+      <div class="esi__kysymykset">
+        <h3>Ennen kuin tämä menee sivustolle</h3>
+        <ol>
+          <li><strong>Onko julkisivun väri ostajan valinta?</strong> Jos on,
+            väri kuuluu myös sisältöön ja hintaan, ei vain heroon.</li>
+          <li><strong>Mitkä ovat värien nimet?</strong> Niiden paikka on
+            merkitty hakasulkein.</li>
+          <li><strong>Lisää värejä arkkitehdiltä.</strong> Jokainen väri samasta
+            kuvakulmasta ja samassa valossa kuin nämä kaksi, jotta vain talo
+            vaihtuu.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+@@DATA@@
+</script>
+<script>
+  (function () {
+    function aukko(t) { return '<span class="gap">[' + t + ']</span>'; }
+    document.getElementById('esi-yla').textContent = COPY.talo.ylaKonseptitalo;
+    document.getElementById('hero-h').innerHTML = TALO.nimi || aukko('Mallin nimi');
+    document.getElementById('esi-sub').innerHTML =
+      TALO.kenelle || aukko('Yksi lause: kenelle talo on suunniteltu');
+  })();
+</script>
+<script>
+@@VVJS@@
+</script>
+<script>
+  // Kytkimet. Tila vain sivulla: artifactin osoitteeseen ei voi kirjoittaa.
+  document.addEventListener('DOMContentLoaded', function () {
+    var vv = document.querySelector('[data-varinvaihto]').varinvaihto;
+    function aseta(ryhma, arvo) {
+      if (ryhma === 'siirtyma') vv.asetaSiirtyma(arvo); else vv.asetaSijoitus(arvo);
+      document.querySelectorAll('[data-esi="' + ryhma + '"] button').forEach(function (b) {
+        b.setAttribute('aria-pressed', b.value === arvo ? 'true' : 'false');
+      });
+      if (ryhma === 'siirtyma') document.querySelectorAll('.esi__tapa').forEach(function (t) {
+        t.setAttribute('aria-current', t.getAttribute('data-tapa') === arvo ? 'true' : 'false');
+      });
+    }
+    ['siirtyma', 'sijoitus'].forEach(function (ryhma) {
+      document.querySelectorAll('[data-esi="' + ryhma + '"] button').forEach(function (b) {
+        b.addEventListener('click', function () { aseta(ryhma, b.value); });
+      });
+    });
+    aseta('siirtyma', 'pyyhkaisy');
+    aseta('sijoitus', 'alla');
+  });
+</script>

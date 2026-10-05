@@ -1,0 +1,336 @@
+{
+ "paivays": "2026-10-05",
+ "kieli": "sv",
+ "huomiot": {
+  "yhteinen.luvut.0.arvo": {
+   "laji": "muutos",
+   "pvm": "24.9.2026",
+   "teksti": "Selite muuttui 24.9.2026: asiakas valitsi termin förverkligade hem eikä levererade hus (vastaus 4.2)."
+  },
+  "yhteinen.luvut.1.arvo": {
+   "laji": "muutos",
+   "pvm": "24.9.2026",
+   "teksti": "KÄÄNNÖS · selite COPYWRITER 24.9.2026"
+  },
+  "yhteinen.luvut.2.arvo": {
+   "laji": "muutos",
+   "pvm": "5.10.2026",
+   "teksti": "AUKKO 5.10.2026, sama kuin suomessa: asiakas ei ole vahvistanut energialuokkaa (\"Återkommer ännu med denna info\")."
+  },
+  "yhteinen.luottamusLahde": {
+   "laji": "muutos",
+   "pvm": "24.9.2026",
+   "teksti": "COPYWRITER 24.9.2026"
+  },
+  "yhteinen.lainauksetIngressi": {
+   "laji": "muutos",
+   "pvm": "24.9.2026",
+   "teksti": "COPYWRITER 24.9.2026"
+  },
+  "yhteinen.prosessiMittari": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "kirjoitettu ilman copywriteria",
+   "teksti": "Sama kuin talon kierroksessa: tämä on Ollin luonnos, joka vietiin copyyn 1.10.2026 ilman päätöstäsi. Kuittaa tai kirjoita päälle."
+  },
+  "yhteinen.toimialueIngressi": {
+   "laji": "muutos",
+   "pvm": "24.9.2026",
+   "teksti": "ERIYTYMÄ KORJATTU 24.9.2026."
+  },
+  "etusivu.hintaSelite": {
+   "laji": "muutos",
+   "pvm": "30.9.2026",
+   "teksti": "UTRUSTNINGSNIVÅER 30.9.2026."
+  },
+  "etusivu.faqPakettiV2Html": {
+   "laji": "muutos",
+   "pvm": "30.9.2026",
+   "teksti": "Terassit ratkesivat 30.9.2026 asiakkaan Miro-lapulla, ks."
+  },
+  "etusivu.faqPohjaPituusHtml": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "kirjoitettu ilman copywriteria",
+   "teksti": "Lause kirjoitettiin uusiksi 2.10.2026 ilman sinua, koska se myi väärää tuotetta: talon päätyyn ei lisätä makuuhuoneita. Olli vahvisti että kasvutapa on 29 v-m²:n lisärakennus ja että isompi talo on eri malli. Fakta on päätetty, sanamuoto ei — kirjoita päälle jos ruotsi ontuu."
+  },
+  "etusivu.nimiPaatos": {
+   "laji": "muutos",
+   "pvm": "24.9.2026",
+   "teksti": "COPYWRITER 24.9.2026"
+  },
+  "talo.hintaSelite": {
+   "laji": "muutos",
+   "pvm": "2.10.2026",
+   "teksti": "FAKTAKORJAUS 2.10.2026."
+  },
+  "talo.sisaltyyOtsikko": {
+   "laji": "muutos",
+   "pvm": "24.9.2026",
+   "teksti": "KÄÄNNÖS COPYWRITER 24.9.2026"
+  },
+  "talo.sisaltyyIngressi": {
+   "laji": "muutos",
+   "pvm": "24.9.2026",
+   "teksti": "COPYWRITER 24.9.2026"
+  },
+  "talo.palettiOtsikko": {
+   "laji": "muutos",
+   "pvm": "28.9.2026",
+   "teksti": "VIISI LAUSETTA ON null JA ODOTTAA PÄÄTÖSTÄ (28.9.2026)."
+  },
+  "talo.variOtsikko": {
+   "laji": "muutos",
+   "pvm": "29.9.2026",
+   "teksti": "KIERROS TALOSSA (29.9.2026)."
+  },
+  "talo.kokoValitsinHuomio": {
+   "laji": "muutos",
+   "pvm": "30.9.2026",
+   "teksti": "UTRUSTNINGSNIVÅER 30.9.2026 — kolumnerna är inte längre storlekar."
+  },
+  "talo.miksiKappale4": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "kirjoitettu ilman copywriteria",
+   "teksti": "Sama korjaus kuin etusivun UKK:ssa: lause lupasi talon pituuden kasvavan. Kirjoitettu uusiksi 2.10.2026 ilman sinua. Kuittaa tai kirjoita päälle."
+  },
+  "talo.laajennusOtsikko": {
+   "laji": "muutos",
+   "pvm": "24.9.2026",
+   "teksti": "KÄÄNNÖS · COPYWRITER 24.9.2026"
+  },
+  "talo.laajennusTeksti": {
+   "laji": "muutos",
+   "pvm": "24.9.2026",
+   "teksti": "COPYWRITER 24.9.2026"
+  },
+  "talo.laajennusKysymysLupa": {
+   "laji": "muutos",
+   "pvm": "30.9.2026",
+   "teksti": "RAKENNUSLUPA — ASIAKKAAN PÄÄTÖS VOITTAA 30.9.2026."
+  },
+  "talo.laajennusKysymysHinta": {
+   "laji": "muutos",
+   "pvm": "24.9.2026",
+   "teksti": "COPYWRITER 24.9.2026"
+  },
+  "talo.laajennusVaraus": {
+   "laji": "muutos",
+   "pvm": "24.9.2026",
+   "teksti": "COPYWRITER 24.9.2026"
+  },
+  "talo.ctaOtsikko": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "kirjoitettu ilman copywriteria",
+   "teksti": "Tämä korvaa sinun 25.8.2026 kirjoittamasi otsikon. Syy on rakenteellinen: talon loppu-CTA:ssa oli kaksi ostopolkua, ja oma tontti -painike poistui. Vanha otsikko oletti kaksi tapaa. Kuittaa tai kirjoita uusi."
+  },
+  "kohteet.hintaSelite": {
+   "laji": "muutos",
+   "pvm": "24.9.2026",
+   "teksti": "COPYWRITER 24.9.2026"
+  },
+  "kohteet.faqOmistusV": {
+   "laji": "muutos",
+   "pvm": "5.10.2026",
+   "teksti": "ASIAKKAAN SANAMUOTO 5.10.2026, sellaisenaan."
+  },
+  "omaTontti.hintaSelite": {
+   "laji": "muutos",
+   "pvm": "30.9.2026",
+   "teksti": "UTRUSTNINGSNIVÅER 30.9.2026."
+  },
+  "omaTontti.hoidammeOtsikko": {
+   "laji": "muutos",
+   "pvm": "24.9.2026",
+   "teksti": "COPYWRITER 24.9.2026"
+  },
+  "meista.sivuKuvaus": {
+   "laji": "muutos",
+   "pvm": "24.9.2026",
+   "teksti": "COPYWRITER 24.9.2026"
+  },
+  "meista.toimialueOtsikko": {
+   "laji": "muutos",
+   "pvm": "24.9.2026",
+   "teksti": "KÄÄNNÖS · COPYWRITER 24.9.2026"
+  },
+  "meista.toimialueIngressi": {
+   "laji": "muutos",
+   "pvm": "24.9.2026",
+   "teksti": "COPYWRITER 24.9.2026"
+  },
+  "yhteys.puhelin": {
+   "laji": "muutos",
+   "pvm": "5.10.2026",
+   "teksti": "ASIAKKAAN YHTEYSTIEDOT 5.10.2026, hänen omin sanoin."
+  },
+  "yhteys.kayntiTeksti": {
+   "laji": "muutos",
+   "pvm": "24.9.2026",
+   "teksti": "COPYWRITER 24.9.2026"
+  },
+  "yhteys.kayntiAukiolo": {
+   "laji": "muutos",
+   "pvm": "24.9.2026",
+   "teksti": "COPYWRITER 24.9.2026"
+  },
+  "talo.kierrosUlkoOtsikko": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "kirjoitettu ilman copywriteria",
+   "teksti": "Tämä lause on sivustolla, mutta sinä et ole kirjoittanut sitä. Se on Ollin luonnos, joka vietiin suoraan copyyn 1.10.2026, kun talon kierros tarvitsi ruotsin tekstit. Lue se talon sivulla ja kuittaa, tai kirjoita päälle."
+  },
+  "talo.kierrosUlkoTeksti": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "kirjoitettu ilman copywriteria",
+   "teksti": "Tämä lause on sivustolla, mutta sinä et ole kirjoittanut sitä. Se on Ollin luonnos, joka vietiin suoraan copyyn 1.10.2026, kun talon kierros tarvitsi ruotsin tekstit. Lue se talon sivulla ja kuittaa, tai kirjoita päälle."
+  },
+  "talo.kierrosYhteinenOtsikko": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "kirjoitettu ilman copywriteria",
+   "teksti": "Tämä lause on sivustolla, mutta sinä et ole kirjoittanut sitä. Se on Ollin luonnos, joka vietiin suoraan copyyn 1.10.2026, kun talon kierros tarvitsi ruotsin tekstit. Lue se talon sivulla ja kuittaa, tai kirjoita päälle."
+  },
+  "talo.kierrosYhteinenTeksti": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "kirjoitettu ilman copywriteria",
+   "teksti": "Tämä lause on sivustolla, mutta sinä et ole kirjoittanut sitä. Se on Ollin luonnos, joka vietiin suoraan copyyn 1.10.2026, kun talon kierros tarvitsi ruotsin tekstit. Lue se talon sivulla ja kuittaa, tai kirjoita päälle."
+  },
+  "talo.kierrosMakuuOtsikko": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "kirjoitettu ilman copywriteria",
+   "teksti": "Tämä lause on sivustolla, mutta sinä et ole kirjoittanut sitä. Se on Ollin luonnos, joka vietiin suoraan copyyn 1.10.2026, kun talon kierros tarvitsi ruotsin tekstit. Lue se talon sivulla ja kuittaa, tai kirjoita päälle."
+  },
+  "talo.kierrosMakuuTeksti": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "kirjoitettu ilman copywriteria",
+   "teksti": "Tämä lause on sivustolla, mutta sinä et ole kirjoittanut sitä. Se on Ollin luonnos, joka vietiin suoraan copyyn 1.10.2026, kun talon kierros tarvitsi ruotsin tekstit. Lue se talon sivulla ja kuittaa, tai kirjoita päälle."
+  },
+  "talo.kierrosMarkaOtsikko": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "kirjoitettu ilman copywriteria",
+   "teksti": "Tämä lause on sivustolla, mutta sinä et ole kirjoittanut sitä. Se on Ollin luonnos, joka vietiin suoraan copyyn 1.10.2026, kun talon kierros tarvitsi ruotsin tekstit. Lue se talon sivulla ja kuittaa, tai kirjoita päälle."
+  },
+  "talo.kierrosMarkaTeksti": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "kirjoitettu ilman copywriteria",
+   "teksti": "Tämä lause on sivustolla, mutta sinä et ole kirjoittanut sitä. Se on Ollin luonnos, joka vietiin suoraan copyyn 1.10.2026, kun talon kierros tarvitsi ruotsin tekstit. Lue se talon sivulla ja kuittaa, tai kirjoita päälle."
+  },
+  "talo.kierrosPihaOtsikko": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "kirjoitettu ilman copywriteria",
+   "teksti": "Tämä lause on sivustolla, mutta sinä et ole kirjoittanut sitä. Se on Ollin luonnos, joka vietiin suoraan copyyn 1.10.2026, kun talon kierros tarvitsi ruotsin tekstit. Lue se talon sivulla ja kuittaa, tai kirjoita päälle."
+  },
+  "talo.kierrosPihaTeksti": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "kirjoitettu ilman copywriteria",
+   "teksti": "Tämä lause on sivustolla, mutta sinä et ole kirjoittanut sitä. Se on Ollin luonnos, joka vietiin suoraan copyyn 1.10.2026, kun talon kierros tarvitsi ruotsin tekstit. Lue se talon sivulla ja kuittaa, tai kirjoita päälle."
+  },
+  "talo.ctaIngressi": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "kirjoitettu ilman copywriteria",
+   "teksti": "Sama kuin yllä: kirjoitettu uusiksi 1.10.2026 kahdelle painikkeelle, ei sinun kädestäsi."
+  },
+  "meista.toimialueEiKartalla": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "kirjoitettu ilman copywriteria",
+   "teksti": "Lause kirjoitettiin uudelleen 1.10.2026: kartta poistui toimialuelohkosta, joten \"kartalla\" ei enää pidä paikkaansa ja lause viittaa nyt kohteisiin. Kuittaa tai kirjoita uusi."
+  },
+  "talo.polkuKohdeKuvaus": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "ilman paikkaa",
+   "teksti": "Tämä sinun kirjoittamasi lause jää ilman paikkaa: talon loppu-CTA:n polkukortit ei palaa sivustolle. Olli poisti 1.10. talon loppu-CTA:sta oma tontti -painikkeen, ja polkukortit vaihtuivat kahdeksi painikkeeksi. Kuvaustekstit jäivät siksi ilman paikkaa. Kuittaa jos teksti saa jäädä arkistoon, tai kirjoita se uudelleen siihen muotoon jossa se sopisi jäljelle jääneeseen lohkoon."
+  },
+  "talo.polkuOmaKuvaus": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "ilman paikkaa",
+   "teksti": "Tämä sinun kirjoittamasi lause jää ilman paikkaa: talon loppu-CTA:n polkukortit ei palaa sivustolle. Sama kuin yllä: kortti josta teksti oli, ei ole enää olemassa. Kuittaa jos teksti saa jäädä arkistoon, tai kirjoita se uudelleen siihen muotoon jossa se sopisi jäljelle jääneeseen lohkoon."
+  },
+  "kohteet.prosessiOtsikko": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "ilman paikkaa",
+   "teksti": "Tämä sinun kirjoittamasi lause jää ilman paikkaa: Kohteet-sivun prosessilohko ei palaa sivustolle. Olli päätti 1.10. että prosessin koti on etusivu; Kohteissa on tilalla vertailu \"9 päätöstä vai 2\". Kuittaa jos teksti saa jäädä arkistoon, tai kirjoita se uudelleen siihen muotoon jossa se sopisi jäljelle jääneeseen lohkoon."
+  },
+  "kohteet.prosessi1Otsikko": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "ilman paikkaa",
+   "teksti": "Tämä sinun kirjoittamasi lause jää ilman paikkaa: Kohteet-sivun prosessilohko ei palaa sivustolle. Sama kuin yllä. Kuittaa jos teksti saa jäädä arkistoon, tai kirjoita se uudelleen siihen muotoon jossa se sopisi jäljelle jääneeseen lohkoon."
+  },
+  "kohteet.prosessi1Teksti": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "ilman paikkaa",
+   "teksti": "Tämä sinun kirjoittamasi lause jää ilman paikkaa: Kohteet-sivun prosessilohko ei palaa sivustolle. Sama kuin yllä. Kuittaa jos teksti saa jäädä arkistoon, tai kirjoita se uudelleen siihen muotoon jossa se sopisi jäljelle jääneeseen lohkoon."
+  },
+  "omaTontti.faqPohjaV": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "ilman paikkaa",
+   "teksti": "Tämä sinun kirjoittamasi lause jää ilman paikkaa: Oma tontti -sivun pohjakysymys ei palaa sivustolle. Kysymys siirrettiin talosivun pohjafilosofiaan, jossa sama asia kerrotaan omana lohkonaan. Vastaus on siis olemassa, mutta toisin sanoin. Kuittaa jos teksti saa jäädä arkistoon, tai kirjoita se uudelleen siihen muotoon jossa se sopisi jäljelle jääneeseen lohkoon."
+  },
+  "omaTontti.tulosAlkuOtsikko": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "kirjoitettu ilman copywriteria",
+   "teksti": "Uusi lause 1.10.2026, kirjoitettu ilman sinua. Tonttitarkistuslistan tulos näytti heti latauksessa alinta tasoa (\"Muutama kohta on vielä auki\"), vaikka kävijä ei ollut merkinnyt mitään — lista sai alkutilan. Ruotsi on konekäännös suomesta. Kuittaa tai kirjoita päälle."
+  },
+  "omaTontti.tulosAlkuTeksti": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "kirjoitettu ilman copywriteria",
+   "teksti": "Sama alkutila kuin yllä: lause joka rauhoittaa kävijän, joka ei tiedä vastauksia. Kirjoitettu ilman sinua 1.10.2026, ruotsi on käännös suomesta."
+  },
+  "etusivu.faqPakettiV": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "asiakkaan faktakorjaus",
+   "teksti": "Asiakas 5.10.2026: \"Vi har inte köpt tomten, utan utgångsläget för oss är att det är en arrenderad tomt.\" Lause sanoo että tontti on ostettu. Se ei pidä paikkaansa, ja se on kaupallisesti merkittävä ero: vuokratontista maksetaan vuokraa, ja vuokrasopimus siirtyy ostajalle kauppakirjalla (uusi vastaus kohteet.faqOmistusV). Kirjoita lause uudelleen niin että lähtökohta on vuokratontti. En kirjoittanut sitä puolestasi, koska lause on sinun ja neljä lausetta pitää sanoa sama asia keskenään yhdenmukaisesti."
+  },
+  "kohteet.hintaIngressi": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "asiakkaan faktakorjaus",
+   "teksti": "Asiakas 5.10.2026: \"Vi har inte köpt tomten, utan utgångsläget för oss är att det är en arrenderad tomt.\" Lause sanoo että tontti on ostettu. Se ei pidä paikkaansa, ja se on kaupallisesti merkittävä ero: vuokratontista maksetaan vuokraa, ja vuokrasopimus siirtyy ostajalle kauppakirjalla (uusi vastaus kohteet.faqOmistusV). Kirjoita lause uudelleen niin että lähtökohta on vuokratontti. En kirjoittanut sitä puolestasi, koska lause on sinun ja neljä lausetta pitää sanoa sama asia keskenään yhdenmukaisesti."
+  },
+  "kohteet.heroAlariviA": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "asiakkaan faktakorjaus",
+   "teksti": "Asiakas 5.10.2026: \"Vi har inte köpt tomten, utan utgångsläget för oss är att det är en arrenderad tomt.\" Lause sanoo että tontti on ostettu. Se ei pidä paikkaansa, ja se on kaupallisesti merkittävä ero: vuokratontista maksetaan vuokraa, ja vuokrasopimus siirtyy ostajalle kauppakirjalla (uusi vastaus kohteet.faqOmistusV). Kirjoita lause uudelleen niin että lähtökohta on vuokratontti. En kirjoittanut sitä puolestasi, koska lause on sinun ja neljä lausetta pitää sanoa sama asia keskenään yhdenmukaisesti."
+  },
+  "kohteet.ratkaistuTicksA.0": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "asiakkaan faktakorjaus",
+   "teksti": "Asiakas 5.10.2026: \"Vi har inte köpt tomten, utan utgångsläget för oss är att det är en arrenderad tomt.\" Lause sanoo että tontti on ostettu. Se ei pidä paikkaansa, ja se on kaupallisesti merkittävä ero: vuokratontista maksetaan vuokraa, ja vuokrasopimus siirtyy ostajalle kauppakirjalla (uusi vastaus kohteet.faqOmistusV). Kirjoita lause uudelleen niin että lähtökohta on vuokratontti. En kirjoittanut sitä puolestasi, koska lause on sinun ja neljä lausetta pitää sanoa sama asia keskenään yhdenmukaisesti."
+  },
+  "omaTontti.viikkoTeksti": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "asiakkaan faktakorjaus",
+   "teksti": "Asiakas 5.10.2026: \"Vi står för markundersökningen: Det gör vi, men om inte huset byggs betalar kunden för markundersökningen.\" Lupaus on nyt ehdoton — \"den kostar dig ingenting\" — ja asiakas lisäsi siihen ehdon. Ehto kannattaa sanoa niin ettei se syö lupausta: tutkimus on maksuton kun talo rakennetaan. Kirjoita sanamuoto, niin se ei kuulosta varaukselta vaan reiluudelta."
+  },
+  "talo.hintaPolut": {
+   "laji": "ehdotus",
+   "versio": "v4",
+   "otsikko": "asiakkaan faktakorjaus",
+   "teksti": "Asiakas 5.10.2026: \"Vi står för markundersökningen: Det gör vi, men om inte huset byggs betalar kunden för markundersökningen.\" Lupaus on nyt ehdoton — \"den kostar dig ingenting\" — ja asiakas lisäsi siihen ehdon. Ehto kannattaa sanoa niin ettei se syö lupausta: tutkimus on maksuton kun talo rakennetaan. Kirjoita sanamuoto, niin se ei kuulosta varaukselta vaan reiluudelta."
+  }
+ }
+}

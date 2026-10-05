@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blokkikirjasto — Luotokoti</title>
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap">
+<link rel="stylesheet" href="../assets/styles.css">
+<style>
+  /* Hakemiston omat tyylit. Työkalusivu, joten ei heron isoa hyppyä:
+     otsikko on h2-kokoa ja sisältö alkaa heti. Blokit ovat viivoin
+     eroteltuja rivejä eivätkä kortteja, kuten sivustolla muutenkin. */
+  .kirjasto{padding-block:var(--s-8) var(--section-y)}
+  .kirjasto h1{font-size:var(--t-h2);margin:0 0 var(--s-3)}
+  .kirjasto__johdanto{max-width:var(--measure);color:var(--ink-soft);margin:0 0 var(--s-7)}
+  .kirjasto__lista{list-style:none;margin:0;padding:0;border-bottom:1px solid var(--rule)}
+
+  .blokki{
+    display:grid;
+    gap:var(--s-5) var(--s-7);
+    padding-block:var(--s-6);
+    border-top:1px solid var(--rule);
+  }
+  @media (min-width:48rem){.blokki{grid-template-columns:minmax(0,5fr) minmax(0,7fr)}}
+  .blokki__kuva{display:block;aspect-ratio:16/9;max-width:100%;background:var(--ph-fill-solid);overflow:hidden}
+  .blokki__kuva img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease-out)}
+  .blokki__kuva:hover img{transform:scale(1.03)}
+  .blokki__teksti{min-width:0}
+  .blokki__yla{display:flex;align-items:center;gap:var(--s-3);margin:0 0 var(--s-3)}
+  .blokki h2{font-size:var(--t-h2);margin:0 0 var(--s-3)}
+  .blokki__kuvaus{max-width:var(--measure);color:var(--ink-soft);margin:0 0 var(--s-5)}
+
+  /* Tila on elinkaaren vaihe, ei koriste: kolme arvoa, kolme muotoa. */
+  .tila{
+    font-family:var(--ff-head);font-size:var(--t-label);font-weight:600;
+    letter-spacing:.14em;text-transform:uppercase;
+    padding:.2em .7em;border:1px solid var(--rule-strong);color:var(--ink-soft);
+  }
+  .tila[data-tila="valittu"]{border-color:var(--olive);color:var(--olive)}
+  .tila[data-tila="liitetty"]{background:var(--charcoal);border-color:var(--charcoal);color:var(--paper)}
+  .tila[data-tila="virhe"]{border-color:var(--amber);color:var(--ink)}
+  .blokki__pvm{font-size:var(--t-label);color:var(--ink-faint);font-variant-numeric:tabular-nums}
+
+  .blokki__tiedot{margin:0 0 var(--s-5);border-bottom:1px solid var(--rule);max-width:40rem}
+  .blokki__tiedot > div{display:grid;grid-template-columns:8rem minmax(0,1fr);gap:var(--s-4);padding:var(--s-2) 0;border-top:1px solid var(--rule)}
+  .blokki__tiedot dt{font-family:var(--ff-head);font-size:var(--t-label);font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);padding-top:.2em}
+  .blokki__tiedot dd{margin:0;font-size:var(--t-small);color:var(--ink-soft)}
+  @media (max-width:29.9375rem){.blokki__tiedot > div{grid-template-columns:1fr;gap:var(--s-1)}}
+
+  .blokki__linkit{display:flex;flex-wrap:wrap;gap:var(--s-3) var(--s-5);font-size:var(--t-small)}
+  .blokki__linkit a{font-weight:600}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-bar">
+    <a class="wordmark" href="../index.html"><img src="../assets/logo-luotokoti.svg" alt="Luotokoti" width="520" height="70"></a>
+  </div>
+</header>
+
+<main id="main" class="kirjasto">
+  <div class="wrap">
+    <span class="eyebrow" id="kirjasto-maara">Blokkikirjasto</span>
+    <h1>Sivuston blokit ennen sivua</h1>
+    <p class="kirjasto__johdanto">Blokki iteroidaan täällä omana sivunaan ja
+      näytetään asiakkaalle, ja vasta valittu versio liitetään sivustolle.
+      Tyylit ja data ovat samat kuin sivustolla.</p>
+    <ol class="kirjasto__lista" id="kirjasto-lista"></ol>
+  </div>
+</main>
+
+<script src="kirjasto.js"></script>
+<script>
+  (function () {
+    var TILAT = { luonnos: 'Luonnos', valittu: 'Valittu', liitetty: 'Liitetty' };
+    function s(t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+    function rivi(dt, dd) { return dd ? '<div><dt>' + dt + '</dt><dd>' + s(dd) + '</dd></div>' : ''; }
+
+    var lista = document.getElementById('kirjasto-lista');
+    var n = (window.KIRJASTO || []).length;
+    document.getElementById('kirjasto-maara').textContent =
+      'Blokkikirjasto · ' + n + (n === 1 ? ' blokki' : ' blokkia');
+
+    (window.KIRJASTO || []).forEach(function (b) {
+      // Tuntematon tila näkyy virheenä eikä hiljaa luonnoksena: tila on
+      // kentistä ainoa, jonka pitää olla oikein.
+      var tila = TILAT[b.tila] ? b.tila : 'virhe';
+      var li = document.createElement('li');
+      li.className = 'blokki';
+      li.id = b.tunnus;
+      li.innerHTML =
+        '<a class="blokki__kuva" href="' + s(b.lab) + '" tabindex="-1" aria-hidden="true">' +
+          (b.kuva ? '<img src="' + s(b.kuva) + '" alt="" loading="lazy">' : '') + '</a>' +
+        '<div class="blokki__teksti">' +
+          '<p class="blokki__yla"><span class="tila" data-tila="' + tila + '">' +
+            (TILAT[tila] || 'Tuntematon tila: ' + s(b.tila)) + '</span>' +
+            '<span class="blokki__pvm">' + s(b.paivitetty) + '</span></p>' +
+          '<h2><a href="' + s(b.lab) + '">' + s(b.nimi) + '</a></h2>' +
+          '<p class="blokki__kuvaus">' + s(b.kuvaus) + '</p>' +
+          '<dl class="blokki__tiedot">' +
+            rivi('Tarkoitettu', b.tarkoitus) +
+            rivi('Käytössä', b.sivut && b.sivut.length ? b.sivut.join(', ') : 'Ei vielä millään sivulla') +
+            rivi('Avoinna', b.avoinna) +
+          '</dl>' +
+          '<p class="blokki__linkit">' +
+            '<a href="' + s(b.lab) + '">Laboratorio</a>' +
+            (b.artifact ? '<a href="' + s(b.artifact) + '" target="_blank" rel="noopener">Asiakasversio ↗</a>' : '') +
+            (b.readme ? '<a href="' + s(b.readme) + '">README</a>' : '') +
+          '</p>' +
+        '</div>';
+      lista.appendChild(li);
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Canvas — Luotokodin lohkot</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  /* Canvas: yksi story koko ikkunassa. Katselin upottaa tämän
+     (upotus=1), "Avaa erikseen" avaa sen sellaisenaan, ja
+     tyokalut/lohkokuvat.py kuvaa sen. Eristys on vain täällä: kolme
+     toteutusta samasta asiasta eriytyisi. */
+  html,body{margin:0;background:#faf8f3}
+  body.upotus{overflow:hidden}
+  iframe{display:block;border:0;width:100%;height:100vh}
+  .virhe{font:14px/1.5 ui-monospace,Menlo,monospace;color:#8a3b00;background:#fff4e8;padding:16px;margin:0;white-space:pre-wrap}
+  #mittaus{display:none}
+</style>
+</head>
+<body>
+<script src="lohkot.js"></script>
+<script src="variantit.js"></script>
+<script src="../kirjasto.js"></script>
+<script src="lk.js"></script>
+<script>
+(function () {
+  'use strict';
+  var p = new URLSearchParams(location.search);
+  var upotus = p.get('upotus') === '1';
+  var story = LK.story(p.get('story'));
+  var kieli = p.get('kieli') || 'fi', sisalto = p.get('sisalto') || 'placeholder';
+  if (upotus) document.body.className = 'upotus';
+  var IKKUNA = 900, vieritys = false;        // vierityslohko, ks. eristaa()
+
+  function laheta(viesti) {
+    if (!upotus) return;
+    viesti.lk = 'canvas'; viesti.story = p.get('story'); viesti.avain = p.get('avain');
+    try { parent.postMessage(viesti, '*'); } catch (e) {}
+  }
+  function virhe(teksti) {
+    var pre = document.createElement('pre'); pre.className = 'virhe'; pre.textContent = teksti;
+    document.body.appendChild(pre);
+    laheta({ tyyppi: 'virhe', teksti: teksti, korkeus: pre.offsetHeight });
+  }
+  if (!story) { virhe('Storya ei löydy: ' + p.get('story')); return; }
+  document.title = story.lohko.nimi + ' · ' + story.nimi + ' — Canvas';
+
+  try {
+    sessionStorage.setItem('luotokoti:kieli', kieli);
+    sessionStorage.setItem('luotokoti:sisalto', sisalto);
+    LK.STORYAVAIMET.forEach(function (k) {
+      if (story.asetukset[k]) sessionStorage.setItem('luotokoti:' + k, story.asetukset[k]);
+      else sessionStorage.removeItem('luotokoti:' + k);
+    });
+  } catch (e) {}
+
+  var f = document.createElement('iframe');
+  f.title = story.lohko.nimi + ' · ' + story.nimi;
+  f.src = LK.sivuUrl(story, kieli);
+  // Kiinteä leveys: kehys saa tarkan leveyden ikkunasta riippumatta.
+  // Tarvitaan kuvauksessa, koska headless-Chrome ei asettele alle ~500 px:n
+  // ikkunaa — 375 px:n kuva olisi muuten oikeasti 500 px:n asettelu.
+  if (p.get('leveys')) { f.style.width = parseInt(p.get('leveys'), 10) + 'px'; }
+  document.body.appendChild(f);
+
+  f.addEventListener('load', function () {
+    var d = f.contentDocument;
+    (d.fonts && d.fonts.ready ? d.fonts.ready : Promise.resolve()).then(function () {
+      setTimeout(function () { eristaa(d); }, 120);
+    });
+  });
+
+  /* Lohkon esivanhemmat merkitään ja niiden muut lapset piilotetaan;
+     lohkon omaan sisältöön ei kosketa. js-reveal pois, koska eristetty
+     lohko ei koskaan vieritä näkyviin (proto.js:n paljastus). */
+  function eristaa(d) {
+    var el = d.querySelector(story.valitsin);
+    if (!el) {
+      f.remove();
+      virhe('Valitsin ' + story.valitsin + ' ei osu sivulle ' + story.sivu +
+            '.\nKorjaa rivi lohkot.js:ssä, tai lohko on poistunut sivulta.');
+      return;
+    }
+    d.documentElement.classList.remove('js-reveal');
+    // Muunnelma joka ei tartu näyttäisi oletuksen ilman virhettä (talo.js
+    // hylkää tuntemattoman koon hiljaa). Tarkistetaan sivun omasta tilasta.
+    var ohi = LK.STORYAVAIMET.filter(function (k) {
+      return story.asetukset[k] && d.body.getAttribute('data-' + k) !== story.asetukset[k];
+    }).map(function (k) { return k + '=' + story.asetukset[k] + ' (sivulla: ' + (d.body.getAttribute('data-' + k) || '–') + ')'; });
+    if (ohi.length) laheta({ tyyppi: 'varoitus', teksti: 'Muunnelma ei tarttunut: ' + ohi.join(', ') + '. Tarkista tunnus lohkot.js:ssä.' });
+    var st = d.createElement('style');
+    st.textContent =
+      '[data-sb-esi] > :not([data-sb-esi]):not([data-sb-lohko]){display:none!important}' +
+      'html,body{min-height:0!important;height:auto!important}' +
+      'body{padding:0!important;margin:0!important}' +
+      '[data-sb-lohko]{margin-top:0!important;margin-bottom:0!important;position:relative!important;top:auto!important}' +
+      // Designsuuntien paljastus (D: [data-reveal] näkyy vasta .syns-luokalla
+      // vierityksestä) — sama syy kuin js-reveal yllä.
+      '[data-sb-lohko] [data-reveal],[data-sb-lohko][data-reveal]{opacity:1!important;transform:none!important;filter:none!important}' +
+      // KUVAHERO (§59): korkeus ja otsikon koko ovat svh-yksiköissä. Kehys
+      // venytetään lohkon mittaiseksi, jolloin svh kutistuisi ja hero
+      // painuisi minimiinsä (24rem). Lukitaan sama 900 px:n näkymä kuin
+      // vierityslohkoilla.
+      '@media (min-width:60.0625rem){.hero--kuva .hero__scen{height:clamp(24rem,' + (IKKUNA - 120) + 'px,64rem)!important}' +
+      '.hero--kuva{--h1:clamp(2.1rem,min(4vw,' + Math.round(IKKUNA * 0.072) + 'px),4.1rem)!important}}' +
+      (p.get('aariviivat') === '1' ? '[data-sb-lohko] *{outline:1px solid rgba(29,127,214,.45)!important;outline-offset:-1px}' : '');
+    d.head.appendChild(st);
+    el.setAttribute('data-sb-lohko', '');
+    for (var q = el.parentElement; q; q = q.parentElement) q.setAttribute('data-sb-esi', '');
+
+    /* VIERITYSLOHKO. Scrollytelling-lohkon askeleilla on min-height
+       vh-yksiköissä (styles.css §60, .kierros), joten sen korkeus riippuu
+       ikkunan korkeudesta. Kun kehys venytetään lohkon mittaiseksi, lohko
+       venyy kehyksen mittaiseksi: etusivun prosessi mitattiin 52 985 px:n
+       ja 375 px:llä 10,6 miljoonan px:n korkuiseksi. Tunnistus: jos
+       korkeus kasvaa kehyksen mukana, kehys lukitaan kiinteään ikkunaan
+       ja lohkoa vieritetään sen sisällä — kuten sivulla. */
+    var kerrat = 0, edellinen = 0;
+    function mittaaKorkeus() {
+      if (vieritys) return;
+      var h = Math.ceil(el.getBoundingClientRect().height);
+      if (edellinen && h > edellinen * 1.25 && h > IKKUNA) {
+        vieritys = true;
+        f.style.height = IKKUNA + 'px';
+        laheta({ tyyppi: 'korkeus', korkeus: IKKUNA, vieritys: true });
+        return;
+      }
+      edellinen = h;
+      f.style.height = h + 'px';
+      laheta({ tyyppi: 'korkeus', korkeus: h });
+    }
+    mittaaKorkeus();
+    // Toinen mittaus heti: vh-riippuvuus näkyy vasta kun kehys on saanut
+    // ensimmäisen korkeutensa.
+    mittaaKorkeus();
+    if (d.defaultView.ResizeObserver) {
+      // Katto: jos lohkon korkeus riippuu kehyksen korkeudesta (vh),
+      // mittaus ruokkisi itseään.
+      new d.defaultView.ResizeObserver(function () { if (kerrat++ < 40) mittaaKorkeus(); }).observe(el);
+    }
+    /* Toiminnot. Linkki lohkon sisällä veisi kehyksen pois lohkosta ja
+       jättäisi katselimeen koko sivun — kirjataan kohde ja jäädään.
+       Lomakkeen lähetys samoin. data-event on prototyypin klikkausmittari
+       (proto.js), ja se kirjataan omana rivinään: se kertoo mitä
+       mittaus näkisi. Painikkeet toimivat normaalisti (kokovalitsin). */
+    d.addEventListener('click', function (ev) {
+      var mittari = ev.target.closest('[data-event]');
+      if (mittari) laheta({ tyyppi: 'toiminto', laji: 'mittari', teksti: mittari.getAttribute('data-event') });
+      var a = ev.target.closest('a[href]');
+      if (a) {
+        var h = a.getAttribute('href');
+        if (h.charAt(0) === '#') return;
+        ev.preventDefault();
+        laheta({ tyyppi: 'toiminto', laji: 'linkki', teksti: (a.textContent || '').trim().slice(0, 60) + ' → ' + h });
+        return;
+      }
+      var b = ev.target.closest('button, summary, [role=button]');
+      if (b) laheta({ tyyppi: 'toiminto', laji: b.tagName.toLowerCase(), teksti: (b.textContent || '').trim().slice(0, 60) });
+    }, true);
+    d.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      laheta({ tyyppi: 'toiminto', laji: 'lähetys', teksti: ev.target.getAttribute('action') || 'lomake' });
+    }, true);
+
+    window.LK_LOHKO = el;
+    window.LK_MITTAA = function () { return mittaa(d, el); };  // testit ja konsoli
+    laheta({ tyyppi: 'valmis', korkeus: vieritys ? IKKUNA : Math.ceil(el.getBoundingClientRect().height), vieritys: vieritys });
+    // Positiivinen kontrolli: mittari jota ei ole nähty hälyttävän ei
+    // todista mitään. ?testi=1 istuttaa tunnetusti heikon tekstin (1,9:1),
+    // liian pienen fontin ja 20 px:n linkin, ja kuvaa.py --testi vaatii
+    // että kaikki kolme löytyvät ennen kuin varsinainen ajo alkaa.
+    if (p.get('testi') === '1') {
+      var h = el.querySelector('h2, h3, p'), isanta = h ? h.parentElement : el;
+      var t1 = d.createElement('p'); t1.textContent = 'Mittarin testi: heikko teksti'; t1.style.color = '#bdb8aa';
+      var t2 = d.createElement('a'); t2.href = '#testi'; t2.textContent = 'pieni'; t2.style.cssText = 'display:inline-block;height:20px;font-size:10px';
+      isanta.appendChild(t1); isanta.appendChild(t2);
+    }
+    if (p.get('mittaa') === '1') setTimeout(function () { kirjaa(mittaa(d, el)); }, 400);
+  }
+
+  /* ----------------------------------------------------------------------
+     MITTAUS. Luetaan renderöidystä DOMista, ei lähdekoodista: kontrasti
+     lasketaan lasketuista väreistä ja taustan läpikuultavuus sekoitetaan
+     esivanhemmista, kosketusalue mitataan laatikosta. Tulos kirjoitetaan
+     #mittaus-elementtiin, jonka kuvaustyökalu lukee --dump-domilla.
+     ---------------------------------------------------------------------- */
+  function kirjaa(tulos) {
+    window.LK_MITTAUS = tulos;
+    var pre = document.createElement('pre'); pre.id = 'mittaus';
+    pre.textContent = JSON.stringify(tulos);
+    document.body.appendChild(pre);
+    laheta({ tyyppi: 'mittaus', mittaus: tulos });
+    // Kuvaustyökalu (kuvaa.py) antaa vastaanottimen osoitteen. --dump-dom
+    // ei valmistunut headless-Chromessa koskaan tällä sivulla (kehys, fontit,
+    // ResizeObserver), joten tulos lähetetään eikä odoteta sivun loppua.
+    if (p.get('keraaja')) {
+      try { fetch(p.get('keraaja'), { method: 'POST', mode: 'no-cors', body: JSON.stringify(tulos) }); } catch (e) {}
+    }
+  }
+
+  function rgba(s) {
+    var m = String(s).match(/rgba?\(([^)]+)\)/); if (!m) return null;
+    var o = m[1].split(/[ ,/]+/).filter(Boolean).map(parseFloat);
+    return { r: o[0], g: o[1], b: o[2], a: o.length > 3 ? o[3] : 1 };
+  }
+  function sekoita(yla, ala) {
+    var a = yla.a;
+    return { r: yla.r * a + ala.r * (1 - a), g: yla.g * a + ala.g * (1 - a), b: yla.b * a + ala.b * (1 - a), a: 1 };
+  }
+  function lum(c) {
+    function k(v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }
+    return 0.2126 * k(c.r) + 0.7152 * k(c.g) + 0.0722 * k(c.b);
+  }
+  function suhde(a, b) { var x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+
+  function mittaa(d, lohko) {
+    var w = d.defaultView, vp = w.innerWidth;
+    function cs(el) { return w.getComputedStyle(el); }
+    function naky(el) {
+      if (el.closest('aside.note, .visually-hidden, [hidden]')) return false;
+      var r = el.getBoundingClientRect(); if (r.width < 1 || r.height < 1) return false;
+      var s = cs(el); return s.visibility !== 'hidden' && parseFloat(s.opacity) > 0.05;
+    }
+    // Tausta: läpikuultavat kerrokset sekoitetaan ylhäältä alas. Kuva
+    // taustana → tuntematon, jätetään pois (ei väärää hälytystä).
+    function tausta(el) {
+      var kerrokset = [];
+      for (var e = el; e && e.nodeType === 1; e = e.parentElement) {
+        var s = cs(e);
+        if (s.backgroundImage && s.backgroundImage !== 'none' && !/gradient/.test(s.backgroundImage)) return null;
+        if (e.tagName === 'IMG' || e.tagName === 'VIDEO') return null;
+        var c = rgba(s.backgroundColor);
+        if (c && c.a > 0) { kerrokset.push(c); if (c.a >= 1) break; }
+      }
+      var pohja = { r: 250, g: 248, b: 243, a: 1 };
+      for (var i = kerrokset.length - 1; i >= 0; i--) pohja = sekoita(kerrokset[i], pohja);
+      return pohja;
+    }
+    function kuvaus(el) {
+      var t = (el.textContent || '').trim().replace(/\s+/g, ' ');
+      return el.tagName.toLowerCase() + (el.className && typeof el.className === 'string' ? '.' + el.className.split(' ')[0] : '') +
+        ' "' + t.slice(0, 50) + (t.length > 50 ? '…' : '') + '"';
+    }
+    // Onko elementti kuvan päällä (esim. havainnekuvan merkintä)?
+    function kuvanPaalla(el) {
+      for (var e = el; e && e !== lohko; e = e.parentElement) {
+        var s = cs(e);
+        if (s.position === 'absolute' && e.parentElement && e.parentElement.querySelector('img')) return true;
+      }
+      return false;
+    }
+
+    var tulos = { story: p.get('story'), vp: vp, kieli: kieli, vieritys: vieritys, korkeus: vieritys ? IKKUNA : Math.round(lohko.getBoundingClientRect().height),
+      kontrasti: [], kohteet: [], ylivuoto: [], pienet: [], otsikot: [], kuvat: [], rivit: [], painikkeet: [], aukot: 0 };
+
+    // Teksti-elementit: ne joilla on oma tekstisolmu
+    var tekstit = [], nahty = new Set();
+    var tw = d.createTreeWalker(lohko, NodeFilter.SHOW_TEXT);
+    while (tw.nextNode()) {
+      var n = tw.currentNode, el = n.parentElement;
+      if (!n.textContent.trim() || nahty.has(el) || !naky(el)) continue;
+      nahty.add(el); tekstit.push(el);
+    }
+    tekstit.forEach(function (el) {
+      var s = cs(el), fg = rgba(s.color), bg = tausta(el), fs = parseFloat(s.fontSize), fw = parseInt(s.fontWeight, 10);
+      if (fs < 12) tulos.pienet.push({ el: kuvaus(el), px: fs });
+      if (!fg || !bg || kuvanPaalla(el)) return;
+      var c = sekoita(fg, bg), r = suhde(c, bg);
+      var suuri = fs >= 24 || (fs >= 18.66 && fw >= 700);
+      var raja = suuri ? 3 : 4.5;
+      if (r < raja) tulos.kontrasti.push({ el: kuvaus(el), suhde: Math.round(r * 100) / 100, raja: raja, px: fs });
+    });
+
+    // Kosketusalueet. Leipätekstin sisäinen linkki saa olla matalampi
+    // (WCAG 2.5.8 poikkeus), mutta vähintään 24 px.
+    Array.prototype.forEach.call(lohko.querySelectorAll('a[href], button, input:not([type=hidden]), select, textarea, summary, [role=button]'), function (el) {
+      if (!naky(el)) return;
+      var r = el.getBoundingClientRect();
+      var inline = cs(el).display === 'inline' && el.closest('p, li, dd');
+      var raja = inline ? 24 : 44;
+      if (r.height < raja || (!inline && r.width < 44)) tulos.kohteet.push({ el: kuvaus(el), w: Math.round(r.width), h: Math.round(r.height), raja: raja });
+    });
+
+    // Vaakaylivuoto: elementti joka ylittää ikkunan eikä ole vierivän
+    // säiliön sisällä.
+    Array.prototype.forEach.call(lohko.querySelectorAll('*'), function (el) {
+      if (!naky(el)) return;
+      var r = el.getBoundingClientRect(); if (r.right <= vp + 1 && r.left >= -1) return;
+      for (var e = el.parentElement; e && e !== d.body; e = e.parentElement) {
+        var ox = cs(e).overflowX; if (ox === 'auto' || ox === 'scroll' || ox === 'hidden' || ox === 'clip') return;
+      }
+      if (tulos.ylivuoto.length < 5) tulos.ylivuoto.push({ el: kuvaus(el), oikea: Math.round(r.right), vasen: Math.round(r.left) });
+    });
+
+    Array.prototype.forEach.call(lohko.querySelectorAll('h1,h2,h3,h4,h5,h6'), function (h) {
+      if (naky(h) || h.closest('.visually-hidden')) tulos.otsikot.push(+h.tagName[1]);
+    });
+    Array.prototype.forEach.call(lohko.querySelectorAll('img'), function (i) {
+      if (!i.hasAttribute('alt')) tulos.kuvat.push(i.getAttribute('src'));
+    });
+    // Rivipituus: merkkiä riviä kohden ≈ leveys / (0,5 × fonttikoko).
+    Array.prototype.forEach.call(lohko.querySelectorAll('p, li, dd'), function (el) {
+      if (!naky(el) || (el.textContent || '').trim().length < 120) return;
+      var s = cs(el), mk = el.clientWidth / (parseFloat(s.fontSize) * 0.5);
+      if (mk > 85) tulos.rivit.push({ el: kuvaus(el), merkkia: Math.round(mk) });
+    });
+    Array.prototype.forEach.call(lohko.querySelectorAll('.btn, a.button, button.btn'), function (el) {
+      if (naky(el)) tulos.painikkeet.push((el.className || '') + ' "' + el.textContent.trim().slice(0, 40) + '"');
+    });
+    tulos.aukot = Array.prototype.filter.call(lohko.querySelectorAll('.gap'), naky).length;
+    return tulos;
+  }
+})();
+</script>
+</body>
+</html>
